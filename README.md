@@ -1,6 +1,69 @@
-# Young Hadene - Landing Page
+# Young Hadene - Official Website
 
-A modern, responsive landing page for the artist Young Hadene, built with HTML, Tailwind CSS, and optimized for Cloudflare Pages deployment.
+A modern, responsive website for Young Hadene, Haitian-born, Toronto-based hip-hop and drill artist.
+
+## Features
+
+- **Dark Theme**: Modern high-contrast design
+- **Mobile Responsive**: Works perfectly on all devices
+- **Video Sections**: Featured videos and YouTube Shorts
+- **Social Links**: Connect on all major platforms
+- **Cloudflare Ready**: Optimized for Cloudflare Pages deployment
+
+## Quick Start
+
+### Local Development
+```bash
+# Open in browser
+open index.html
+
+# Or serve locally
+python -m http.server 8080
+```
+
+### Deployment to Cloudflare Pages
+
+1. Push to GitHub repository
+2. Connect to Cloudflare Pages
+3. Deploy automatically
+
+## Content Updates
+
+### Add YouTube Videos
+Replace `VIDEO_ID_1`, `VIDEO_ID_2` in `index.html` with actual YouTube video IDs.
+
+### Add YouTube Shorts
+Replace `SHORTS_ID_1`, `SHORTS_ID_2` in `index.html` with actual Shorts video IDs.
+
+### Update Social Links
+Replace placeholder URLs in the streaming section with actual profile links.
+
+### Update Biography
+Edit the About section text in `index.html`.
+
+## File Structure
+
+```
+young-hadene-landing/
+├── index.html          # Main HTML file
+├── styles.css          # Custom CSS styles
+├── script.js           # JavaScript functionality
+├── _redirects          # Cloudflare redirects
+├── package.json        # Project metadata
+└── README.md           # This file
+```
+
+## Customization
+
+- Colors: Modify Tailwind config in `index.html`
+- Fonts: Change Google Fonts imports
+- Layout: Adjust Tailwind classes
+- Animations: Edit `styles.css`
+
+## Support
+
+Managed by Str8hitsRecords
+Contact: contact@younghadene.com
 
 ## 🚀 Features
 
