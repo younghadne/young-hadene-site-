@@ -1,4 +1,4 @@
-# Young Hadene - Official Website younghadene.ca
+# Young Hadene - Official Website
 
 A modern, responsive website for Young Hadene, Haitian-born, Toronto-based hip-hop and drill artist.
 
