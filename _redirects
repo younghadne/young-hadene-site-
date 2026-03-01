@@ -1,6 +1,28 @@
 # Default redirects for Cloudflare Pages
 # This file handles URL redirection if needed in the future
 
+# Directory redirects for path-based structure
+/how-to-make-drill-music/ /how-to-make-drill-music/index.html 200
+/how-to-start-independent-record-label/ /how-to-start-independent-record-label/index.html 200
+
+# Handle trailing slashes
+/how-to-make-drill-music /how-to-make-drill-music/index.html 200
+/how-to-start-independent-record-label /how-to-start-independent-record-label/index.html 200
+
+# Demo structure redirects
+/demo-structure/academy/ /demo-structure/academy/index.html 200
+/demo-structure/label/ /demo-structure/label/index.html 200
+/demo-structure/blog/ /demo-structure/blog/index.html 200
+/demo-structure/shop/ /demo-structure/shop/index.html 200
+/demo-structure/community/ /demo-structure/community/index.html 200
+
+# Handle trailing slashes for demo structure
+/demo-structure/academy /demo-structure/academy/index.html 200
+/demo-structure/label /demo-structure/label/index.html 200
+/demo-structure/blog /demo-structure/blog/index.html 200
+/demo-structure/shop /demo-structure/shop/index.html 200
+/demo-structure/community /demo-structure/community/index.html 200
+
 # Example redirect (uncomment and modify as needed):
 # /old-page /new-page 301
 
