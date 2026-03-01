@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    
+    <url>
+        <loc>https://younghadene.com/#featured</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        
+        <!-- Trap Blueprints Music Video -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - Trap Blueprints Official Music Video</video:title>
+            <video:description>Young Hadene performs Trap Blueprints - Official music video from Haitian-born, Toronto-based hip-hop and drill artist. Features signature drill sound with Caribbean influences.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=cBmTH6P1Ep8</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/cBmTH6P1Ep8</video:embed_loc>
+            <video:duration>225</video:duration>
+            <video:publication_date>2024-01-15T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:platform relationship="allow">tv</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>Trap Blueprints</video:tag>
+            <video:tag>Toronto Drill</video:tag>
+            <video:tag>Haitian Hip-Hop</video:tag>
+            <video:tag>Drill Music</video:tag>
+            <video:tag>Canadian Rap</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+        
+        <!-- 30K LV Tru Diss Music Video -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/p6ghY_-H6SE/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - 30K LV Tru Diss Official Music Video</video:title>
+            <video:description>Young Hadene delivers 30K LV Tru Diss - Powerful drill track showcasing Toronto sound with Haitian cultural influences. High-energy performance with authentic street narratives.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=p6ghY_-H6SE</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/p6ghY_-H6SE</video:embed_loc>
+            <video:duration>198</video:duration>
+            <video:publication_date>2024-02-20T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:platform relationship="allow">tv</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>30K LV Tru Diss</video:tag>
+            <video:tag>Toronto Drill</video:tag>
+            <video:tag>Diss Track</video:tag>
+            <video:tag>Hip-Hop</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+        
+        <!-- Hood Rich Stories Music Video -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/H1Cn9k671WE/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - Hood Rich Stories Official Music Video</video:title>
+            <video:description>Young Hadene shares Hood Rich Stories - Narrative-driven drill music video depicting street life and success journey. Authentic storytelling with cinematic visuals.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=H1Cn9k671WE</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/H1Cn9k671WE</video:embed_loc>
+            <video:duration>242</video:duration>
+            <video:publication_date>2024-03-10T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:platform relationship="allow">tv</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>Hood Rich Stories</video:tag>
+            <video:tag>Street Music</video:tag>
+            <video:tag>Narrative Hip-Hop</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+        
+        <!-- No Choice Music Video -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/LV1H0-ilz6c/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - No Choice Official Music Video</video:title>
+            <video:description>Young Hadene presents No Choice - Intense drill music video showcasing raw talent and determination. Features hard-hitting beats with Caribbean rhythmic influences.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=LV1H0-ilz6c</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/LV1H0-ilz6c</video:embed_loc>
+            <video:duration>186</video:duration>
+            <video:publication_date>2024-04-05T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:platform relationship="allow">tv</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>No Choice</video:tag>
+            <video:tag>Drill Music</video:tag>
+            <video:tag>Caribbean Hip-Hop</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+        
+        <!-- LV Tru Music Video -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/fxO59qBISbo/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - LV Tru Official Music Video</video:title>
+            <video:description>Young Hadene delivers LV Tru - Signature drill track with authentic Toronto sound. Features high-energy performance and street credibility.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=fxO59qBISbo</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/fxO59qBISbo</video:embed_loc>
+            <video:duration>203</video:duration>
+            <video:publication_date>2024-05-12T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:platform relationship="allow">tv</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>LV Tru</video:tag>
+            <video:tag>Toronto Drill</video:tag>
+            <video:tag>Street Credibility</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+    </url>
+    
+    <url>
+        <loc>https://younghadene.com/#shorts</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        
+        <!-- Drill Freestyle YouTube Short -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/Yb8NrHBbzk0/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - Drill Freestyle YouTube Short</video:title>
+            <video:description>Young Hadene performs intense drill freestyle - Quick showcase of lyrical skills and Toronto drill sound. Perfect for social media sharing.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=Yb8NrHBbzk0</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/Yb8NrHBbzk0</video:embed_loc>
+            <video:duration>45</video:duration>
+            <video:publication_date>2026-02-28T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>Drill Freestyle</video:tag>
+            <video:tag>YouTube Shorts</video:tag>
+            <video:tag>Toronto Drill</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+        
+        <!-- Behind the Scenes YouTube Short -->
+        <video:video>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/osARn7TOEpI/maxresdefault.jpg</video:thumbnail_loc>
+            <video:title>Young Hadene - Behind the Scenes YouTube Short</video:title>
+            <video:description>Young Hadene behind the scenes content - Exclusive footage from music video shoots and studio sessions. Gives fans insight into creative process.</video:description>
+            <video:content_loc>https://www.youtube.com/watch?v=osARn7TOEpI</video:content_loc>
+            <video:embed_loc>https://www.youtube.com/embed/osARn7TOEpI</video:embed_loc>
+            <video:duration>38</video:duration>
+            <video:publication_date>2026-02-28T00:00:00+00:00</video:publication_date>
+            <video:family_friendly>yes</video:family_friendly>
+            <video:requires_subscription>no</video:requires_subscription>
+            <video:platform relationship="allow">web</video:platform>
+            <video:platform relationship="allow">mobile</video:platform>
+            <video:live>no</video:live>
+            <video:tag>Young Hadene</video:tag>
+            <video:tag>Behind the Scenes</video:tag>
+            <video:tag>YouTube Shorts</video:tag>
+            <video:tag>Studio Session</video:tag>
+            <video:category>Music</video:category>
+            <video:uploader>Young Hadene Official</video:uploader>
+            <video:uploader_info>https://www.youtube.com/@YoungHadeneOfficial</video:uploader_info>
+        </video:video>
+    </url>
+    
+</urlset>
