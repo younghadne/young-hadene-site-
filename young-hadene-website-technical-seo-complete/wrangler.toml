@@ -1,0 +1,13 @@
+# Cloudflare Pages Configuration
+# This file tells Cloudflare Pages how to build and deploy your site
+
+# Build command - since this is a static site, we use exit 0
+command = "exit 0"
+
+# Build output directory - where the final files are located
+# For this static site, it's the root directory
+publish = "."
+
+# Environment variables (optional)
+# [env.production]
+#   NODE_VERSION = "18"
