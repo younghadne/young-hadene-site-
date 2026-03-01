@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Str8hitsRecords - Independent Record Label</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .label-hero {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .cta-button {
+            background: #f5576c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(245,87,108,0.4);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Main Site</a>
+    
+    <section class="label-hero">
+        <div>
+            <h1>🏢 Str8hitsRecords</h1>
+            <p>Independent Label for Toronto's Next Generation</p>
+        </div>
+    </section>
+
+    <div class="services-grid">
+        <div class="service-card">
+            <h3>🎵 Artist Development</h3>
+            <p>Comprehensive artist development programs</p>
+            <a href="artist-development.html" class="cta-button">Learn More</a>
+        </div>
+        <div class="service-card">
+            <h3>📀 Music Distribution</h3>
+            <p>Global distribution to all major platforms</p>
+            <a href="distribution.html" class="cta-button">Get Distributed</a>
+        </div>
+        <div class="service-card">
+            <h3>🎯 Marketing & Promotion</h3>
+            <p>Strategic marketing for maximum exposure</p>
+            <a href="marketing.html" class="cta-button">Promote Your Music</a>
+        </div>
+        <div class="service-card">
+            <h3>📝 Submit Your Music</h3>
+            <p>Get your music heard by our A&R team</p>
+            <a href="submit.html" class="cta-button">Submit Now</a>
+        </div>
+    </div>
+</body>
+</html>

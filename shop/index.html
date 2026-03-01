@@ -4,46 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - Young Hadene Merchandise</title>
+    <link rel="stylesheet" href="../styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .hero { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; padding: 3rem 2rem; text-align: center; border-radius: 15px; margin-bottom: 3rem; }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .product { background: #16213e; padding: 2rem; border-radius: 10px; text-align: center; }
-        .product h3 { color: #a8edea; margin-bottom: 1rem; }
-        .price { font-size: 1.5rem; color: #fed6e3; font-weight: bold; margin: 1rem 0; }
-        .buy-button { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; }
-        .back-link { background: #a8edea; color: #333; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 2rem; }
+        .shop-hero {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            text-align: center;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .product-image {
+            height: 250px;
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        .product-content {
+            padding: 1.5rem;
+        }
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a8edea;
+            margin-bottom: 1rem;
+        }
+        .buy-button {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            color: #333;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .buy-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(168,237,234,0.4);
+        }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← Back to Main Site</a>
-        
-        <div class="hero">
-            <h1>🛍️ Shop</h1>
-            <p>Official Merchandise & Exclusive Products</p>
+    <a href="/" class="back-link">← Back to Main Site</a>
+    
+    <section class="shop-hero">
+        <div>
+            <h1>🛍️ Official Merchandise</h1>
+            <p>Exclusive Young Hadene & Str8hitsRecords Gear</p>
+        </div>
+    </section>
+
+    <div class="products-grid">
+        <div class="product-card">
+            <div class="product-image">👕</div>
+            <div class="product-content">
+                <h3>Young Hadene Classic Tee</h3>
+                <p>Premium quality cotton tee with original design</p>
+                <div class="product-price">$29.99</div>
+                <a href="#" class="buy-button">Add to Cart</a>
+            </div>
         </div>
 
-        <div class="products">
-            <div class="product">
-                <h3>👕 Classic Tee</h3>
-                <p>Premium quality cotton tee</p>
-                <div class="price">$29.99</div>
+        <div class="product-card">
+            <div class="product-image">🧢</div>
+            <div class="product-content">
+                <h3>Str8hitsRecords Cap</h3>
+                <p>Adjustable snapback with embroidered logo</p>
+                <div class="product-price">$34.99</div>
                 <a href="#" class="buy-button">Add to Cart</a>
             </div>
-            <div class="product">
-                <h3>🧢 Str8hitsRecords Cap</h3>
-                <p>Adjustable snapback with logo</p>
-                <div class="price">$34.99</div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">🎧</div>
+            <div class="product-content">
+                <h3>Drill Producer Hoodie</h3>
+                <p>Heavyweight hoodie with producer theme design</p>
+                <div class="product-price">$59.99</div>
                 <a href="#" class="buy-button">Add to Cart</a>
             </div>
-            <div class="product">
-                <h3>🎧 Producer Hoodie</h3>
-                <p>Heavyweight hoodie with design</p>
-                <div class="price">$59.99</div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">📱</div>
+            <div class="product-content">
+                <h3>Phone Case Collection</h3>
+                <p>Protective cases with exclusive artwork</p>
+                <div class="product-price">$19.99</div>
+                <a href="#" class="buy-button">Add to Cart</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">🎵</div>
+            <div class="product-content">
+                <h3>Vinyl Record Bundle</h3>
+                <p>Limited edition vinyl with signed poster</p>
+                <div class="product-price">$49.99</div>
+                <a href="#" class="buy-button">Add to Cart</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">🎨</div>
+            <div class="product-content">
+                <h3>Art Print Set</h3>
+                <p>Collection of exclusive artwork prints</p>
+                <div class="product-price">$39.99</div>
                 <a href="#" class="buy-button">Add to Cart</a>
             </div>
         </div>

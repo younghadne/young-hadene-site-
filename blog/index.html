@@ -4,45 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog - Young Hadene</title>
+    <link rel="stylesheet" href="../styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .hero { background: linear-gradient(135deg, #fa709a, #fee140); color: #333; padding: 3rem 2rem; text-align: center; border-radius: 15px; margin-bottom: 3rem; }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
-        .post { background: #16213e; padding: 2rem; border-radius: 10px; }
-        .post h3 { color: #fa709a; margin-bottom: 1rem; }
-        .post-meta { color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
-        .back-link { background: #fa709a; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 2rem; }
+        .blog-hero {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .blog-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .blog-image {
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+        .blog-content {
+            padding: 1.5rem;
+        }
+        .blog-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← Back to Main Site</a>
-        
-        <div class="hero">
+    <a href="/" class="back-link">← Back to Main Site</a>
+    
+    <section class="blog-hero">
+        <div>
             <h1>📝 Blog</h1>
-            <p>Industry Insights & Behind the Scenes</p>
+            <p>Industry Insights, Tutorials & Behind the Scenes</p>
         </div>
+    </section>
 
-        <div class="posts">
-            <div class="post">
-                <div class="post-meta">March 1, 2024 • Production</div>
+    <div class="blog-grid">
+        <article class="blog-card">
+            <div class="blog-image">🎵</div>
+            <div class="blog-content">
+                <div class="blog-meta">March 1, 2024 • Production</div>
                 <h3>How to Create Drill 808 Patterns</h3>
-                <p>Master the art of creating hard-hitting 808 patterns...</p>
+                <p>Master the art of creating hard-hitting 808 patterns that define the drill sound...</p>
+                <a href="posts/drill-808-patterns.html" style="color: #fa709a;">Read More →</a>
             </div>
-            <div class="post">
-                <div class="post-meta">February 28, 2024 • Career</div>
+        </article>
+
+        <article class="blog-card">
+            <div class="blog-image">🎤</div>
+            <div class="blog-content">
+                <div class="blog-meta">February 28, 2024 • Career</div>
                 <h3>Building Your Music Career in 2024</h3>
-                <p>Essential strategies for independent artists...</p>
+                <p>Essential strategies for independent artists looking to make it in today's industry...</p>
+                <a href="posts/music-career-2024.html" style="color: #fa709a;">Read More →</a>
             </div>
-            <div class="post">
-                <div class="post-meta">February 25, 2024 • Business</div>
+        </article>
+
+        <article class="blog-card">
+            <div class="blog-image">🏢</div>
+            <div class="blog-content">
+                <div class="blog-meta">February 25, 2024 • Business</div>
                 <h3>Starting an Independent Record Label</h3>
-                <p>Everything you need to know about launching your own label...</p>
+                <p>Everything you need to know about launching your own record label...</p>
+                <a href="posts/independent-label-guide.html" style="color: #fa709a;">Read More →</a>
             </div>
-        </div>
+        </article>
+
+        <article class="blog-card">
+            <div class="blog-image">🎹</div>
+            <div class="blog-content">
+                <div class="blog-meta">February 20, 2024 • Theory</div>
+                <h3>Music Theory for Modern Hip-Hop</h3>
+                <p>Understanding music theory principles that apply to contemporary hip-hop production...</p>
+                <a href="posts/music-theory-hiphop.html" style="color: #fa709a;">Read More →</a>
+            </div>
+        </article>
+
+        <article class="blog-card">
+            <div class="blog-image">🌍</div>
+            <div class="blog-content">
+                <div class="blog-meta">February 15, 2024 • Culture</div>
+                <h3>Toronto Drill: A Cultural Movement</h3>
+                <p>Exploring the cultural impact and evolution of Toronto's drill music scene...</p>
+                <a href="posts/toronto-drill-culture.html" style="color: #fa709a;">Read More →</a>
+            </div>
+        </article>
+
+        <article class="blog-card">
+            <div class="blog-image">🎧</div>
+            <div class="blog-content">
+                <div class="blog-meta">February 10, 2024 • Production</div>
+                <h3>Mixing & Mastering Drill Music</h3>
+                <p>Professional techniques for getting that polished drill mix...</p>
+                <a href="posts/mixing-drill-music.html" style="color: #fa709a;">Read More →</a>
+            </div>
+        </article>
     </div>
 </body>
 </html>

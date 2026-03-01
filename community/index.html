@@ -4,66 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community - Young Hadene</title>
+    <link rel="stylesheet" href="../styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .hero { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #333; padding: 3rem 2rem; text-align: center; border-radius: 15px; margin-bottom: 3rem; }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
-        .stat { background: rgba(255,255,255,0.1); padding: 2rem; text-align: center; border-radius: 10px; }
-        .stat-number { font-size: 2.5rem; font-weight: bold; color: #fcb69f; }
-        .community-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .community-card { background: #16213e; padding: 2rem; border-radius: 10px; text-align: center; }
-        .community-card h3 { color: #fcb69f; margin-bottom: 1rem; }
-        .join-button { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #333; padding: 1rem 2rem; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; margin-top: 1rem; }
-        .back-link { background: #fcb69f; color: #333; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 2rem; }
+        .community-hero {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            text-align: center;
+        }
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .community-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .community-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .community-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .join-button {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #333;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+        .join-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(252,182,159,0.4);
+        }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 15px;
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fcb69f;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← Back to Main Site</a>
-        
-        <div class="hero">
+    <a href="/" class="back-link">← Back to Main Site</a>
+    
+    <section class="community-hero">
+        <div>
             <h1>👥 Community</h1>
-            <p>Join the Movement & Connect with Artists</p>
+            <p>Join the Movement. Connect with Fans and Artists.</p>
+        </div>
+    </section>
+
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Community Members</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">100+</div>
+            <div class="stat-label">Active Artists</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Discord Community</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">15</div>
+            <div class="stat-label">Countries</div>
+        </div>
+    </div>
+
+    <div class="community-grid">
+        <div class="community-card">
+            <div class="community-icon">💬</div>
+            <h3>Discord Server</h3>
+            <p>Join our active Discord community for real-time chat, collaboration, and exclusive content.</p>
+            <a href="https://discord.gg/younghadene" class="join-button">Join Discord</a>
         </div>
 
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-number">50K+</div>
-                <div>Community Members</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">100+</div>
-                <div>Active Artists</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">24/7</div>
-                <div>Discord Community</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">15</div>
-                <div>Countries</div>
-            </div>
+        <div class="community-card">
+            <div class="community-icon">📱</div>
+            <h3>Telegram Group</h3>
+            <p>Connect with fans and artists on Telegram for updates and behind-the-scenes content.</p>
+            <a href="https://t.me/younghadene" class="join-button">Join Telegram</a>
         </div>
 
-        <div class="community-grid">
-            <div class="community-card">
-                <h3>💬 Discord Server</h3>
-                <p>Join our active Discord community for real-time chat and collaboration</p>
-                <a href="https://discord.gg/younghadene" class="join-button">Join Discord</a>
-            </div>
-            <div class="community-card">
-                <h3>📱 Telegram Group</h3>
-                <p>Connect with fans and artists for updates and behind-the-scenes content</p>
-                <a href="https://t.me/younghadene" class="join-button">Join Telegram</a>
-            </div>
-            <div class="community-card">
-                <h3>🎵 Artist Collective</h3>
-                <p>Network with other independent artists and find collaboration opportunities</p>
-                <a href="#" class="join-button">Join Collective</a>
-            </div>
+        <div class="community-card">
+            <div class="community-icon">🎵</div>
+            <h3>Artist Collective</h3>
+            <p>Network with other independent artists, share knowledge, and find collaboration opportunities.</p>
+            <a href="artist-collective.html" class="join-button">Join Collective</a>
+        </div>
+
+        <div class="community-card">
+            <div class="community-icon">🎮</div>
+            <h3>Gaming Community</h3>
+            <p>Join Young Hadene and community members for gaming sessions and tournaments.</p>
+            <a href="gaming.html" class="join-button">Join Gaming</a>
+        </div>
+
+        <div class="community-card">
+            <div class="community-icon">📚</div>
+            <h3>Learning Hub</h3>
+            <p>Access exclusive tutorials, workshops, and resources for music production and career development.</p>
+            <a href="learning.html" class="join-button">Access Hub</a>
+        </div>
+
+        <div class="community-card">
+            <div class="community-icon">🎤</div>
+            <h3>Open Mic Nights</h3>
+            <p>Participate in virtual open mic events and showcase your talent to the community.</p>
+            <a href="open-mic.html" class="join-button">Sign Up</a>
         </div>
     </div>
 </body>
