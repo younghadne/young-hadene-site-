@@ -10,7 +10,7 @@
     <meta name="robots" content="index, follow">
     
     <!-- Canonical URL - HIGH PRIORITY -->
-    <link rel="canonical" href="https://younghadene.com">
+    <link rel="canonical" href="https://younghadene.ca">
     
     <!-- Favicon - HIGH PRIORITY -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -19,7 +19,7 @@
     <meta property="og:title" content="Young Hadene - Official Website | Haitian-Toronto Hip-Hop Drill Artist">
     <meta property="og:description" content="Young Hadene - Haitian-born, Toronto-based hip-hop and drill artist. Stream 'Trap Blueprints', '30K LV Tru Diss', 'Hood Rich Stories'. Str8hitsRecords.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://younghadene.com">
+    <meta property="og:url" content="https://younghadene.ca">
     <meta property="og:image" content="https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg">
     <meta property="og:site_name" content="Young Hadene Official">
     <meta property="og:locale" content="en_CA">
@@ -28,10 +28,10 @@
     <meta name="twitter:description" content="Young Hadene - Haitian-born, Toronto-based hip-hop and drill artist. Stream 'Trap Blueprints', '30K LV Tru Diss', 'Hood Rich Stories'.">
     
     <!-- International Targeting - hreflang -->
-    <link rel="alternate" hreflang="en" href="https://younghadene.com/">
-    <link rel="alternate" hreflang="en-ca" href="https://younghadene.com/">
-    <link rel="alternate" hreflang="en-us" href="https://younghadene.com/">
-    <link rel="alternate" hreflang="x-default" href="https://younghadene.com/">
+    <link rel="alternate" hreflang="en" href="https://younghadene.ca/">
+    <link rel="alternate" hreflang="en-ca" href="https://younghadene.ca/">
+    <link rel="alternate" hreflang="en-us" href="https://younghadene.ca/">
+    <link rel="alternate" hreflang="x-default" href="https://younghadene.ca/">
     
     <!-- Article Date for Content Freshness -->
     <meta name="article:published_time" content="2026-02-28T00:00:00+00:00">
@@ -51,9 +51,9 @@
     </script>
     <meta name="twitter:image" content="https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg">
     <meta name="twitter:site" content="@younghadene">
-    <link rel="canonical" href="https://younghadene.com">
-    <link rel="alternate" hreflang="en" href="https://younghadene.com">
-    <link rel="alternate" hreflang="en-ca" href="https://younghadene.com">
+    <link rel="canonical" href="https://younghadene.ca">
+    <link rel="alternate" hreflang="en" href="https://younghadene.ca">
+    <link rel="alternate" hreflang="en-ca" href="https://younghadene.ca">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -89,6 +89,34 @@
     
     <!-- YouTube Embed API -->
     <script src="https://www.youtube.com/iframe_api"></script>
+    
+    <!-- Section Tabs CSS -->
+    <style>
+        .section-tab {
+            @apply px-6 py-3 bg-dark-surface text-gray-300 rounded-lg font-semibold transition-all duration-300 hover:bg-accent hover:text-white;
+            border: 2px solid transparent;
+        }
+        
+        .section-tab.active {
+            @apply bg-accent text-white;
+            border-color: #ff5722;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+        
+        .section-content {
+            display: none;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .section-tab {
+                @apply px-4 py-2 text-sm;
+            }
+        }
+    </style>
 </head>
 <body class="bg-dark-bg text-white font-body min-h-screen">
     
@@ -299,8 +327,29 @@
             </div>
         </div>
         
-        <!-- Featured Videos Section -->
-        <section id="featured" class="py-16 md:py-24">
+        <!-- Section Tabs Navigation -->
+        <div class="container mx-auto px-4 pb-8">
+            <div class="flex flex-wrap justify-center gap-2 md:gap-4">
+                <button class="section-tab active" data-section="featured">
+                    <i class="fas fa-play mr-2"></i>Featured
+                </button>
+                <button class="section-tab" data-section="shorts">
+                    <i class="fas fa-video mr-2"></i>Shorts
+                </button>
+                <button class="section-tab" data-section="biography">
+                    <i class="fas fa-user mr-2"></i>Biography
+                </button>
+                <button class="section-tab" data-section="albums">
+                    <i class="fas fa-compact-disc mr-2"></i>Albums
+                </button>
+                <button class="section-tab" data-section="streaming">
+                    <i class="fas fa-music mr-2"></i>Streaming
+                </button>
+            </div>
+        </div>
+        
+        <!-- Featured Section -->
+        <section id="featured" class="py-16 md:py-24 section-content active">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
                     <h2 class="font-display text-4xl md:text-6xl mb-4 bg-gradient-to-r from-accent to-accent-hover bg-clip-text text-transparent">
@@ -381,18 +430,6 @@
                             </iframe>
                         </div>
                         <h3 class="text-xl font-semibold mt-4 text-center">LV Tru</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- YouTube Shorts Section -->
-        <section id="shorts" class="py-16 bg-dark-surface">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-12">
-                    <h2 class="font-display text-4xl md:text-6xl mb-4">
-                        YouTube Shorts
-                    </h2>
                     <p class="text-xl text-gray-300">
                         Quick clips and behind-the-scenes content
                     </p>
@@ -493,20 +530,13 @@
                             Young Hadene is a Haitian-born, Toronto-based hip-hop and drill artist known for blending Caribbean influences with Toronto's underground sound. Born on February 10, 1998, and raised between Haiti, Florida, and Toronto, his music reflects resilience, ambition, and sharp storytelling. His notable works include 'Trap Blueprints,' Hood Rich Stories, 'No Choice,' and '30K (LV Tru Diss),' with cinematic visuals and dynamic style. Young Hadene also runs an independent label, Str8hitsRecords, and maintains strong engagement across YouTube, Instagram, SoundCloud, Apple Music, and Spotify.
                         </p>
                     </div>
-                    
-                    <!-- Call to Action -->
-                    <div class="mt-12">
-                        <a href="#streaming" class="inline-block bg-accent hover:bg-accent-hover text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105">
-                            Stream Music Now
-                        </a>
-                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Streaming Platforms Section -->
-        <section id="streaming" class="py-16">
-            <div class="container mx-auto px-4">
+        
+        <!-- Streaming Section -->
+    <section id="streaming" class="py-16 section-content">
+        <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
                     <h2 class="font-display text-4xl md:text-6xl mb-4">
                         Stream Everywhere
@@ -639,7 +669,7 @@
         <!-- Silo Structure Sections -->
         
         <!-- Artist Silo - Topical Relevance Hub -->
-        <section id="biography" class="py-16 bg-dark-surface">
+        <section id="biography" class="py-16 bg-dark-surface section-content">
             <div class="container mx-auto px-4">
                 <div class="max-w-4xl mx-auto">
                     <h2 class="font-display text-4xl md:text-6xl mb-8 text-center">Artist Biography</h2>
@@ -744,7 +774,7 @@
         </section>
 
         <!-- Music Silo -->
-        <section id="albums" class="py-16">
+        <section id="albums" class="py-16 section-content">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
                     <h2 class="font-display text-4xl md:text-6xl mb-4">Music Discography</h2>
@@ -2168,8 +2198,8 @@
                     <h4 class="font-semibold text-lg mb-4">Contact</h4>
                     <div class="space-y-2 text-gray-400">
                         <p>For bookings and inquiries:</p>
-                        <a href="mailto:contact@younghadene.com" class="hover:text-accent transition-colors">
-                            contact@younghadene.com
+                        <a href="mailto:contact@younghadene.ca" class="hover:text-accent transition-colors">
+                            contact@younghadene.ca
                         </a>
                         <p>
                             © 2024 Young Hadene. All rights reserved. Managed by Str8hitsRecords.
@@ -2230,7 +2260,7 @@
         "@type": "MusicGroup",
         "name": "Young Hadene",
         "description": "Haitian-born, Toronto-based hip-hop and drill artist known for blending Caribbean influences with Toronto's underground sound. Founder of Str8hitsRecords.",
-        "url": "https://younghadene.com",
+        "url": "https://younghadene.ca",
         "image": "https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg",
         "sameAs": [
             "https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA",
@@ -2304,7 +2334,7 @@
         "@type": "Organization",
         "name": "Str8hitsRecords",
         "description": "Independent record label founded by Young Hadene, specializing in Toronto drill music and Haitian-Canadian hip-hop artists",
-        "url": "https://younghadene.com",
+        "url": "https://younghadene.ca",
         "foundingDate": "2018",
         "foundingLocation": "Toronto, Ontario, Canada",
         "areaServed": {
@@ -2394,37 +2424,37 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://younghadene.com/"
+                "item": "https://younghadene.ca/"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Featured Videos",
-                "item": "https://younghadene.com/#featured"
+                "item": "https://younghadene.ca/#featured"
             },
             {
                 "@type": "ListItem",
                 "position": 3,
                 "name": "Artist Biography",
-                "item": "https://younghadene.com/#biography"
+                "item": "https://younghadene.ca/#biography"
             },
             {
                 "@type": "ListItem",
                 "position": 4,
                 "name": "Music Discography",
-                "item": "https://younghadene.com/#albums"
+                "item": "https://younghadene.ca/#albums"
             },
             {
                 "@type": "ListItem",
                 "position": 5,
                 "name": "YouTube Shorts",
-                "item": "https://younghadene.com/#shorts"
+                "item": "https://younghadene.ca/#shorts"
             },
             {
                 "@type": "ListItem",
                 "position": 6,
                 "name": "Toronto Drill Music",
-                "item": "https://younghadene.com/#toronto-drill-music"
+                "item": "https://younghadene.ca/#toronto-drill-music"
             }
         ]
     }
@@ -2462,9 +2492,69 @@
         "publisher": {
             "@type": "Organization",
             "name": "Str8hitsRecords",
-            "url": "https://younghadene.com"
+            "url": "https://younghadene.ca"
         }
     }
+    </script>
+    
+    <!-- Section Tabs JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all tab buttons and content sections
+            const tabs = document.querySelectorAll('.section-tab');
+            const sections = document.querySelectorAll('.section-content');
+            
+            // Function to switch tabs
+            function switchTab(targetSection) {
+                // Remove active class from all tabs and sections
+                tabs.forEach(tab => tab.classList.remove('active'));
+                sections.forEach(section => section.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding section
+                const activeTab = document.querySelector(`[data-section="${targetSection}"]`);
+                const activeSection = document.getElementById(targetSection);
+                
+                if (activeTab && activeSection) {
+                    activeTab.classList.add('active');
+                    activeSection.classList.add('active');
+                    
+                    // Smooth scroll to the section
+                    activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Update URL hash without jumping
+                    history.pushState(null, null, `#${targetSection}`);
+                }
+            }
+            
+            // Add click event listeners to tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetSection = this.getAttribute('data-section');
+                    switchTab(targetSection);
+                });
+            });
+            
+            // Handle direct URL hash access
+            function handleHashChange() {
+                const hash = window.location.hash.substring(1);
+                if (hash && ['featured', 'shorts', 'biography', 'albums', 'streaming'].includes(hash)) {
+                    switchTab(hash);
+                } else {
+                    // Default to featured if no valid hash
+                    switchTab('featured');
+                }
+            }
+            
+            // Check hash on page load
+            handleHashChange();
+            
+            // Listen for hash changes
+            window.addEventListener('hashchange', handleHashChange);
+            
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', handleHashChange);
+        });
     </script>
     
     <!-- Optimized JavaScript with defer attribute -->
