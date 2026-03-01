@@ -1,32 +1,32 @@
-// Young Hadene Website - Enhanced JavaScript
+// Young Hadene Website - Optimized JavaScript
+// Use defer attribute for better performance
 
-// Mobile Menu Toggle
+// Mobile Menu Toggle - Optimized
 const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
 const mobileMenu = document.getElementById('mobile-menu');
 
 if (mobileMenuToggle && mobileMenu) {
     mobileMenuToggle.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
-        // Add animation class
         mobileMenu.classList.toggle('animate-fade-in-up');
     });
     
-    // Close mobile menu when clicking on a link
-    const mobileLinks = mobileMenu.querySelectorAll('a');
-    mobileLinks.forEach(link => {
-        link.addEventListener('click', () => {
+    // Close mobile menu when clicking on a link - Optimized with event delegation
+    mobileMenu.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
             mobileMenu.classList.add('hidden');
-        });
+        }
     });
 }
 
-// Smooth Scrolling for anchor links
+// Smooth Scrolling for anchor links - Optimized
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const targetId = this.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
         if (target) {
-            const headerOffset = 80; // Account for fixed header
+            const headerOffset = 80;
             const elementPosition = target.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -38,19 +38,27 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Add scroll effect to header
+// Add scroll effect to header - Throttled for performance
+let scrollTimer;
 window.addEventListener('scroll', () => {
-    const header = document.querySelector('header');
-    if (header) {
-        if (window.scrollY > 100) {
-            header.classList.add('backdrop-blur-lg', 'bg-dark-bg/90', 'shadow-lg');
-        } else {
-            header.classList.remove('backdrop-blur-lg', 'bg-dark-bg/90', 'shadow-lg');
-        }
+    if (scrollTimer) {
+        return;
     }
+    
+    scrollTimer = setTimeout(() => {
+        const header = document.querySelector('header');
+        if (header) {
+            if (window.scrollY > 100) {
+                header.classList.add('backdrop-blur-lg', 'bg-dark-bg/90', 'shadow-lg');
+            } else {
+                header.classList.remove('backdrop-blur-lg', 'bg-dark-bg/90', 'shadow-lg');
+            }
+        }
+        scrollTimer = null;
+    }, 16); // ~60fps
 });
 
-// Intersection Observer for fade-in animations
+// Intersection Observer for fade-in animations - Optimized
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
@@ -65,12 +73,13 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe all sections
-document.querySelectorAll('section').forEach(section => {
+// Observe only visible sections for better performance
+const visibleSections = document.querySelectorAll('section:not(.hidden)');
+visibleSections.forEach(section => {
     observer.observe(section);
 });
 
-// Video loading optimization
+// Video loading optimization - Enhanced
 function optimizeVideoLoading() {
     const videos = document.querySelectorAll('iframe');
     
@@ -78,16 +87,28 @@ function optimizeVideoLoading() {
         // Add loading attribute for better performance
         video.setAttribute('loading', 'lazy');
         
-        // Add error handling
+        // Add error handling with fallback
         video.addEventListener('error', function() {
             this.parentElement.innerHTML = `
                 <div class="bg-dark-surface rounded-lg p-8 text-center">
                     <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
-                    <p>Video unavailable. Please check back later.</p>
+                    <p>Video temporarily unavailable. <a href="#featured" class="text-accent hover:text-accent-hover">Browse other videos</a></p>
                 </div>
             `;
         });
+        
+        // Add load success handling
+        video.addEventListener('load', function() {
+            this.parentElement.classList.add('video-loaded');
+        });
     });
+}
+
+// Initialize optimizations when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', optimizeVideoLoading);
+} else {
+    optimizeVideoLoading();
 }
 
 // Initialize video optimization
