@@ -21,9 +21,9 @@ Allow: /sitemap.xml
 Allow: /404.html
 
 # Sitemap reference for Google
-Sitemap: https://younghadene.com/sitemap.xml
-Sitemap: https://younghadene.com/sitemap-image.xml
-Sitemap: https://younghadene.com/sitemap-video.xml
+Sitemap: https://younghadene.ca/sitemap.xml
+Sitemap: https://younghadene.ca/sitemap-image.xml
+Sitemap: https://younghadene.ca/sitemap-video.xml
 
 # Crawl delay for server protection (if needed)
 # Crawl-delay: 1

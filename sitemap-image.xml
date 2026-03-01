@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     
     <url>
-        <loc>https://younghadene.com/</loc>
+        <loc>https://younghadene.ca/</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
@@ -67,7 +67,7 @@
     </url>
     
     <url>
-        <loc>https://younghadene.com/#featured</loc>
+        <loc>https://younghadene.ca/#featured</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
@@ -87,7 +87,7 @@
     </url>
     
     <url>
-        <loc>https://younghadene.com/#biography</loc>
+        <loc>https://younghadene.ca/#biography</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
@@ -100,7 +100,7 @@
     </url>
     
     <url>
-        <loc>https://younghadene.com/#albums</loc>
+        <loc>https://younghadene.ca/#albums</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
@@ -113,7 +113,7 @@
     </url>
     
     <url>
-        <loc>https://younghadene.com/#shorts</loc>
+        <loc>https://younghadene.ca/#shorts</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
