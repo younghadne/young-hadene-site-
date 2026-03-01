@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young Hadene - Multi-Site Architecture Demo</title>
+    <meta name="description" content="Professional landing page with multi-site architecture: directories, subdomains, and domains">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --secondary: #004E89;
+            --dark: #1A1A2E;
+            --light: #F5F5F5;
+            --accent: #FFD23F;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff20" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            position: relative;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Architecture Section */
+        .architecture {
+            padding: 5rem 2rem;
+            background: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+
+        /* Architecture Cards */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .arch-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .arch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .arch-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .arch-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .arch-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .url-example {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Site Examples */
+        .site-examples {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .site-card {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .site-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,107,53,0.1);
+        }
+
+        .site-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-planned {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-demo {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        /* Implementation Section */
+        .implementation {
+            padding: 5rem 2rem;
+            background: var(--light);
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 2rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        .code-comment {
+            color: #68d391;
+        }
+
+        .code-keyword {
+            color: #fbb6ce;
+        }
+
+        .code-string {
+            color: #90cdf4;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .arch-grid,
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <div class="nav-logo">🎵 Young Hadene</div>
+            <ul class="nav-links">
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#implementation">Implementation</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content fade-in-up">
+            <h1>Multi-Site Architecture</h1>
+            <p>Professional Landing Page with Directories, Subdomains & Domains</p>
+            <a href="#architecture" class="cta-button">Explore Architecture</a>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture" id="architecture">
+        <div class="container">
+            <h2 class="section-title">Site Architecture Options</h2>
+            <p class="section-subtitle">Choose the best structure for your multi-site strategy</p>
+            
+            <div class="arch-grid">
+                <!-- Directory Structure -->
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <h3 class="arch-title">Directory Structure</h3>
+                    <p class="arch-description">Perfect for Cloudflare Pages. All content in subdirectories with clean URLs.</p>
+                    <div class="url-example">younghadene.com/music-guide/</div>
+                    <div class="url-example">younghadene.com/artist-profile/</div>
+                    <div class="url-example">younghadene.com/label-services/</div>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>✅ SEO friendly</li>
+                        <li>✅ Easy deployment</li>
+                        <li>✅ Single domain authority</li>
+                        <li>✅ Shared assets & styles</li>
+                    </ul>
+                </div>
+
+                <!-- Subdomain Structure -->
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="arch-title">Subdomain Structure</h3>
+                    <p class="arch-description">Separate sites for different purposes with unique subdomains.</p>
+                    <div class="url-example">music.younghadene.com</div>
+                    <div class="url-example">label.younghadene.com</div>
+                    <div class="url-example">academy.younghadene.com</div>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>✅ Clear separation</li>
+                        <li>✅ Brand expansion</li>
+                        <li>✅ Independent content</li>
+                        <li>✅ Specialized focus</li>
+                    </ul>
+                </div>
+
+                <!-- Multiple Domains -->
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="arch-title">Multiple Domains</h3>
+                    <p class="arch-description">Separate brands or ventures with their own domain names.</p>
+                    <div class="url-example">younghadene.com</div>
+                    <div class="url-example">str8hitsrecords.com</div>
+                    <div class="url-example">drillacademy.com</div>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>✅ Maximum separation</li>
+                        <li>✅ Independent SEO</li>
+                        <li>✅ Brand diversification</li>
+                        <li>✅ Asset protection</li>
+                    </ul>
+                </div>
+
+                <!-- Hybrid Approach -->
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3 class="arch-title">Hybrid Approach</h3>
+                    <p class="arch-description">Combine multiple strategies for maximum flexibility.</p>
+                    <div class="url-example">younghadene.com/academy/</div>
+                    <div class="url-example">music.younghadene.com</div>
+                    <div class="url-example">str8hitsrecords.com</div>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>✅ Maximum flexibility</li>
+                        <li>✅ Strategic organization</li>
+                        <li>✅ Scalable structure</li>
+                        <li>✅ Best of all worlds</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Site Examples -->
+    <section class="site-examples" id="examples">
+        <div class="container">
+            <h2 class="section-title">Live Site Examples</h2>
+            <p class="section-subtitle">See how different sites can be structured</p>
+            
+            <div class="examples-grid">
+                <!-- Main Site -->
+                <div class="site-card">
+                    <span class="site-status status-active">Active</span>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎤</div>
+                    <h3>Main Artist Site</h3>
+                    <div class="url-example">younghadene.com</div>
+                    <p style="color: #666;">Main artist portfolio, music, videos, and bio</p>
+                </div>
+
+                <!-- Music Academy -->
+                <div class="site-card">
+                    <span class="site-status status-demo">Demo</span>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎓</div>
+                    <h3>Music Academy</h3>
+                    <div class="url-example">younghadene.com/academy/</div>
+                    <p style="color: #666;">Production tutorials, courses, and guides</p>
+                </div>
+
+                <!-- Record Label -->
+                <div class="site-card">
+                    <span class="site-status status-planned">Planned</span>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏢</div>
+                    <h3>Record Label</h3>
+                    <div class="url-example">str8hitsrecords.com</div>
+                    <p style="color: #666;">Label services, artist roster, submissions</p>
+                </div>
+
+                <!-- Music Blog -->
+                <div class="site-card">
+                    <span class="site-status status-demo">Demo</span>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+                    <h3>Music Blog</h3>
+                    <div class="url-example">blog.younghadene.com</div>
+                    <p style="color: #666;">Industry insights, tutorials, and news</p>
+                </div>
+
+                <!-- Merch Store -->
+                <div class="site-card">
+                    <span class="site-status status-planned">Planned</span>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🛍️</div>
+                    <h3>Merch Store</h3>
+                    <div class="url-example">shop.younghadene.com</div>
+                    <p style="color: #666;">Official merchandise and products</p>
+                </div>
+
+                <!-- Community -->
+                <div class="site-card">
+                    <span class="site-status status-planned">Planned</span>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+                    <h3>Community</h3>
+                    <div class="url-example">community.younghadene.com</div>
+                    <p style="color: #666;">Fan community, forums, and discussions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation Section -->
+    <section class="implementation" id="implementation">
+        <div class="container">
+            <h2 class="section-title">Implementation Guide</h2>
+            <p class="section-subtitle">How to set up your multi-site architecture</p>
+            
+            <!-- Directory Structure Implementation -->
+            <div class="arch-card">
+                <h3 class="arch-title">📁 Directory Structure Setup</h3>
+                <p class="arch-description">Perfect for Cloudflare Pages and single-domain deployments</p>
+                
+                <div class="code-block">
+<span class="code-comment"># File Structure</span>
+younghadene.com/
+├── <span class="code-keyword">index.html</span>          <span class="code-comment"># Main landing page</span>
+├── <span class="code-keyword">academy/</span>
+│   ├── <span class="code-keyword">index.html</span>      <span class="code-comment"># Music academy main page</span>
+│   ├── <span class="code-keyword">production.html</span> <span class="code-comment"># Production course</span>
+│   └── <span class="code-keyword">theory.html</span>     <span class="code-comment"># Music theory course</span>
+├── <span class="code-keyword">label/</span>
+│   ├── <span class="code-keyword">index.html</span>      <span class="code-comment"># Label services</span>
+│   └── <span class="code-keyword">submit.html</span>     <span class="code-comment"># Artist submissions</span>
+└── <span class="code-keyword">blog/</span>
+    ├── <span class="code-keyword">index.html</span>      <span class="code-comment"># Blog main page</span>
+    └── <span class="code-keyword">posts/</span>
+        ├── <span class="code-keyword">post1.html</span>
+        └── <span class="code-keyword">post2.html</span>
+
+<span class="code-comment"># Cloudflare Pages _redirects file</span>
+<span class="code-keyword">/academy/</span> /academy/index.html 200
+<span class="code-keyword">/label/</span> /label/index.html 200
+<span class="code-keyword">/blog/</span> /blog/index.html 200
+                </div>
+            </div>
+
+            <!-- Subdomain Implementation -->
+            <div class="arch-card">
+                <h3 class="arch-title">🌐 Subdomain Setup</h3>
+                <p class="arch-description">Separate Cloudflare Pages projects for each subdomain</p>
+                
+                <div class="code-block">
+<span class="code-comment"># DNS Configuration in Cloudflare</span>
+<span class="code-keyword">academy</span>.younghadene.com  CNAME  academy.younghadene.pages.dev
+<span class="code-keyword">blog</span>.younghadene.com    CNAME  blog.younghadene.pages.dev
+<span class="code-keyword">shop</span>.younghadene.com    CNAME  shop.younghadene.pages.dev
+
+<span class="code-comment"># Separate Git Repositories</span>
+<span class="code-string">younghadene-academy</span>/     <span class="code-comment"># Academy content</span>
+<span class="code-string">younghadene-blog</span>/        <span class="code-comment"># Blog content</span>
+<span class="code-string">younghadene-shop</span>/        <span class="code-comment"># E-commerce site</span>
+
+<span class="code-comment"># Each has its own wrangler.toml</span>
+<span class="code-keyword">name</span> = <span class="code-string">"academy"</span>
+<span class="code-keyword">compatibility_date</span> = <span class="code-string">"2024-01-01"</span>
+                </div>
+            </div>
+
+            <!-- Multiple Domains -->
+            <div class="arch-card">
+                <h3 class="arch-title">🔗 Multiple Domains Strategy</h3>
+                <p class="arch-description">Complete brand separation with dedicated domains</p>
+                
+                <div class="code-block">
+<span class="code-comment"># Domain Portfolio</span>
+<span class="code-keyword">younghadene.com</span>           <span class="code-comment"># Main artist site</span>
+<span class="code-keyword">str8hitsrecords.com</span>       <span class="code-comment"># Record label</span>
+<span class="code-keyword">drillacademy.com</span>          <span class="code-comment"># Educational platform</span>
+<span class="code-keyword">younghadene.shop</span>          <span class="code-comment"># Merchandise store</span>
+
+<span class="code-comment"># Cross-linking Strategy</span>
+<span class="code-comment"># Main site links to all properties</span>
+&lt;a href=<span class="code-string">"https://str8hitsrecords.com"</span>&gt;Record Label&lt;/a&gt;
+&lt;a href=<span class="code-string">"https://drillacademy.com"</span>&gt;Music Academy&lt;/a&gt;
+
+<span class="code-comment"># Shared branding elements</span>
+&lt;script src=<span class="code-string">"https://cdn.younghadene.com/branding.js"</span>&gt;&lt;/script&gt;
+                </div>
+            </div>
+
+            <!-- Hybrid Strategy -->
+            <div class="arch-card">
+                <h3 class="arch-title">🎯 Hybrid Strategy</h3>
+                <p class="arch-description">Combine approaches for optimal results</p>
+                
+                <div class="code-block">
+<span class="code-comment"># Hybrid Structure Example</span>
+<span class="code-keyword">younghadene.com</span>
+├── <span class="code-keyword">academy/</span>              <span class="code-comment"># Educational content (directory)</span>
+├── <span class="code-keyword">resources/</span>            <span class="code-comment"># Free resources (directory)</span>
+└── <span class="code-keyword">index.html</span>            <span class="code-comment"># Main site
+
+<span class="code-keyword">blog.younghadene.com</span>      <span class="code-comment"># Blog (subdomain)</span>
+<span class="code-keyword">shop.younghadene.com</span>      <span class="code-comment"># Store (subdomain)</span>
+<span class="code-keyword">str8hitsrecords.com</span>      <span class="code-comment"># Label (separate domain)</span>
+
+<span class="code-comment"># Unified Analytics & Tracking</span>
+&lt;script data-domain=<span class="code-string">"younghadene.com"</span> src=<span class="code-string">"/js/analytics.js"</script>&gt;&lt;/script&gt;
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.arch-card, .site-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Interactive site cards
+        document.querySelectorAll('.site-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const status = this.querySelector('.site-status');
+                if (status.classList.contains('status-demo')) {
+                    alert('This would navigate to the demo site');
+                } else if (status.classList.contains('status-planned')) {
+                    alert('This site is planned for future development');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

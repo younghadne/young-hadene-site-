@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Academy - Young Hadene</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .academy-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Main Site</a>
+    
+    <section class="academy-hero">
+        <div>
+            <h1>🎓 Music Academy</h1>
+            <p>Learn from Toronto's Drill Pioneer</p>
+        </div>
+    </section>
+
+    <div class="course-grid">
+        <div class="course-card">
+            <h3>🎵 Drill Production 101</h3>
+            <p>Master the fundamentals of drill music production</p>
+            <a href="production.html" style="color: #667eea;">Start Learning →</a>
+        </div>
+        <div class="course-card">
+            <h3>🎹 Music Theory</h3>
+            <p>Understanding the theory behind modern hip-hop</p>
+            <a href="theory.html" style="color: #667eea;">Explore Theory →</a>
+        </div>
+        <div class="course-card">
+            <h3>🎤 Artist Development</h3>
+            <p>Build your brand and career in music</p>
+            <a href="artist-development.html" style="color: #667eea;">Start Journey →</a>
+        </div>
+    </div>
+</body>
+</html>
