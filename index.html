@@ -70,8 +70,11 @@
 </head>
 <body class="bg-dark-bg text-white font-body min-h-screen">
     
+    <!-- Skip to Main Content - Accessibility Fix -->
+    <a href="#main-content" class="skip-link" tabindex="1">Skip to main content</a>
+    
     <!-- Header -->
-    <header class="relative overflow-hidden">
+    <header role="banner" class="relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-dark-surface to-dark-bg opacity-90"></div>
         <div class="relative z-10 container mx-auto px-4 py-8">
             <nav class="flex justify-between items-center">
@@ -80,7 +83,7 @@
                     <div class="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
                         <span class="text-white font-bold text-xl">YH</span>
                     </div>
-                    <h1 class="font-display text-4xl md:text-5xl tracking-wider">Young Hadene</h1>
+                    <h2 class="font-display text-4xl md:text-5xl tracking-wider">Young Hadene</h2>
                 </div>
                 
                 <!-- Mobile Menu Toggle -->
@@ -89,10 +92,10 @@
                 </button>
                 
                 <!-- Desktop Navigation - Advanced SEO Silo Structure -->
-                <nav class="hidden md:flex space-x-8">
+                <nav role="navigation" aria-label="Main navigation" class="hidden md:flex space-x-8">
                     <!-- Artist Silo - Topical Relevance Hub -->
                     <div class="relative group">
-                        <button class="hover:text-accent transition-colors duration-300 flex items-center space-x-1">
+                        <button class="hover:text-accent transition-colors duration-300 flex items-center space-x-1" aria-expanded="false" aria-haspopup="true">
                             <span>Artist</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
@@ -262,7 +265,7 @@
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main id="main-content" role="main" tabindex="-1">
         
         <!-- Featured Videos Section -->
         <section id="featured" class="py-16 md:py-24">
@@ -781,7 +784,7 @@
             <div class="container mx-auto px-4">
                 <div class="max-w-5xl mx-auto">
                     <div class="text-center mb-12">
-                        <h1 class="font-display text-5xl md:text-7xl mb-6">Toronto Drill Music</h1>
+                        <h2 class="font-display text-5xl md:text-7xl mb-6">Toronto Drill Music</h2>
                         <p class="text-xl text-gray-300 mb-4">The Complete Guide to Toronto's Explosive Drill Scene</p>
                         <div class="flex justify-center space-x-4 text-sm">
                             <span class="bg-accent px-3 py-1 rounded-full">3,500+ words</span>
@@ -1604,7 +1607,7 @@
             <div class="container mx-auto px-4">
                 <div class="max-w-5xl mx-auto">
                     <div class="text-center mb-12">
-                        <h1 class="font-display text-5xl md:text-7xl mb-6">Independent Music Labels Toronto</h1>
+                        <h2 class="font-display text-5xl md:text-7xl mb-6">Independent Music Labels Toronto</h2>
                         <p class="text-xl text-gray-300 mb-4">The Complete Guide to Toronto's Indie Label Revolution</p>
                         <div class="flex justify-center space-x-4 text-sm">
                             <span class="bg-accent px-3 py-1 rounded-full">3,600+ words</span>
@@ -1782,6 +1785,290 @@
                                 </ul>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topic Cluster Content Structure -->
+        
+        <!-- Cluster 1: Young Hadene Artist Deep Dive -->
+        <section id="young-hadene-artist-cluster" class="py-16 bg-dark-surface">
+            <div class="container mx-auto px-4">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="font-display text-4xl md:text-6xl mb-4">Young Hadene Artist Deep Dive</h2>
+                        <p class="text-xl text-gray-300">Complete artist analysis, career timeline, and musical evolution</p>
+                        <div class="flex justify-center space-x-4 text-sm">
+                            <span class="bg-accent px-3 py-1 rounded-full">Expert Analysis</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Career Timeline</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Musical Influences</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Artist Cluster Subtopics -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Early Life & Background</h3>
+                            <p class="text-gray-300 mb-4">Born February 10, 1998, in Port-au-Prince, Haiti. Raised between Haiti, Florida, and Toronto, developing unique multicultural perspective that influences his music.</p>
+                            <p class="text-gray-300 mb-4">Early exposure to Haitian kompa, Caribbean rhythms, and North American hip-hop created foundation for his distinctive sound blending cultural traditions.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• Where did Young Hadene grow up?</li>
+                                    <li>• What musical influences shaped his early sound?</li>
+                                    <li>• How did Haitian heritage impact his artistry?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Musical Evolution & Style</h3>
+                            <p class="text-gray-300 mb-4">Evolution from early Haitian-influenced sound to Toronto drill pioneer. Development of unique style combining Caribbean rhythms with contemporary drill production techniques.</p>
+                            <p class="text-gray-300 mb-4">Signature sound characterized by 808 slides, melodic complexity, and bilingual lyricism reflecting Haitian Creole and English influences.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• What defines Young Hadene's musical style?</li>
+                                    <li>• How did his sound evolve over time?</li>
+                                    <li>• What makes his production unique?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Career Milestones</h3>
+                            <p class="text-gray-300 mb-4">Key career moments from first releases to establishing Str8hitsRecords. Timeline of major releases, collaborations, and industry recognition.</p>
+                            <p class="text-gray-300 mb-4">Breakthrough moments including viral tracks, label launches, and establishing presence in Toronto drill scene and beyond.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• What are Young Hadene's biggest career achievements?</li>
+                                    <li>• How did he establish Str8hitsRecords?</li>
+                                    <li>• What impact has he had on Toronto drill scene?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Artistic Philosophy & Impact</h3>
+                            <p class="text-gray-300 mb-4">Artistic vision and approach to music creation. Focus on authenticity, cultural representation, and pushing boundaries of drill music genre.</p>
+                            <p class="text-gray-300 mb-4">Impact on Haitian-Canadian hip-hop community and role as cultural bridge between traditional Haitian music and contemporary Toronto sound.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• What is Young Hadene's artistic philosophy?</li>
+                                    <li>• How does he represent Haitian culture?</li>
+                                    <li>• What is his vision for the future?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Internal Linking to Related Clusters -->
+                    <div class="mt-12 text-center">
+                        <p class="text-sm text-gray-400">Related Clusters: <a href="#toronto-drill-music-cluster" class="text-accent hover:text-accent-hover">Toronto Drill Scene</a> • <a href="#haitian-music-cluster" class="text-accent hover:text-accent-hover">Haitian Music Culture</a> • <a href="#music-industry-cluster" class="text-accent hover:text-accent-hover">Music Business</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cluster 2: Toronto Drill Music Scene -->
+        <section id="toronto-drill-music-cluster" class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="font-display text-4xl md:text-6xl mb-4">Toronto Drill Music Scene Deep Dive</h2>
+                        <p class="text-xl text-gray-300">Complete analysis of Toronto's drill movement, key artists, and cultural impact</p>
+                        <div class="flex justify-center space-x-4 text-sm">
+                            <span class="bg-accent px-3 py-1 rounded-full">Scene Analysis</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Artist Profiles</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Cultural Impact</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Toronto Drill Cluster Subtopics -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-dark-surface p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Origins & Development</h3>
+                            <p class="text-gray-300 mb-4">How Toronto drill evolved from Chicago influences. Timeline from early 2010s to current sound, key pioneers, and musical characteristics.</p>
+                            <p class="text-gray-300 mb-4">Unique Toronto elements including Caribbean influences, multicultural neighborhoods, and local slang that distinguish it from other drill scenes.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• Where did Toronto drill originate?</li>
+                                    <li>• How is it different from Chicago drill?</li>
+                                    <li>• Who are the key pioneers?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-surface p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Key Artists & Profiles</h3>
+                            <p class="text-gray-300 mb-4">In-depth analysis of major Toronto drill artists. Their contributions, styles, and impact on the genre and global hip-hop scene.</p>
+                            <p class="text-gray-300 mb-4">Artist profiles including Pressa, Houdini, Top5, and emerging talents. Their musical evolution and cultural significance in Toronto's music landscape.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• Who are the most influential Toronto drill artists?</li>
+                                    <li>• What makes Toronto drill unique?</li>
+                                    <li>• How has the genre evolved?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-surface p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Cultural & Social Impact</h3>
+                            <p class="text-gray-300 mb-4">Toronto drill's influence on youth culture and international music scene. Social media impact, fashion trends, and global reach.</p>
+                            <p class="text-gray-300 mb-4">Role in shaping Toronto's cultural identity and international perception of the city's music scene. Community impact and industry recognition.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• How has drill impacted Toronto culture?</li>
+                                    <li>• What is the global reach of Toronto drill?</li>
+                                    <li>• How does it influence youth?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Internal Linking to Related Clusters -->
+                    <div class="mt-12 text-center">
+                        <p class="text-sm text-gray-400">Related Clusters: <a href="#young-hadene-artist-cluster" class="text-accent hover:text-accent-hover">Young Hadene Artist</a> • <a href="#haitian-music-cluster" class="text-accent hover:text-accent-hover">Haitian Music Culture</a> • <a href="#music-industry-cluster" class="text-accent hover:text-accent-hover">Music Business</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cluster 3: Haitian Music & Culture -->
+        <section id="haitian-music-cluster" class="py-16 bg-dark-surface">
+            <div class="container mx-auto px-4">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="font-display text-4xl md:text-6xl mb-4">Haitian Music & Culture Deep Dive</h2>
+                        <p class="text-xl text-gray-300">Complete exploration of Haitian musical traditions and diaspora influence</p>
+                        <div class="flex justify-center space-x-4 text-sm">
+                            <span class="bg-accent px-3 py-1 rounded-full">Cultural Heritage</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Musical Traditions</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Diaspora Impact</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Haitian Music Cluster Subtopics -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Traditional Haitian Music</h3>
+                            <p class="text-gray-300 mb-4">Kompa, racine, twoubadou, and rara traditions. Historical development, musical characteristics, and cultural significance.</p>
+                            <p class="text-gray-300 mb-4">Evolution of traditional genres and their influence on global music. Key artists and historical movements in Haitian musical history.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• What are the main Haitian music genres?</li>
+                                    <li>• How has kompa influenced global music?</li>
+                                    <li>• What is the cultural significance of rara?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Haitian Diaspora in Toronto</h3>
+                            <p class="text-gray-300 mb-4">History and development of Haitian community in Toronto. Cultural institutions, festivals, and community organizations.</p>
+                            <p class="text-gray-300 mb-4">Contributions to Toronto's multicultural landscape and music scene. Notable figures and community achievements.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• When did Haitians first come to Toronto?</li>
+                                    <li>• What are the main Haitian communities?</li>
+                                    <li>• How has Haitian culture influenced Toronto?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-bg p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Contemporary Haitian-Canadian Music</h3>
+                            <p class="text-gray-300 mb-4">Modern Haitian-Canadian artists and their impact. Fusion of traditional and contemporary sounds.</p>
+                            <p class="text-gray-300 mb-4">Current trends and future directions. Emerging artists and evolving musical styles that bridge cultures.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• Who are leading Haitian-Canadian artists?</li>
+                                    <li>• How is Haitian music evolving in Canada?</li>
+                                    <li>• What is the future of Haitian-Canadian music?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Internal Linking to Related Clusters -->
+                    <div class="mt-12 text-center">
+                        <p class="text-sm text-gray-400">Related Clusters: <a href="#young-hadene-artist-cluster" class="text-accent hover:text-accent-hover">Young Hadene Artist</a> • <a href="#toronto-drill-music-cluster" class="text-accent hover:text-accent-hover">Toronto Drill Scene</a> • <a href="#music-industry-cluster" class="text-accent hover:text-accent-hover">Music Business</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cluster 4: Music Industry & Business -->
+        <section id="music-industry-cluster" class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="font-display text-4xl md:text-6xl mb-4">Music Industry & Business Deep Dive</h2>
+                        <p class="text-xl text-gray-300">Complete guide to music business, independent labels, and industry success</p>
+                        <div class="flex justify-center space-x-4 text-sm">
+                            <span class="bg-accent px-3 py-1 rounded-full">Business Strategy</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Industry Insights</span>
+                            <span class="bg-dark-bg px-3 py-1 rounded-full">Success Stories</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Music Industry Cluster Subtopics -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-dark-surface p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Independent Label Success</h3>
+                            <p class="text-gray-300 mb-4">Building successful independent music labels. Strategies, case studies, and practical advice for label owners.</p>
+                            <p class="text-gray-300 mb-4">Revenue streams, artist development, and distribution strategies. Examples of successful indie labels and their business models.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• How to start an independent record label?</li>
+                                    <li>• What are the best revenue streams for artists?</li>
+                                    <li>• How do indie labels succeed?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-surface p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Artist Development Strategies</h3>
+                            <p class="text-gray-300 mb-4">Comprehensive artist development and career growth. Branding, marketing, and long-term career planning.</p>
+                            <p class="text-gray-300 mb-4">Building sustainable music careers. Fan engagement, merchandise, and diversification strategies for modern artists.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• How to develop as an independent artist?</li>
+                                    <li>• What marketing strategies work for musicians?</li>
+                                    <li>• How to build a sustainable music career?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-surface p-6 rounded-lg">
+                            <h3 class="font-semibold text-xl mb-4 text-accent">Music Production & Technology</h3>
+                            <p class="text-gray-300 mb-4">Modern music production techniques and technology. Home recording, software, and equipment for independent artists.</p>
+                            <p class="text-gray-300 mb-4">Beat making, mixing, mastering, and distribution. Technical skills and industry standards for quality music production.</p>
+                            <div class="mt-4">
+                                <h4 class="font-semibold mb-2">Key Questions Answered:</h4>
+                                <ul class="space-y-2 text-sm text-gray-400">
+                                    <li>• What equipment do I need to start producing?</li>
+                                    <li>• How to mix and master music?</li>
+                                    <li>• What's the best software for music production?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Internal Linking to Related Clusters -->
+                    <div class="mt-12 text-center">
+                        <p class="text-sm text-gray-400">Related Clusters: <a href="#young-hadene-artist-cluster" class="text-accent hover:text-accent-hover">Young Hadene Artist</a> • <a href="#toronto-drill-music-cluster" class="text-accent hover:text-accent-hover">Toronto Drill Scene</a> • <a href="#haitian-music-cluster" class="text-accent hover:text-accent-hover">Haitian Music Culture</a></p>
                     </div>
                 </div>
             </div>
