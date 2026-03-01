@@ -189,31 +189,31 @@
     </url>
     <!-- Demo Structure URLs -->
     <url>
-        <loc>https://younghadene.ca/demo-structure/academy/</loc>
+        <loc>https://younghadene.ca/academy/</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://younghadene.ca/demo-structure/label/</loc>
+        <loc>https://younghadene.ca/label/</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://younghadene.ca/demo-structure/blog/</loc>
+        <loc>https://younghadene.ca/blog/</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://younghadene.ca/demo-structure/shop/</loc>
+        <loc>https://younghadene.ca/shop/</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://younghadene.ca/demo-structure/community/</loc>
+        <loc>https://younghadene.ca/community/</loc>
         <lastmod>2026-03-01</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
