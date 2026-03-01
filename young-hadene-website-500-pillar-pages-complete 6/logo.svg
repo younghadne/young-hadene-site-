@@ -1,0 +1,28 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#1a1a1a" stroke="#ff6b35" stroke-width="4"/>
+  
+  <!-- Sound Wave Pattern -->
+  <path d="M 30 100 Q 25 85 T 20 70 Q 15 55 T 10 40 Q 5 25 T -5 15 Q -25 25 T -35 35 Q -45 45 T -55 55 Q -65 65 T -75 75 Q -85 85 T -95 95 Q -105 105 T -115 115 Q -125 125 T -135 135 Q -145 145 T -155 155 Q -165 165 T -175 175" 
+        fill="none" 
+        stroke="#ff6b35" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Second Wave Layer -->
+  <path d="M 35 100 Q 45 80 T 55 60 Q 65 40 T 75 20 Q 85 80 T 95 40 Q 105 60 T 115 20 Q 125 80 T 135 40 Q 145 60 T 165 20 T 175 80" 
+        fill="none" 
+        stroke="#ff8c42" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- YH Letters -->
+  <g fill="#ffffff" font-family="Arial, sans-serif" font-weight="bold" font-size="72">
+    <!-- Y -->
+    <text x="50" y="110" text-anchor="middle">Y</text>
+    <!-- H -->
+    <text x="150" y="110" text-anchor="middle">H</text>
+  </g>
+</svg>
