@@ -1,0 +1,8 @@
+# Default redirects for Cloudflare Pages
+# This file handles URL redirection if needed in the future
+
+# Example redirect (uncomment and modify as needed):
+# /old-page /new-page 301
+
+# Handle SPA routing (if you add a single-page app later):
+# /* /index.html 200
