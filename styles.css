@@ -1,5 +1,45 @@
 /* Custom CSS for Young Hadene Website */
 
+/* Accessibility Styles */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 6px;
+    outline: 2px solid #ff6b35;
+    outline-offset: 2px;
+}
+
+/* Focus Indicators */
+:focus {
+    outline: 3px solid #ff6b35;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .skip-link {
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+    }
+    
+    .focus {
+        outline: 4px solid #000;
+        outline-offset: 2px;
+    }
+}
+
 /* Smooth scrolling */
 html {
     scroll-behavior: smooth;
