@@ -101,6 +101,18 @@
                 <button id="mobile-menu-toggle" class="md:hidden text-white focus:outline-none">
                     <i class="fas fa-bars text-2xl"></i>
                 </button>
+                
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-dark-bg border-t border-dark-border py-4 z-50">
+                    <nav class="container mx-auto px-4 space-y-2">
+                        <a href="/" class="block py-2 hover:text-accent transition-colors">Home</a>
+                        <a href="/featured-content.html" class="block py-2 hover:text-accent transition-colors">Featured Content</a>
+                        <a href="/biography.html" class="block py-2 hover:text-accent transition-colors">Biography</a>
+                        <a href="/albums.html" class="block py-2 hover:text-accent transition-colors">Albums</a>
+                        <a href="/streaming.html" class="block py-2 hover:text-accent transition-colors">Streaming</a>
+                        <a href="/shorts.html" class="block py-2 hover:text-accent transition-colors">Shorts</a>
+                    </nav>
+                </div>
             </nav>
         </div>
     </header>
@@ -140,7 +152,7 @@
                         </a>
                         
                         <!-- Apple Music -->
-                        <a href="https://music.apple.com/ca/artist/young-hadene/1581234567" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-8 rounded-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 text-center group">
+                        <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-8 rounded-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 text-center group">
                             <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-white transition-colors">
                                 <i class="fab fa-apple text-3xl text-white group-hover:text-gray-800"></i>
                             </div>
@@ -148,17 +160,18 @@
                             <p class="text-sm text-gray-400">Listen on Apple</p>
                         </a>
                         
+                        
                         <!-- YouTube Music -->
-                        <a href="https://music.youtube.com/channel/UCexample" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-8 rounded-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 text-center group">
-                            <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-white transition-colors">
-                                <i class="fab fa-youtube text-3xl text-white group-hover:text-red-600"></i>
+                        <a href="https://music.youtube.com/channel/UCe9yHPV4f8pGNNSOisncM7A" target="_blank" rel="noopener noreferrer" class="bg-red-600 p-8 rounded-lg hover:bg-red-700 transition-all duration-300 transform hover:scale-105 text-center group">
+                            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-red-600 transition-colors">
+                                <i class="fab fa-youtube text-red-600 group-hover:text-white text-3xl"></i>
                             </div>
                             <h3 class="font-semibold text-xl mb-2">YouTube Music</h3>
-                            <p class="text-sm text-gray-400">Watch & Listen</p>
+                            <p class="text-sm text-gray-300">Stream Music</p>
                         </a>
                         
                         <!-- SoundCloud -->
-                        <a href="https://soundcloud.com/younghadene" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-8 rounded-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 text-center group">
+                        <a href="https://soundcloud.com/young_hadene" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-8 rounded-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 text-center group">
                             <div class="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-white transition-colors">
                                 <i class="fab fa-soundcloud text-3xl text-white group-hover:text-orange-500"></i>
                             </div>
@@ -169,66 +182,10 @@
                     </div>
                 </div>
                 
-                <!-- Additional Platforms -->
-                <div class="mb-16">
-                    <h2 class="font-display text-3xl md:text-4xl mb-8 text-center">More Platforms</h2>
-                    <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
-                        
-                        <!-- Tidal -->
-                        <a href="https://tidal.com/browse/artist/123456" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-6 rounded-lg hover:bg-accent transition-all duration-300 text-center">
-                            <div class="w-12 h-12 bg-black rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fab fa-tidal text-2xl text-white"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Tidal</h4>
-                        </a>
-                        
-                        <!-- Amazon Music -->
-                        <a href="https://music.amazon.com/artists/B123456789/young-hadene" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-6 rounded-lg hover:bg-accent transition-all duration-300 text-center">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fab fa-amazon text-2xl text-white"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Amazon</h4>
-                        </a>
-                        
-                        <!-- Deezer -->
-                        <a href="https://www.deezer.com/en/artist/123456" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-6 rounded-lg hover:bg-accent transition-all duration-300 text-center">
-                            <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fas fa-music text-2xl text-white"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Deezer</h4>
-                        </a>
-                        
-                        <!-- Pandora -->
-                        <a href="https://www.pandora.com/artist/young-hadene/AR123456" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-6 rounded-lg hover:bg-accent transition-all duration-300 text-center">
-                            <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fas fa-podcast text-2xl text-white"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Pandora</h4>
-                        </a>
-                        
-                        <!-- Audiomack -->
-                        <a href="https://audiomack.com/younghadene" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-6 rounded-lg hover:bg-accent transition-all duration-300 text-center">
-                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fas fa-music text-2xl text-black"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Audiomack</h4>
-                        </a>
-                        
-                        <!-- Bandcamp -->
-                        <a href="https://younghadene.bandcamp.com" target="_blank" rel="noopener noreferrer" class="bg-dark-surface p-6 rounded-lg hover:bg-accent transition-all duration-300 text-center">
-                            <div class="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fab fa-bandcamp text-2xl text-white"></i>
-                            </div>
-                            <h4 class="font-semibold text-sm">Bandcamp</h4>
-                        </a>
-                        
-                    </div>
-                </div>
-                
                 <!-- Popular Tracks -->
                 <div class="mb-16">
                     <h2 class="font-display text-3xl md:text-4xl mb-8 text-center">Popular Tracks</h2>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
                         
                         <!-- Track 1 -->
                         <div class="bg-dark-surface p-6 rounded-lg">

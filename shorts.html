@@ -101,6 +101,18 @@
                 <button id="mobile-menu-toggle" class="md:hidden text-white focus:outline-none">
                     <i class="fas fa-bars text-2xl"></i>
                 </button>
+                
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-dark-bg border-t border-dark-border py-4 z-50">
+                    <nav class="container mx-auto px-4 space-y-2">
+                        <a href="/" class="block py-2 hover:text-accent transition-colors">Home</a>
+                        <a href="/featured-content.html" class="block py-2 hover:text-accent transition-colors">Featured Content</a>
+                        <a href="/biography.html" class="block py-2 hover:text-accent transition-colors">Biography</a>
+                        <a href="/albums.html" class="block py-2 hover:text-accent transition-colors">Albums</a>
+                        <a href="/streaming.html" class="block py-2 hover:text-accent transition-colors">Streaming</a>
+                        <a href="/shorts.html" class="block py-2 hover:text-accent transition-colors">Shorts</a>
+                    </nav>
+                </div>
             </nav>
         </div>
     </header>
@@ -123,20 +135,6 @@
             <div class="container mx-auto px-4">
                 <!-- Shorts Grid -->
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 max-w-6xl mx-auto">
-                    <!-- Short 1 -->
-                    <div class="shorts-container">
-                        <div class="relative aspect-[9/16] bg-dark-surface rounded-lg overflow-hidden shadow-xl">
-                            <iframe 
-                                class="w-full h-full"
-                                src="https://www.youtube.com/embed/Yb8NrHBbzk0" 
-                                title="Young Hadene Drill Freestyle YouTube Short"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <h3 class="text-sm font-semibold mt-2 text-center">Drill Freestyle</h3>
-                    </div>
                     
                     <!-- Short 2 -->
                     <div class="shorts-container">
@@ -151,21 +149,6 @@
                             </iframe>
                         </div>
                         <h3 class="text-sm font-semibold mt-2 text-center">Behind Scenes</h3>
-                    </div>
-                    
-                    <!-- Short 3 -->
-                    <div class="shorts-container">
-                        <div class="relative aspect-[9/16] bg-dark-surface rounded-lg overflow-hidden shadow-xl">
-                            <iframe 
-                                class="w-full h-full"
-                                src="https://www.youtube.com/embed/p6ghY_-H6SE" 
-                                title="Young Hadene Studio Session YouTube Short"
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <h3 class="text-sm font-semibold mt-2 text-center">Studio Session</h3>
                     </div>
                     
                     <!-- Add more shorts as needed -->
