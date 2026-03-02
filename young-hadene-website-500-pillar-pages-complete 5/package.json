@@ -1,0 +1,28 @@
+{
+  "name": "young-hadene-website",
+  "version": "1.0.0",
+  "description": "Official website for Young Hadene - Haitian-born, Toronto-based hip-hop and drill artist",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8080",
+    "build": "echo 'Static site - no build step required'",
+    "deploy": "echo 'Deploy to Cloudflare Pages via dashboard or CLI'"
+  },
+  "keywords": [
+    "young-hadene",
+    "hip-hop",
+    "drill",
+    "toronto",
+    "haitian",
+    "music",
+    "str8hitsrecords"
+  ],
+  "author": "Str8hitsRecords",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/young-hadene-website.ca.git"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

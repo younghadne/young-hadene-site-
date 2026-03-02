@@ -63,7 +63,7 @@ young-hadene-landing/
 ## Support
 
 Managed by Str8hitsRecords
-Contact: contact@younghadene.com
+Contact: contact@younghadene.ca
 
 ## 🚀 Features
 
@@ -164,8 +164,8 @@ Find the social media section and update the URLs:
 Update the email address in the footer:
 
 ```html
-<a href="mailto:contact@younghadene.com" class="hover:text-accent transition-colors">
-    contact@younghadene.com
+<a href="mailto:contact@younghadene.ca" class="hover:text-accent transition-colors">
+    contact@younghadene.ca
 </a>
 ```
 
@@ -262,7 +262,7 @@ tailwind.config = {
 1. **Add Custom Domain**
    - In your Cloudflare Pages project, go to **Custom domains**
    - Click **Set up a custom domain**
-   - Enter your domain (e.g., `younghadene.com`)
+   - Enter your domain (e.g., `younghadene.ca`)
    - Follow the DNS configuration instructions
 
 2. **Update DNS Records**
