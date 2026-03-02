@@ -1,0 +1,29 @@
+# Young Hadene Website - robots.txt
+# Optimized for Google Search Central guidelines
+
+User-agent: *
+Allow: /
+
+# Block unnecessary resources to optimize crawl budget
+Disallow: /admin/
+Disallow: /temp/
+Disallow: /*.json$
+Disallow: /*?*
+Disallow: /_headers
+Disallow: /_redirects
+Disallow: /package.json
+Disallow: /wrangler.toml
+
+# Allow important content and resources
+Allow: /styles.css
+Allow: /script.js
+Allow: /sitemap.xml
+Allow: /404.html
+
+# Sitemap reference for Google
+Sitemap: https://younghadene.ca/sitemap.xml
+Sitemap: https://younghadene.ca/sitemap-image.xml
+Sitemap: https://younghadene.ca/sitemap-video.xml
+
+# Crawl delay for server protection (if needed)
+# Crawl-delay: 1

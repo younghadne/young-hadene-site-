@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    
+    <url>
+        <loc>https://younghadene.ca/</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        
+        <!-- Main thumbnail images -->
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - Trap Blueprints Official Music Video</image:title>
+            <image:caption>Young Hadene performing Trap Blueprints - Official music video thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=cBmTH6P1Ep8</image:license>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/p6ghY_-H6SE/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - 30K LV Tru Diss Official Music Video</image:title>
+            <image:caption>Young Hadene performing 30K LV Tru Diss - Official music video thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=p6ghY_-H6SE</image:license>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/H1Cn9k671WE/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - Hood Rich Stories Official Music Video</image:title>
+            <image:caption>Young Hadene performing Hood Rich Stories - Official music video thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=H1Cn9k671WE</image:license>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/LV1H0-ilz6c/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - No Choice Official Music Video</image:title>
+            <image:caption>Young Hadene performing No Choice - Official music video thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=LV1H0-ilz6c</image:license>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/fxO59qBISbo/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - LV Tru Official Music Video</image:title>
+            <image:caption>Young Hadene performing LV Tru - Official music video thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=fxO59qBISbo</image:license>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/Yb8NrHBbzk0/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - Drill Freestyle YouTube Short</image:title>
+            <image:caption>Young Hadene drill freestyle performance - YouTube Short thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=Yb8NrHBbzk0</image:license>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/osARn7TOEpI/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene - Behind the Scenes YouTube Short</image:title>
+            <image:caption>Young Hadene behind the scenes content - YouTube Short thumbnail</image:caption>
+            <image:geo_location>Toronto, Ontario, Canada</image:geo_location>
+            <image:license>https://www.youtube.com/watch?v=osARn7TOEpI</image:license>
+        </image:image>
+    </url>
+    
+    <url>
+        <loc>https://younghadene.ca/#featured</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        
+        <!-- Featured videos section images -->
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene Featured Videos - Trap Blueprints</image:title>
+            <image:caption>Featured music video: Young Hadene - Trap Blueprints</image:caption>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/p6ghY_-H6SE/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene Featured Videos - 30K LV Tru Diss</image:title>
+            <image:caption>Featured music video: Young Hadene - 30K LV Tru Diss</image:caption>
+        </image:image>
+    </url>
+    
+    <url>
+        <loc>https://younghadene.ca/#biography</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene Artist Biography</image:title>
+            <image:caption>Young Hadene - Haitian-born, Toronto-based hip-hop and drill artist biography</image:caption>
+        </image:image>
+    </url>
+    
+    <url>
+        <loc>https://younghadene.ca/#albums</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene Music Discography</image:title>
+            <image:caption>Young Hadene complete music discography and albums</image:caption>
+        </image:image>
+    </url>
+    
+    <url>
+        <loc>https://younghadene.ca/#shorts</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        
+        <!-- YouTube Shorts images -->
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/Yb8NrHBbzk0/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene YouTube Shorts - Drill Freestyle</image:title>
+            <image:caption>Young Hadene drill freestyle YouTube Short</image:caption>
+        </image:image>
+        
+        <image:image>
+            <image:loc>https://i.ytimg.com/vi/osARn7TOEpI/maxresdefault.jpg</image:loc>
+            <image:title>Young Hadene YouTube Shorts - Behind the Scenes</image:title>
+            <image:caption>Young Hadene behind the scenes YouTube Short</image:caption>
+        </image:image>
+    </url>
+    
+</urlset>
