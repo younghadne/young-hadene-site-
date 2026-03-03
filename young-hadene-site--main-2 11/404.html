@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Young Hadene</title>
+    <meta name="description" content="404 - Page not found on Young Hadene website. Return to homepage or explore music, videos, and discography.">
+    <meta name="robots" content="noindex, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://younghadene.ca/404.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Page Not Found - Young Hadene">
+    <meta property="og:description" content="404 - Page not found on Young Hadene website. Return to homepage or explore music, videos, and discography.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://younghadene.ca/404.html">
+    <meta property="og:image" content="https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg">
+    <meta property="og:site_name" content="Young Hadene Official">
+    <meta property="og:locale" content="en_CA">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Page Not Found - Young Hadene">
+    <meta name="twitter:description" content="404 - Page not found on Young Hadene website. Return to homepage or explore music, videos, and discography.">
+    <meta name="twitter:image" content="https://i.ytimg.com/vi/cBmTH6P1Ep8/maxresdefault.jpg">
+    <meta name="twitter:site" content="@younghadene">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0a0a0a',
+                        'dark-surface': '#1a1a1a',
+                        'dark-border': '#2a2a2a',
+                        'accent': '#FF6B35',
+                        'accent-hover': '#FF8C42',
+                        'text-primary': '#FFFFFF',
+                        'text-secondary': '#B3B3B3',
+                        'text-muted': '#808080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-white min-h-screen flex items-center justify-center">
+    <div class="container mx-auto px-4 py-16 max-w-4xl">
+        <div class="text-center fade-in">
+            <h1 class="error-code font-display mb-8">404</h1>
+            <h2 class="font-display text-4xl md:text-5xl mb-6 text-red-500">Page Not Found</h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Sorry, the page you're looking for doesn't exist. Let's get you back to the music.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/" class="inline-flex items-center px-8 py-3 bg-accent hover:bg-accent-hover text-white font-bold rounded-lg transition-colors">
+                    <i class="fas fa-home mr-2"></i>
+                    Return Home
+                </a>
+                <a href="/biography.html" class="inline-flex items-center px-8 py-3 bg-dark-surface hover:bg-dark-border text-white font-bold rounded-lg transition-colors border border-dark-border">
+                    <i class="fas fa-user mr-2"></i>
+                    Biography
+                </a>
+                <a href="/albums.html" class="inline-flex items-center px-8 py-3 bg-dark-surface hover:bg-dark-border text-white font-bold rounded-lg transition-colors border border-dark-border">
+                    <i class="fas fa-music mr-2"></i>
+                    Music
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</body>
+</html>
