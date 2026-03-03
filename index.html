@@ -252,7 +252,7 @@
                 
                 <!-- Desktop Navigation -->
                 <nav role="navigation" aria-label="Main navigation" class="hidden md:flex space-x-8">
-                    <a href="/" class="hover:text-accent transition-colors">Home</a>
+                    <a href="/" class="text-accent">Home</a>
                     <a href="/featured-content.html" class="hover:text-accent transition-colors">Featured Content</a>
                     <a href="/biography.html" class="hover:text-accent transition-colors">Biography</a>
                     <a href="/albums.html" class="hover:text-accent transition-colors">Albums</a>
@@ -790,6 +790,22 @@
 
         </section>
         
+        <!-- Email Capture Section -->
+        <section class="py-16 md:py-24 bg-dark-surface">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl mx-auto text-center">
+                    <h2 class="font-display text-4xl md:text-6xl mb-4 bg-gradient-to-r from-accent to-accent-hover bg-clip-text text-transparent">Stay Updated</h2>
+                    <p class="text-xl text-gray-300 mb-8">Subscribe for exclusive content, early access to new releases, behind-the-scenes updates, and special announcements.</p>
+                    <form class="max-w-md mx-auto" action="https://younghadene.us21.list-manage.com/subscribe/post?u=YOUR_U_VALUE&id=YOUR_ID_VALUE" method="post" target="_blank">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <input type="email" name="EMAIL" placeholder="Enter your email address" class="flex-1 px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent" required>
+                            <button type="submit" class="px-8 py-3 bg-accent hover:bg-accent-hover text-white font-bold rounded-lg transition-colors">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
         <!-- FAQ Section -->
         <section class="py-16 md:py-24">
             <div class="container mx-auto px-4">
@@ -893,5 +909,19 @@
     
     <!-- JavaScript -->
     <script defer src="/script.js"></script>
+    
+    <!-- Backend Tracking -->
+    <script>
+        const sessionId = localStorage.getItem('sessionId') || (localStorage.setItem('sessionId', Date.now().toString()), localStorage.getItem('sessionId'));
+        fetch('http://localhost:3000/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                page: window.location.pathname, 
+                referrer: document.referrer,
+                sessionId: sessionId
+            })
+        });
+    </script>
 </body>
 </html>
