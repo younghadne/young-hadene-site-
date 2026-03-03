@@ -51,6 +51,38 @@
       gtag('config', 'G-BZ5RHDCLM2');
     </script>
     
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Young Hadene Official Website",
+      "alternateName": "Young Hadene",
+      "url": "https://younghadene.ca",
+      "description": "Official website of Young Hadene - Haitian-born, Toronto-based hip-hop and drill artist. Stream music, watch videos, and explore the complete discography.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://younghadene.ca/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Young Hadene | Str8hitsRecords",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://younghadene.ca/logo.png",
+          "width": 512,
+          "height": 512
+        },
+        "sameAs": [
+          "https://www.youtube.com/@younghadene",
+          "https://twitter.com/younghadene",
+          "https://instagram.com/younghadene"
+        ]
+      }
+    }
+    </script>
+    
     <!-- Person Schema for E-E-A-T -->
     <script type="application/ld+json">
     {
@@ -62,12 +94,18 @@
         "@type": "Country",
         "name": "Haiti"
       },
-      "description": "Young Hadene is a pioneering Toronto drill artist blending Haitian cultural influences with authentic street narratives, recognized for innovative approaches to drill music production and fan engagement.",
+      "jobTitle": "Hip-Hop and Drill Artist",
+      "description": "Young Hadene is a Haitian-born, Toronto-based hip-hop and drill artist known for authentic street narratives and innovative production in the Toronto drill scene.",
       "url": "https://younghadene.ca",
       "sameAs": [
         "https://www.youtube.com/@younghadene",
-        "https://www.instagram.com/younghadene"
+        "https://twitter.com/younghadene",
+        "https://instagram.com/younghadene"
       ],
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Str8hitsRecords"
+      },
       "knowsAbout": ["Drill Music", "Toronto Drill Scene", "Haitian Culture in Music", "Digital Marketing for Artists", "Hip Hop Production"],
       "hasOccupation": {
         "@type": "Occupation",
@@ -286,7 +324,7 @@
         <!-- Page Title -->
         <div class="container mx-auto px-4 py-12">
             <div class="text-center">
-                <h1 class="font-display text-5xl md:text-7xl mb-8">Young Hadene</h1>
+                <h2 class="font-display text-5xl md:text-7xl mb-8">Young Hadene</h2>
                 <p class="text-xl text-gray-300 max-w-3xl mx-auto">
                     Haitian-born, Toronto-based hip-hop and drill artist. Stream music, watch videos, and explore the complete discography.
                 </p>
