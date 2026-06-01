@@ -716,12 +716,11 @@
           </div>
 
           <!-- AI Assistant in Editor -->
-          <div class="card" id="editorAiCard">
-            <div class="ai-assistant-header" onclick="document.getElementById('editorAiBody').classList.toggle('hidden');document.getElementById('editorAiArrow').classList.toggle('rotated')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div class="card" id="editorAiCard" style="border-color:var(--accent)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
               <h3 style="font-size:0.9rem;font-weight:600;margin:0"><span class="text-accent">AI</span> Assistant</h3>
-              <span id="editorAiArrow" style="font-size:0.7rem;transition:transform .2s">▼</span>
             </div>
-            <div id="editorAiBody" class="hidden" style="margin-top:12px">
+            <div id="editorAiBody">
               <div style="display:flex;flex-direction:column;gap:8px">
                 <button class="btn btn-sm btn-secondary" onclick="aiGenerateTitle()">
                   ✨ Generate Title from Content
@@ -746,7 +745,6 @@
               <div id="editorAiStatus" class="text-sm" style="margin-top:8px;color:var(--text-muted)"></div>
             </div>
           </div>
-          <script>setTimeout(()=>{const e=document.getElementById('editorAiBody');if(e)e.classList.remove('hidden');},300)</script>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:16px">
