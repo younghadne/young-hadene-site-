@@ -1584,16 +1584,17 @@ function savePost() {
 
   let posts = getPosts();
 
+  let postData;
   if (currentEditId) {
     const idx = posts.findIndex(p => p.id === currentEditId);
     if (idx !== -1) {
       posts[idx] = { ...posts[idx], title, content, excerpt, status, category, tags, featured, pinned, scheduleDate, date: dateStr, dateNum: Date.now() };
+      postData = posts[idx];
     }
     addActivity(`Updated post: "${title}"`);
     showAlert('Post updated successfully!');
   } else {
-    const newPost = {
-      id: Date.now(),
+    postData = {
       title,
       slug: slugify(title),
       category,
@@ -1608,7 +1609,8 @@ function savePost() {
       scheduleDate: status === 'scheduled' ? scheduleDate : null,
       views: 0,
     };
-    posts.push(newPost);
+    postData.id = Date.now();
+    posts.push(postData);
     addActivity(`Created post: "${title}"`);
     showAlert('Post created successfully!');
   }
@@ -1617,6 +1619,13 @@ function savePost() {
   resetEditor();
   loadPosts();
   updateDashboard();
+
+  // Sync to server API
+  fetch('/api/posts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(postData),
+  }).catch(function() {});
 }
 
 function savePostAsDraft() {
@@ -1647,6 +1656,9 @@ function deletePost(id) {
   addActivity(`Deleted post: "${p ? p.title : id}"`);
   loadPosts();
   updateDashboard();
+  if (p && p.slug) {
+    fetch('/api/posts/' + p.slug, { method: 'DELETE' }).catch(function() {});
+  }
 }
 
 function resetEditor() {

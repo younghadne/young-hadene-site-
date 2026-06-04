@@ -219,6 +219,30 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── POST /api/posts — save a blog post ──
+  if (url.pathname === '/api/posts' && req.method === 'POST') {
+    let body = ''; req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        if (!data.slug) data.slug = (data.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        let posts = getBlogPosts();
+        const existing = posts.findIndex(p => p.slug === data.slug);
+        if (existing >= 0) { posts[existing] = { ...posts[existing], ...data }; }
+        else { data.id = Date.now(); data.dateNum = Date.now(); posts.push(data); }
+        fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+        // Generate static HTML file
+        const blogDir = path.join(__dirname, 'blog');
+        if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
+        const tmpl = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${escHtml(data.title)} — Young Hadene</title><meta name="description" content="${escHtml((data.excerpt || data.content || '').substring(0, 160))}"><link rel="canonical" href="${SITE_URL}/blog/${escHtml(data.slug)}"><meta property="og:title" content="${escHtml(data.title)}"><meta property="og:description" content="${escHtml((data.excerpt || data.content || '').substring(0, 160))}"><meta property="og:image" content="${SITE_URL}/images/poster1.png"><meta property="og:url" content="${SITE_URL}/blog/${escHtml(data.slug)}"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"${escHtml(data.title)}","description":"${escHtml((data.excerpt || data.content || '').substring(0, 160))}","author":{"@type":"MusicGroup","name":"Young Hadene"},"datePublished":"${data.date || new Date().toISOString().split('T')[0]}","image":"${SITE_URL}/images/poster1.png"}</script></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="page-hero"><div class="container"><span class="section-label">${escHtml(data.category || 'Blog')}</span><h1 class="section-title">${escHtml(data.title)}</h1><p class="section-subtitle">${data.date || ''}</p></div></section><section class="section" style="padding:40px 0 100px"><div class="container"><div class="card" style="padding:40px;max-width:800px;margin:0 auto;font-size:1rem;line-height:1.9;color:var(--text-secondary)">${(data.content || '').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
+        fs.writeFileSync(path.join(blogDir, data.slug + '.html'), tmpl);
+        log(`📝 Saved post: "${data.title}" (${data.slug})`);
+        return json({ ok: true, slug: data.slug });
+      } catch (e) { return json({ error: e.message }, 400); }
+    });
+    return;
+  }
+
   // ── Analytics ──
   function loadAnalytics() { try { return JSON.parse(fs.readFileSync(ANALYTICS_FILE, 'utf8')); } catch { return { hits: [], pages: {}, referrers: {}, daily: {}, devices: {}, totalViews: 0, uniqueIps: [] }; } }
   function saveAnalytics(a) { fs.writeFileSync(ANALYTICS_FILE, JSON.stringify(a, null, 2)); }
@@ -268,6 +292,19 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/api/status' && req.method === 'GET') {
     return json({ ok: true, uptime: process.uptime(), pid: process.pid, postCount: getBlogPosts().length });
+  }
+
+  // ── DELETE /api/posts/:slug — delete a blog post ──
+  const deleteMatch = url.pathname.match(/^\/api\/posts\/(.+)$/);
+  if (deleteMatch && req.method === 'DELETE') {
+    const slug = deleteMatch[1];
+    let posts = getBlogPosts();
+    posts = posts.filter(p => p.slug !== slug);
+    fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+    const staticFile = path.join(__dirname, 'blog', slug + '.html');
+    if (fs.existsSync(staticFile)) fs.unlinkSync(staticFile);
+    log(`🗑️ Deleted post: ${slug}`);
+    return json({ ok: true });
   }
 
   // ── Cloudflare API Proxy ──
