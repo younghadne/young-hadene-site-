@@ -293,6 +293,7 @@
       const featured = posts.find(p => p.featured) || posts[0];
       if (!featured) { container.innerHTML = ''; return; }
 
+      const featuredUrl = featured.slug ? `/blog/${featured.slug}.html` : '#';
       container.innerHTML = `
         <div class="featured-card">
           <div class="featured-image">
@@ -305,7 +306,7 @@
             <span class="post-date">${featured.date}</span>
             <h2>${escapeHtml(featured.title)}</h2>
             <p>${escapeHtml(truncate(featured.content, 150))}</p>
-            <a class="read-more" onclick="openPost(${featured.id})">Read Article &#8594;</a>
+            <a href="${featuredUrl}" class="read-more">Read Full Article &#8594;</a>
           </div>
         </div>
       `;
@@ -338,6 +339,7 @@
       container.innerHTML = finalPosts.map(post => {
         const externalLink = extractLink(post.content);
         const cleanContent = externalLink ? post.content.replace(externalLink, '').trim() : post.content;
+        const postUrl = post.slug ? `/blog/${post.slug}.html` : '#';
         return `
         <article class="blog-card fade-in">
           <div class="blog-card-image">
@@ -348,7 +350,7 @@
             <span class="post-date">${post.date}</span>
             <h3>${escapeHtml(post.title)}</h3>
             <p>${escapeHtml(truncate(cleanContent, 120))}</p>
-            ${externalLink ? `<a href="${escapeHtml(externalLink)}" class="read-more">Read Full Article &#8594;</a>` : `<a class="read-more" onclick="openPost(${post.id})">Read &#8594;</a>`}
+            ${externalLink ? `<a href="${escapeHtml(externalLink)}" class="read-more">Read Full Article &#8594;</a>` : `<a href="${postUrl}" class="read-more">Read Full Article &#8594;</a>`}
           </div>
         </article>`;
       }).join('');
