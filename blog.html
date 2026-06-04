@@ -272,9 +272,10 @@
           if (parsed.length > 0) return parsed;
         }
       } catch {}
-      // Seed defaults on first visit
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_POSTS));
-      return DEFAULT_POSTS;
+      // Use server-injected data first, fall back to hardcoded defaults
+      var posts = typeof SERVER_POSTS !== 'undefined' ? SERVER_POSTS : DEFAULT_POSTS;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      return posts;
     }
 
     let currentCategory = 'all';

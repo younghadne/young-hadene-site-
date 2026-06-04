@@ -439,6 +439,14 @@ const server = http.createServer((req, res) => {
     }
     try {
       let html = fs.readFileSync(filePath, 'utf8');
+      // Inject blog posts data into blog listing page
+      if (url.pathname === '/blog.html' || url.pathname === '/blog/') {
+        const posts = getBlogPosts();
+        if (posts.length > 0) {
+          const postsJson = JSON.stringify(posts);
+          html = html.replace('<script>', '<script>var SERVER_POSTS = ' + postsJson + ';\n');
+        }
+      }
       // Add RSS alternate link + additional meta to all HTML pages
       const rssLink = `<link rel="alternate" type="application/rss+xml" title="Young Hadene Blog RSS" href="${SITE_URL}/api/rss.xml">\n`;
       const webSiteSchema = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Young Hadene","url":"${SITE_URL}","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"${SITE_URL}/blog.html?search={search_term_string}"},"query-input":"required name=search_term_string"}}</script>\n`;
