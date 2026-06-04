@@ -28,7 +28,7 @@
     .embed-wrap iframe { display: block; border-radius: 12px; box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(220,38,38,0.06); }
 
     /* Video Gallery */
-    .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px; }
+    .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
     .video-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: all var(--transition); }
     .video-card:hover { border-color: rgba(220,38,38,0.3); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
     .video-thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #111; }
@@ -52,6 +52,9 @@
     .video-modal-embed { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius); }
     .video-modal-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
+    @media (max-width: 1024px) {
+      .video-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 768px) {
       .video-grid { grid-template-columns: 1fr; }
       .music-faq-grid { grid-template-columns: 1fr; }
@@ -109,44 +112,124 @@
         <p class="section-subtitle">Music videos, visuals, and behind-the-scenes content from Young Hadene.</p>
       </div>
       <div class="video-grid" id="videoGrid">
-        <div class="video-card fade-in" data-video="dQw4w9WgXcQ">
+        <div class="video-card fade-in" data-video="_r4NRelzXzc">
           <div class="video-thumb">
-            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="No Sleep (Official Video)" loading="lazy">
+            <img src="https://img.youtube.com/vi/_r4NRelzXzc/maxresdefault.jpg" alt="Young Hadene ft. Yung Dragonuv – Next Level Shit" loading="lazy">
             <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
           </div>
           <div class="video-info">
-            <h4>No Sleep (Official Video)</h4>
-            <p>Young Hadene</p>
+            <h4>Next Level Shit (ft. Yung Dragonuv)</h4>
+            <p>Official Music Video</p>
           </div>
         </div>
-        <div class="video-card fade-in" data-video="dQw4w9WgXcQ">
+        <div class="video-card fade-in" data-video="7JernHdTQt8">
           <div class="video-thumb">
-            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="6ix Side (Official Video)" loading="lazy">
+            <img src="https://img.youtube.com/vi/7JernHdTQt8/maxresdefault.jpg" alt="Young Hadene – Send Him Home" loading="lazy">
             <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
           </div>
           <div class="video-info">
-            <h4>6ix Side (Official Video)</h4>
-            <p>Young Hadene</p>
+            <h4>Send Him Home</h4>
+            <p>Official Music Video</p>
           </div>
         </div>
-        <div class="video-card fade-in" data-video="dQw4w9WgXcQ">
+        <div class="video-card fade-in" data-video="ax6J26q2Ric">
           <div class="video-thumb">
-            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Pressure (Official Video)" loading="lazy">
+            <img src="https://img.youtube.com/vi/ax6J26q2Ric/maxresdefault.jpg" alt="Young Hadene - Russia Pack" loading="lazy">
             <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
           </div>
           <div class="video-info">
-            <h4>Pressure (Official Video)</h4>
-            <p>Young Hadene</p>
+            <h4>Russia Pack</h4>
+            <p>Official Music Video</p>
           </div>
         </div>
-        <div class="video-card fade-in" data-video="dQw4w9WgXcQ">
+        <div class="video-card fade-in" data-video="c3L5v0iH0fM">
           <div class="video-thumb">
-            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="After Dark (Visualizer)" loading="lazy">
+            <img src="https://img.youtube.com/vi/c3L5v0iH0fM/maxresdefault.jpg" alt="Young Hadene – Ghost" loading="lazy">
             <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
           </div>
           <div class="video-info">
-            <h4>After Dark (Visualizer)</h4>
-            <p>Young Hadene</p>
+            <h4>Ghost</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="CB5F6Alix_k">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/CB5F6Alix_k/maxresdefault.jpg" alt="Young Hadene – Drip On My Walk" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>Drip On My Walk</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="eloQ9DseIPg">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/eloQ9DseIPg/maxresdefault.jpg" alt="Young Hadene – Are You Dumb" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>Are You Dumb</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="F3lbDp84OQM">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/F3lbDp84OQM/maxresdefault.jpg" alt="Young Hadene - Midnight Bag Run" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>Midnight Bag Run</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="fxO59qBISbo">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/fxO59qBISbo/maxresdefault.jpg" alt="Young Hadene - AP" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>AP</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="N-13ZEAU5HM">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/N-13ZEAU5HM/maxresdefault.jpg" alt="Young Hadene – 10 Feet" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>10 Feet</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="STbQjGTY3is">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/STbQjGTY3is/maxresdefault.jpg" alt="Young Hadene – Creeping" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>Creeping</h4>
+            <p>Official Music Video</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="Auq6O9616nI">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/Auq6O9616nI/maxresdefault.jpg" alt="Who Got It (Behind The Scenes)" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>Who Got It (BTS)</h4>
+            <p>Behind The Scenes</p>
+          </div>
+        </div>
+        <div class="video-card fade-in" data-video="Yb8NrHBbzk0">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/Yb8NrHBbzk0/maxresdefault.jpg" alt="Young Hadene - Cold Hands (BTS)" loading="lazy">
+            <div class="video-play-overlay"><span class="video-play-icon">&#9654;</span></div>
+          </div>
+          <div class="video-info">
+            <h4>Cold Hands (BTS)</h4>
+            <p>Behind The Scenes</p>
           </div>
         </div>
       </div>
