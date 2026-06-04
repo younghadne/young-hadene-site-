@@ -348,7 +348,7 @@ const server = http.createServer((req, res) => {
   }
 
   // ── Blog post pages (SEO-injected) ──
-  const blogMatch = url.pathname.match(/^\/blog\/(.+)\.html$/);
+  const blogMatch = url.pathname.match(/^\/blog\/(.+)\.html$/) || (url.pathname !== '/blog' && url.pathname !== '/blog.html' && url.pathname.match(/^\/blog\/(.+)$/));
   if (blogMatch) {
     const slug = blogMatch[1];
     const posts = getBlogPosts();

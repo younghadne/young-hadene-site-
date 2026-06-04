@@ -294,7 +294,7 @@
       const featured = posts.find(p => p.featured) || posts[0];
       if (!featured) { container.innerHTML = ''; return; }
 
-      const featuredUrl = featured.slug ? `/blog/${featured.slug}.html` : '#';
+      const featuredUrl = featured.slug ? `/blog/${featured.slug}` : '#';
       container.innerHTML = `
         <div class="featured-card">
           <div class="featured-image">
@@ -340,7 +340,7 @@
       container.innerHTML = finalPosts.map(post => {
         const externalLink = extractLink(post.content);
         const cleanContent = externalLink ? post.content.replace(externalLink, '').trim() : post.content;
-        const postUrl = post.slug ? `/blog/${post.slug}.html` : '#';
+        const postUrl = post.slug ? `/blog/${post.slug}` : '#';
         return `
         <article class="blog-card fade-in">
           <div class="blog-card-image">
