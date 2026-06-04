@@ -381,7 +381,7 @@ const server = http.createServer((req, res) => {
   }
 
   // ── Clean URL support (like Cloudflare Pages auto-redirect) ──
-  const cleanPages = { '/blog': '/blog.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html' };
+  const cleanPages = { '/blog': '/blog.html', '/blog/': '/blog.html', '/blog/index.html': '/blog.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html' };
   if (cleanPages[url.pathname]) {
     url.pathname = cleanPages[url.pathname];
   }

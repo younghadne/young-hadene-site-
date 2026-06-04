@@ -17,5 +17,8 @@
   "dependencies": {
     "node-cron": "^4.2.1",
     "openai": "^6.39.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
