@@ -351,6 +351,11 @@ const server = http.createServer((req, res) => {
   const blogMatch = url.pathname.match(/^\/blog\/(.+)\.html$/) || (url.pathname !== '/blog' && url.pathname !== '/blog.html' && url.pathname.match(/^\/blog\/(.+)$/));
   if (blogMatch) {
     const slug = blogMatch[1];
+    const staticFile = path.join(__dirname, 'blog', slug + '.html');
+    if (fs.existsSync(staticFile)) {
+      const html = fs.readFileSync(staticFile, 'utf8');
+      return send(res, 200, html, 'text/html', { 'X-Robots-Tag': 'index,follow' });
+    }
     const posts = getBlogPosts();
     const post = posts.find(p => p.slug === slug);
     if (!post) { res.writeHead(404, { 'Content-Type': 'text/html' }); return res.end('<!DOCTYPE html><html><head><title>Post Not Found</title><meta name="robots" content="noindex"></head><body><h1>Not Found</h1></body></html>'); }
