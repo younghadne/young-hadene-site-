@@ -210,19 +210,27 @@ ${tpl.footEnd}
 
 // ── Main ──
 async function main() {
-  console.log('🎤 Young Hadene Blog Generator');
-  console.log(`Model: ${MODEL}`);
+  const count = parseInt(process.argv[2]) || 1;
+  console.log(`🎤 Young Hadene Blog Generator`);
+  console.log(`Model: ${MODEL} | Count: ${count}`);
 
-  const used = usedTitles();
-  const target = pickKw(used);
-  console.log(`Target: "${target.kw}" [${target.cat}]`);
-
-  const raw = await genArticle(target.kw, target.cat);
-  const art = parse(raw, target.kw);
-  const slug = save(art, target.kw, target.cat);
-
-  console.log(`\n🎉 Published: ${art.title}`);
-  console.log(`   https://younghadene.ca/blog/${slug}.html`);
+  for (let i = 0; i < count; i++) {
+    console.log(`\n─── Post ${i + 1}/${count} ───`);
+    const used = usedTitles();
+    const target = pickKw(used);
+    console.log(`Target: "${target.kw}" [${target.cat}]`);
+    try {
+      const raw = await genArticle(target.kw, target.cat);
+      const art = parse(raw, target.kw);
+      const slug = save(art, target.kw, target.cat);
+      console.log(`🎉 (${i + 1}/${count}) ${art.title}`);
+      console.log(`   https://younghadene.ca/blog/${slug}.html`);
+    } catch (e) {
+      console.error(`❌ Post ${i + 1} failed:`, e.message);
+    }
+    if (i < count - 1) await new Promise(r => setTimeout(r, 2000));
+  }
+  console.log(`\n🎉 Done! Generated ${count} posts.`);
 }
 
 main().catch(e => { console.error('❌', e.message); process.exit(1); });

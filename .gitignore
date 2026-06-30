@@ -1,7 +1,5 @@
 node_modules/
 .env
-logs/
 settings.json
-analytics.json
-opencode.json
+logs/
 .DS_Store
