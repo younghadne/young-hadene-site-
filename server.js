@@ -590,7 +590,7 @@ const server = http.createServer((req, res) => {
       // Inject blog posts data into blog listing page
       if (url.pathname === '/blog.html' || url.pathname === '/blog/') {
         const posts = getBlogPosts();
-        if (posts.length > 0) {
+        if (posts.length > 0 && !html.includes('var SERVER_POSTS')) {
           const postsJson = JSON.stringify(posts);
           html = html.replace('</head>', '<script>var SERVER_POSTS = ' + postsJson + ';\n</script>\n</head>');
         }
