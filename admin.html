@@ -662,6 +662,12 @@
               <input type="text" id="postSlug" placeholder="auto-generated" readonly style="opacity:0.7">
             </div>
           </div>
+
+          <div class="form-group">
+            <label>Tags (comma-separated — powers SEO + blog filtering)</label>
+            <input type="text" id="postTags" placeholder="Toronto drill, new Toronto rappers, dark trap 2026" maxlength="300">
+            <div class="char-count">e.g. Toronto drill, Toronto underground rap, new Toronto music</div>
+          </div>
           <div class="form-group">
             <div style="font-size:0.75rem;color:var(--text-muted);"><span id="wordCount">0 words</span> &middot; <span id="readTime">0 min read</span></div>
           </div>
@@ -897,6 +903,7 @@
       const takeaways = document.getElementById('postTakeaways').value.trim();
       const faq = document.getElementById('postFaq').value.trim();
       const excerpt = document.getElementById('postExcerpt').value.trim();
+      const tags = document.getElementById('postTags').value.trim();
       const featured = document.getElementById('postFeatured').checked;
 
       if (!title) { alert('Enter a title.'); return; }
@@ -911,7 +918,7 @@
         // Edit existing
         const idx = posts.findIndex(p => p.id === Number(id));
         if (idx !== -1) {
-          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, excerpt, featured, date: dateStr, dateNum: Date.now() };
+          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, excerpt, tags, featured, date: dateStr, dateNum: Date.now() };
         }
       } else {
         // New post
@@ -924,6 +931,7 @@
           takeaways,
           faq,
           excerpt,
+          tags,
           date: dateStr,
           dateNum: Date.now(),
           featured
@@ -936,14 +944,16 @@
       showSuccess();
       resetForm();
 
-      // Sync to server
+      // Sync to server (source of truth for live site)
       const postData = id ? posts.find(p => p.id === Number(id)) : posts[posts.length - 1];
       if (postData) {
         fetch('/api/posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(postData)
-        }).catch(e => console.error('Server sync failed:', e));
+        }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(d => showGenSuccess('Published live: /blog/' + d.slug + '.html'))
+          .catch(e => { console.error('Server sync failed:', e); alert('Saved locally but server sync failed: ' + e.message + '. Post will NOT show live until server is reachable.'); });
       }
     }
 
@@ -960,6 +970,7 @@
       document.getElementById('postTakeaways').value = post.takeaways || '';
       document.getElementById('postFaq').value = post.faq || '';
       document.getElementById('postExcerpt').value = post.excerpt || '';
+      document.getElementById('postTags').value = post.tags || '';
       document.getElementById('postFeatured').checked = post.featured;
       refreshPreview();
       document.getElementById('cancelBtn').style.display = 'inline-flex';
@@ -970,9 +981,14 @@
     function deletePost(id) {
       if (!confirm('Delete this post?')) return;
       let posts = getPosts();
+      const target = posts.find(p => p.id === id);
       posts = posts.filter(p => p.id !== id);
       savePosts(posts);
       loadPosts();
+      if (target && target.slug) {
+        fetch('/api/posts/' + encodeURIComponent(target.slug), { method: 'DELETE' })
+          .catch(e => console.error('Server delete failed:', e));
+      }
     }
 
     function toggleFeatured(id) {
@@ -986,6 +1002,11 @@
         post.featured = !post.featured;
         savePosts(posts);
         loadPosts();
+        fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(post)
+        }).catch(e => console.error('Server sync failed:', e));
       }
     }
 
@@ -998,6 +1019,7 @@
       document.getElementById('postTakeaways').value = '';
       document.getElementById('postFaq').value = '';
       document.getElementById('postExcerpt').value = '';
+      document.getElementById('postTags').value = '';
       document.getElementById('postSlug').value = '';
       document.getElementById('previewPane').style.display = 'none';
       document.getElementById('wordCount').textContent = '0 words';
