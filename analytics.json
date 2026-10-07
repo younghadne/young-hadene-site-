@@ -111,23 +111,151 @@
       "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
       "ip": "::1",
       "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791356392460,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791356451699,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791356555917,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/music.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791356636753,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791356645306,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791356778555,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/index.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791357630108,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791357974940,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791358065534,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/blog/top-toronto-rappers.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791358139082,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/blog/top-toronto-rappers",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791358382845,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/music.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791371541660,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791371568462,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791371620030,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/index.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791371788062,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791374938288,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/music.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
     }
   ],
   "pages": {
-    "/blog.html": 13,
+    "/blog.html": 29,
     "/index.html": 1
   },
   "referrers": {
-    "Direct": 11,
+    "Direct": 27,
     "Referral": 3
   },
   "daily": {
-    "2026-10-07": 14
+    "2026-10-07": 30
   },
   "devices": {
-    "Desktop": 14
+    "Desktop": 30
   },
-  "totalViews": 14,
+  "totalViews": 30,
   "uniqueIps": [
     "::1"
   ]

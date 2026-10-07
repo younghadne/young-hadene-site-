@@ -128,7 +128,7 @@ function injectSeoMeta(html, post, urlPath) {
     description: desc,
     image: ogImage,
     datePublished: date,
-    author: { '@type': 'Person', 'name': 'Young Hadene' },
+    author: { '@type': 'Person', 'name': 'Young Hadene', 'jobTitle': 'Recording Artist', 'url': SITE_URL + '/about.html', 'sameAs': ['https://www.instagram.com/YOUNGHADENE', 'https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg', 'https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA'] },
     publisher: { '@type': 'Organization', 'name': 'Young Hadene', 'logo': { '@type': 'ImageObject', 'url': SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
   });
@@ -453,7 +453,13 @@ const server = http.createServer((req, res) => {
     <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>
   <section class="page-hero"><div class="container"><span class="section-label">${escHtml(post.category || 'Blog')}</span><h1 class="section-title">${escHtml(post.title)}</h1><p class="section-subtitle">${date}</p></div></section>
-  <section class="section" style="padding:40px 0 100px"><div class="container"><div class="card" style="padding:40px;max-width:800px;margin:0 auto;font-size:1rem;line-height:1.9;color:var(--text-secondary)"><p>${content}</p></div></div></section>
+  <section class="section" style="padding:40px 0 100px"><div class="container"><div class="card" style="padding:40px;max-width:800px;margin:0 auto;font-size:1rem;line-height:1.9;color:var(--text-secondary)"><p>${content}</p></div>
+  <div class="card" style="padding:24px 32px;max-width:800px;margin:24px auto 0;display:flex;gap:16px;align-items:center;">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div>
+    <div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div>
+    <div style="font-weight:700;"><a href="/about.html" rel="author" style="color:var(--text-primary);">Young Hadene</a></div>
+    <div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist. Haitian-born, Toronto-raised — writing on Toronto hip hop, studio life, and the 6ix underground.</div></div>
+  </div></div></section>
   <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>
   <script src="/js/main.js"></script>
   <script>(function(){var d={path:location.pathname,referrer:document.referrer||'',ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon('/api/track',JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open('POST','/api/track',true);x.setRequestHeader('Content-Type','application/json');x.send(JSON.stringify(d))}})();</script>

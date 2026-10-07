@@ -425,8 +425,8 @@
       <div class="footer-bottom">
         <p>&copy; 2026 Young Hadene. All rights reserved. Toronto. 6ix.</p>
         <div class="footer-bottom-links">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
         </div>
       </div>
     </div>
@@ -609,11 +609,19 @@
       document.getElementById('postFullContent').innerHTML = `
         <div class="post-full-header">
           <span class="category-tag">${escapeHtml(post.category)}</span>
-          <span class="post-date">${post.date}</span>
+          <span class="post-date">${post.date} &middot; By <a href="about.html" rel="author" style="color:var(--accent)">Young Hadene</a></span>
           <h2>${escapeHtml(post.title)}</h2>
         </div>
         <div class="post-full-body">
           ${post.content.split('\n').filter(p => p.trim()).map(p => `<p>${escapeHtml(p.trim())}</p>`).join('')}
+        </div>
+        <div class="feature-card" style="padding:24px;display:flex;gap:16px;align-items:center;margin-top:32px;">
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div>
+          <div>
+            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div>
+            <div style="font-weight:700;"><a href="about.html" rel="author">Young Hadene</a></div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist writing on Toronto hip hop, studio life, and the 6ix underground.</div>
+          </div>
         </div>
       `;
 
@@ -631,8 +639,15 @@
         "headline": post.title,
         "datePublished": post.date,
         "author": {
-          "@type": "MusicGroup",
-          "name": "Young Hadene"
+          "@type": "Person",
+          "name": "Young Hadene",
+          "jobTitle": "Recording Artist",
+          "url": "https://younghadene.ca/about.html",
+          "sameAs": [
+            "https://www.instagram.com/YOUNGHADENE",
+            "https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg",
+            "https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA"
+          ]
         },
         "url": "https://younghadene.ca/blog.html",
         "articleSection": post.category
