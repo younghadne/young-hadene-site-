@@ -860,10 +860,43 @@
     })();
 
     // ---- Blog CRUD ----
+    // Local drafts/unpublished edits live in localStorage. Published posts
+    // live on the site itself (blog.html baked SERVER_POSTS). The manager
+    // merges both so the "All Posts" tab always shows the real catalog.
+    let SITE_POSTS = [];
+    let SITE_POSTS_LOADED = false;
+
     function getPosts() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       } catch { return []; }
+    }
+
+    function getAllPosts() {
+      const local = getPosts();
+      const seen = new Set(local.map(p => p.slug));
+      const merged = [...local];
+      for (const p of SITE_POSTS) {
+        if (p && p.slug && !seen.has(p.slug)) merged.push(p);
+      }
+      return merged;
+    }
+
+    async function fetchSitePosts() {
+      try {
+        const r = await fetch('/blog.html', { cache: 'no-store' });
+        if (!r.ok) return;
+        const html = await r.text();
+        const m = html.match(/var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s);
+        if (!m) return;
+        const arr = JSON.parse(m[1]);
+        if (Array.isArray(arr) && arr.length) {
+          SITE_POSTS = arr;
+          SITE_POSTS_LOADED = true;
+        }
+      } catch (e) {
+        console.error('Could not load site posts:', e);
+      }
     }
 
     function savePosts(posts) {
@@ -871,7 +904,12 @@
     }
 
     function loadPosts() {
-      const posts = getPosts();
+      renderPostsList(getAllPosts(), SITE_POSTS_LOADED);
+      // Then pull the live site index in the background and re-render merged.
+      fetchSitePosts().then(() => renderPostsList(getAllPosts(), SITE_POSTS_LOADED));
+    }
+
+    function renderPostsList(posts, fromSite) {
       const container = document.getElementById('postsContainer');
 
       if (posts.length === 0) {
@@ -886,7 +924,9 @@
 
       posts.sort((a, b) => b.dateNum - a.dateNum);
 
-      container.innerHTML = posts.map(post => `
+      const hint = fromSite ? `<p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:12px;">Showing ${posts.length} posts from the live site + your local drafts.</p>` : '';
+
+      container.innerHTML = hint + posts.map(post => `
         <div class="post-item">
           <div class="post-item-info">
             <h4>${escapeHtml(post.title)}</h4>
@@ -925,10 +965,14 @@
       let posts = getPosts();
 
       if (id) {
-        // Edit existing
+        // Edit existing (may be a live-site post not yet in local drafts)
         const idx = posts.findIndex(p => p.id === Number(id));
+        const updated = { title, category, content, takeaways, faq, excerpt, tags, featured, date: dateStr, dateNum: Date.now() };
         if (idx !== -1) {
-          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, excerpt, tags, featured, date: dateStr, dateNum: Date.now() };
+          posts[idx] = { ...posts[idx], ...updated };
+        } else {
+          const original = getAllPosts().find(p => p.id === Number(id));
+          posts.push({ id: Number(id), slug: (original && original.slug) || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), ...updated });
         }
       } else {
         // New post
@@ -972,7 +1016,7 @@
     }
 
     function editPost(id) {
-      const posts = getPosts();
+      const posts = getAllPosts();
       const post = posts.find(p => p.id === id);
       if (!post) return;
 
@@ -994,10 +1038,12 @@
 
     function deletePost(id) {
       if (!confirm('Delete this post?')) return;
+      const target = getAllPosts().find(p => p.id === id);
       let posts = getPosts();
-      const target = posts.find(p => p.id === id);
       posts = posts.filter(p => p.id !== id);
       savePosts(posts);
+      // Remove from the cached site list too so it disappears immediately.
+      SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
       loadPosts();
       if (target && target.slug) {
         fetch('/api/posts?slug=' + encodeURIComponent(target.slug), {
@@ -1013,20 +1059,26 @@
     }
 
     function toggleFeatured(id) {
-      let posts = getPosts();
-      const post = posts.find(p => p.id === id);
+      const all = getAllPosts();
+      const post = all.find(p => p.id === id);
       if (post) {
-        // Only one featured at a time
-        if (!post.featured) {
-          posts.forEach(p => p.featured = false);
+        const turningOn = !post.featured;
+        // Persist locally (creates a local copy for live-site posts).
+        let posts = getPosts();
+        posts.forEach(p => p.featured = false);
+        SITE_POSTS.forEach(p => p.featured = false);
+        const idx = posts.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          posts[idx].featured = turningOn;
+        } else {
+          posts.push({ ...post, featured: turningOn });
         }
-        post.featured = !post.featured;
         savePosts(posts);
         loadPosts();
         fetch('/api/posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: adminPassword(), post })
+          body: JSON.stringify({ password: adminPassword(), post: { ...post, featured: turningOn } })
         }).catch(e => console.error('Server sync failed:', e));
       }
     }
