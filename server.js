@@ -182,6 +182,8 @@ function fmtInline(s) {
   const hold = (html) => { holders.push(html); return ' ' + (holders.length - 1) + ' '; };
   s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, alt, src) => hold('<img src="' + src + '" alt="' + alt + '" loading="lazy" style="max-width:100%;border-radius:8px;margin:12px 0;">'));
   s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m, txt, url) => hold('<a href="' + url + '" target="_blank" rel="noopener">' + txt + '</a>'));
+  s = s.replace(/\*\*([^*]+)\*\*/g, (m, txt) => hold('<strong>' + txt + '</strong>'));
+  s = s.replace(/\*([^*]+)\*/g, (m, txt) => hold('<em>' + txt + '</em>'));
   s = s.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
     url = url.replace(/[.,;:!?)]+$/, '');
     const id = ytId(url);

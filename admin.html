@@ -627,9 +627,18 @@
 
           <div class="form-group">
             <label>Content</label>
-            <textarea id="postContent" placeholder="Write your blog post content here..." style="min-height:420px;"></textarea>
+            <div id="editorToolbar" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('h2')" title="Section heading">H2</button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('bold')" title="Bold"><strong>B</strong></button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('italic')" title="Italic"><em>I</em></button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('bullet')" title="Bullet list">• List</button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('quote')" title="Pull quote">❝ Quote</button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('link')" title="Add link">🔗 Link</button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('image')" title="Add image">🖼 Image</button>
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="fmtDoc('youtube')" title="Embed YouTube video">▶ Video</button>
+            </div>
+            <textarea id="postContent" placeholder="Write your blog post content here... (blank line = new paragraph)" style="min-height:420px;"></textarea>
             <div class="char-count"><span id="contentCount">0</span> characters, no limit</div>
-            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;line-height:1.7;">Formatting: <strong>## Heading</strong> = section (auto Table of Contents) &middot; <strong>- item</strong> = bullet list &middot; <strong>&gt; quote</strong> = pull quote &middot; <strong>[text](https://…)</strong> = link &middot; <strong>![alt](https://…image)</strong> = image &middot; paste a <strong>YouTube link</strong> on its own line = embedded video &middot; blank line = new paragraph</div>
           </div>
 
           <div class="form-group">
@@ -1020,6 +1029,50 @@
       return div.innerHTML;
     }
 
+    // ---- Editor toolbar ----
+    function fmtDoc(cmd) {
+      const ta = document.getElementById('postContent');
+      const start = ta.selectionStart, end = ta.selectionEnd;
+      const sel = ta.value.substring(start, end) || '';
+      let insert = '', cursor = 0;
+      const prefixLines = (prefix, fallback) => {
+        if (!sel) return { text: prefix + fallback + '\n', move: prefix.length + fallback.length };
+        const lines = sel.split('\n').map(l => prefix + l).join('\n');
+        return { text: lines, move: lines.length };
+      };
+      if (cmd === 'h2') {
+        const r = prefixLines('## ', 'Section heading');
+        insert = r.text; cursor = start + r.move;
+      } else if (cmd === 'bold') {
+        insert = '**' + (sel || 'bold text') + '**'; cursor = start + insert.length;
+      } else if (cmd === 'italic') {
+        insert = '*' + (sel || 'italic text') + '*'; cursor = start + insert.length;
+      } else if (cmd === 'bullet') {
+        const r = prefixLines('- ', 'List item');
+        insert = r.text; cursor = start + r.move;
+      } else if (cmd === 'quote') {
+        const r = prefixLines('> ', 'Pull quote');
+        insert = r.text; cursor = start + r.move;
+      } else if (cmd === 'link') {
+        const url = prompt('Paste the link URL:', 'https://');
+        if (!url) { ta.focus(); return; }
+        insert = '[' + (sel || 'link text') + '](' + url.trim() + ')'; cursor = start + insert.length;
+      } else if (cmd === 'image') {
+        const url = prompt('Paste the image URL:', 'https://');
+        if (!url) { ta.focus(); return; }
+        insert = '\n![' + (sel || 'image description') + '](' + url.trim() + ')\n'; cursor = start + insert.length;
+      } else if (cmd === 'youtube') {
+        const url = prompt('Paste the YouTube link:', 'https://www.youtube.com/watch?v=');
+        if (!url) { ta.focus(); return; }
+        insert = '\n' + url.trim() + '\n'; cursor = start + insert.length;
+      }
+      ta.value = ta.value.substring(0, start) + insert + ta.value.substring(end);
+      ta.focus();
+      ta.setSelectionRange(cursor, cursor);
+      refreshPreview();
+      if (document.getElementById('previewPane').style.display !== 'none') refreshPreview();
+    }
+
     // ---- Live article preview (mirrors server renderer) ----
     function slugify(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 
@@ -1036,6 +1089,8 @@
       const hold = (html) => { holders.push(html); return ' ' + (holders.length - 1) + ' '; };
       s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, alt, src) => hold('<em>🖼 Image:</em> ' + alt));
       s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m, txt, url) => hold('<a>' + txt + '</a>'));
+      s = s.replace(/\*\*([^*]+)\*\*/g, (m, txt) => hold('<strong>' + txt + '</strong>'));
+      s = s.replace(/\*([^*]+)\*/g, (m, txt) => hold('<em>' + txt + '</em>'));
       s = s.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
         url = url.replace(/[.,;:!?)]+$/, '');
         return hold(ytId(url) ? '▶ [embedded video]' : url);
