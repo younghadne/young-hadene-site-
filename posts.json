@@ -1,5 +1,115 @@
 [
   {
+    "id": 1781000000000,
+    "title": "Best Underated Toronto Rappers You Should Know 2026",
+    "slug": "best-underrated-toronto-rappers-you-should-know-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1781000000000,
+    "featured": true,
+    "content": "Best underrated Toronto rappers you should know in 2026."
+  },
+  {
+    "id": 1780999999999,
+    "title": "Independent Toronto Rappers Scene Culture 2026",
+    "slug": "independent-toronto-rappers-scene-culture-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999999,
+    "featured": true,
+    "content": "The independent rappers scene and culture in Toronto for 2026."
+  },
+  {
+    "id": 1780999999998,
+    "title": "Toronto Street Melodic Hard Drill Sound 2026",
+    "slug": "toronto-street-melodic-hard-drill-sound-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999998,
+    "featured": true,
+    "content": "The street melodic hard drill sound defining Toronto in 2026."
+  },
+  {
+    "id": 1780999999997,
+    "title": "Toronto Trap Dark Trap Artists 2026 Guide",
+    "slug": "toronto-trap-dark-trap-artists-2026-guide",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999997,
+    "featured": true,
+    "content": "Dark trap artists shaping the Toronto sound in 2026."
+  },
+  {
+    "id": 1780999999996,
+    "title": "Upcoming Emerging Toronto Rappers Drill Hip-Hop 2026",
+    "slug": "upcoming-emerging-toronto-rappers-drill-hip-hop-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999996,
+    "featured": true,
+    "content": "Emerging Toronto rappers in the drill and hip-hop scene for 2026."
+  },
+  {
+    "id": 1780999999995,
+    "title": "New Toronto Rap Songs Latest Releases 2026",
+    "slug": "new-toronto-rap-songs-latest-releases-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999995,
+    "featured": true,
+    "content": "Latest releases from Toronto rap artists in 2026."
+  },
+  {
+    "id": 1780999999994,
+    "title": "New Toronto Rappers Artists Music 2026",
+    "slug": "new-toronto-rappers-artists-music-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999994,
+    "featured": true,
+    "content": "New and emerging Toronto rap artists making waves in 2026."
+  },
+  {
+    "id": 1780999999993,
+    "title": "Toronto Hip-Hop Rap Music Artists 2026 — Top List",
+    "slug": "toronto-hip-hop-rap-music-artists-2026",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999993,
+    "featured": true,
+    "content": "The complete list of Toronto hip-hop and rap artists to know in 2026."
+  },
+  {
+    "id": 1780999999992,
+    "title": "Toronto Underground Rap Artists 2026 — To Watch",
+    "slug": "toronto-underground-rap-artists-2026-to-watch",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999992,
+    "featured": true,
+    "content": "Meet the underground rappers you need to know from Toronto's drill and hip-hop scene in 2026."
+  },
+  {
+    "id": 1780999999991,
+    "title": "Toronto Drill Music 2026 — Complete Guide",
+    "slug": "toronto-drill-music-2026-complete-guide",
+    "category": "Music",
+    "date": "October 7, 2026",
+    "dateNum": 1780999999991,
+    "featured": true,
+    "content": "The definitive complete guide to Toronto drill music in 2026. Young Hadene breaks down the sound, the artists, and the culture from the 6ix."
+  },
+  {
+    "id": 8,
+    "title": "Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked",
+    "slug": "top-toronto-rappers",
+    "category": "Music",
+    "date": "May 31, 2026",
+    "dateNum": 1748736000000,
+    "featured": true,
+    "content": "The definitive list of the best Toronto rappers — from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more. Read the full article: https://younghadene.ca/blog/top-toronto-rappers.html"
+  },
+  {
     "id": 178000000016,
     "title": "Inside Young Hadene: An Honest Look at the Haitian-Toronto Drill Artist",
     "slug": "inside-young-hadene-an-honest-look",
@@ -7,7 +117,7 @@
     "date": "June 4, 2026",
     "dateNum": 1780624000000,
     "featured": false,
-    "content": "An honest, in-depth look at Young Hadene \u2014 the Haitian-Toronto drill and dark trap artist representing the 6ix. His story, his sound, his vision. Read the full article on younghadene.ca/blog/inside-young-hadene-an-honest-look.html"
+    "content": "An honest, in-depth look at Young Hadene — the Haitian-Toronto drill and dark trap artist representing the 6ix. His story, his sound, his vision. Read the full article on younghadene.ca/blog/inside-young-hadene-an-honest-look.html"
   },
   {
     "id": 1780263692026,
@@ -48,115 +158,5 @@
     "dateNum": 1780258321927,
     "featured": false,
     "content": "A deep dive into melodic drill rap artists."
-  },
-  {
-    "id": 1780257977431,
-    "title": "What to Know About Caribbean influence on drill music in 2026",
-    "slug": "what-to-know-about-caribbean-influence-on-drill-music-in-202",
-    "category": "Toronto",
-    "date": "May 31, 2026",
-    "dateNum": 1780257977431,
-    "featured": false,
-    "content": "A deep dive into Caribbean influence on drill music."
-  },
-  {
-    "id": 1780257953675,
-    "title": "What to Know About Haitian-Toronto music fusion in 2026",
-    "slug": "what-to-know-about-haitian-toronto-music-fusion-in-2026",
-    "category": "Toronto",
-    "date": "May 31, 2026",
-    "dateNum": 1780257953675,
-    "featured": false,
-    "content": "A deep dive into Haitian-Toronto music fusion."
-  },
-  {
-    "id": 1780257768027,
-    "title": "What to Know About Haitian Canadian artists to know in 2026",
-    "slug": "what-to-know-about-haitian-canadian-artists-to-know-in-2026",
-    "category": "Toronto",
-    "date": "May 31, 2026",
-    "dateNum": 1780257768027,
-    "featured": false,
-    "content": "A deep dive into Haitian Canadian artists to know."
-  },
-  {
-    "id": 8,
-    "title": "Best Toronto Rappers 2026 \u2014 Top Toronto Hip Hop Artists Ranked",
-    "slug": "top-toronto-rappers",
-    "category": "Music",
-    "date": "May 31, 2026",
-    "dateNum": 1748736000000,
-    "featured": true,
-    "content": "The definitive list of the best Toronto rappers \u2014 from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more. Read the full article: https://younghadene.ca/blog/top-toronto-rappers.html"
-  },
-  {
-    "id": 1,
-    "title": "The Underground Toronto Sound: Why 2026 Is Different",
-    "slug": "underground-toronto-sound-2026",
-    "category": "Toronto",
-    "date": "May 28, 2026",
-    "dateNum": 1748448000000,
-    "featured": false,
-    "content": "The city's hip-hop scene has shifted. From basement studios in Scarborough to sold-out shows at the Danforth Music Hall, Toronto's underground is louder and more authentic than ever. Here's what changed and who's leading it."
-  },
-  {
-    "id": 2,
-    "title": "Late Night in the Lab \u2014 Building \"No Sleep\"",
-    "slug": "late-night-lab-no-sleep",
-    "category": "Studio Sessions",
-    "date": "May 20, 2026",
-    "dateNum": 1747785600000,
-    "featured": false,
-    "content": "The making of the heaviest track yet. From 3 AM melodies to 808s that shake the walls. Every great track starts with a late night. This one was no different \u2014 pulling inspiration from the empty Toronto streets at 3 AM, the hum of the city that never quite sleeps."
-  },
-  {
-    "id": 3,
-    "title": "Toronto After Midnight \u2014 A Dark Trap Diary",
-    "slug": "toronto-after-midnight",
-    "category": "Lifestyle",
-    "date": "May 14, 2026",
-    "dateNum": 1747267200000,
-    "featured": false,
-    "content": "Night drives through the 6ix, empty streets, and the inspiration that only comes after midnight. There is something about this city when the lights dim and the crowds disappear."
-  },
-  {
-    "id": 4,
-    "title": "From Basement to Stage \u2014 The First Show",
-    "slug": "basement-to-stage-first-show",
-    "category": "Behind The Scenes",
-    "date": "May 7, 2026",
-    "dateNum": 1746662400000,
-    "featured": false,
-    "content": "Behind the scenes of the first live performance. The nerves, the energy, the moments they don't show you. Walking on stage for the first time is something you never forget."
-  },
-  {
-    "id": 5,
-    "title": "Top 10 Underground Toronto Tracks (2026)",
-    "slug": "top-10-underground-toronto-tracks-2026",
-    "category": "Music",
-    "date": "Apr 28, 2026",
-    "dateNum": 1745884800000,
-    "featured": false,
-    "content": "The songs that are defining the current wave. Heavy beats, raw lyricism, and real Toronto energy. From Scarborough to Rexdale, these are the tracks that matter right now."
-  },
-  {
-    "id": 6,
-    "title": "The Venues That Built Toronto's Sound",
-    "slug": "venues-built-toronto-sound",
-    "category": "Toronto",
-    "date": "Apr 19, 2026",
-    "dateNum": 1745107200000,
-    "featured": false,
-    "content": "From the Phoenix to Smiling Buddha, a look at the stages that shaped the 6ix music scene. These venues were more than just rooms \u2014 they were launching pads."
-  },
-  {
-    "id": 7,
-    "title": "Studio Gear Setup \u2014 The Dark Trap Signal Chain",
-    "slug": "studio-gear-dark-trap-signal-chain",
-    "category": "Studio Sessions",
-    "date": "Apr 10, 2026",
-    "dateNum": 1744329600000,
-    "featured": false,
-    "content": "Breaking down the hardware and software that creates the signature heavy sound. Mic, preamp, interface, plugins. Here is exactly what goes into the signal chain."
   }
 ]
