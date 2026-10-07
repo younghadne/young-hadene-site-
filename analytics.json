@@ -1,0 +1,125 @@
+{
+  "hits": [
+    {
+      "ts": 1791349754019,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791349757680,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/blog/inside-young-hadene-an-honest-look",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791350952271,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351224142,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351229370,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351242991,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/index.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351795880,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/music.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351829237,
+      "path": "/blog.html",
+      "referrer": "",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351971825,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/music.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791351977610,
+      "path": "/blog.html",
+      "referrer": "http://localhost:3456/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791353165048,
+      "path": "/blog.html",
+      "referrer": "https://crazy-candles-dream.loca.lt/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791353172842,
+      "path": "/blog.html",
+      "referrer": "https://crazy-candles-dream.loca.lt/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791353178656,
+      "path": "/blog.html",
+      "referrer": "https://crazy-candles-dream.loca.lt/contact.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    }
+  ],
+  "pages": {
+    "/blog.html": 13
+  },
+  "referrers": {
+    "Direct": 10,
+    "Referral": 3
+  },
+  "daily": {
+    "2026-10-07": 13
+  },
+  "devices": {
+    "Desktop": 13
+  },
+  "totalViews": 13,
+  "uniqueIps": [
+    "::1"
+  ]
+}
