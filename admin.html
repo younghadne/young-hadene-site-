@@ -553,7 +553,7 @@
 
   <header class="header">
     <div class="header-inner">
-      <a href="index.html" class="logo">
+      <a href="/" class="logo">
         YOUNG<span class="logo-accent">HADENE</span>
         <span class="logo-sub">Toronto • Dark Trap</span>
       </a>
@@ -564,11 +564,11 @@
       </button>
       <nav>
         <ul class="nav-list">
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="music.html" class="nav-link">Music</a></li>
-          <li><a href="blog.html" class="nav-link">Blog</a></li>
-          <li><a href="contact.html" class="nav-link">Contact</a></li>
-          <li><a href="admin.html" class="nav-link active">Admin</a></li>
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/music" class="nav-link">Music</a></li>
+          <li><a href="/blog" class="nav-link">Blog</a></li>
+          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/admin" class="nav-link active">Admin</a></li>
         </ul>
       </nav>
     </div>
@@ -1314,7 +1314,7 @@
                     const deployStage = stages.find(s => s.name === 'deploy');
                     if (deployStage && deployStage.status === 'success') {
                       log.innerHTML += `\n<span class="ok">✅ Deployment complete! New blog posts are live!</span>\n`;
-                      log.innerHTML += `<span class="info">📝 <a href="blog.html" target="_blank">View blog</a></span>\n`;
+                      log.innerHTML += `<span class="info">📝 <a href="/blog" target="_blank">View blog</a></span>\n`;
                       break;
                     }
                     if (buildStage && buildStage.status === 'failure') {
