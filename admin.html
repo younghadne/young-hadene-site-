@@ -588,6 +588,15 @@
         </div>
         <button class="btn btn-primary" onclick="handleLogin()">Unlock</button>
         <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+
+        <!-- Fallback: unlock with GitHub token when the server has no password configured -->
+        <div id="ghLoginBox" style="display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border-color);text-align:left;">
+          <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-secondary);margin-bottom:6px;">Or unlock with GitHub token</label>
+          <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px;">No Cloudflare setup needed. Create a token at GitHub → Settings → Developer settings → Personal access tokens (fine-grained) → give it <strong>Contents: Read &amp; Write</strong> on <strong>younghadne/young-hadene-site-</strong>, then paste it here. Publishing commits straight to the site from this browser.</p>
+          <input type="password" id="ghTokenInput" placeholder="github_pat_..." style="width:100%;padding:14px 16px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:0.9rem;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')handleGhUnlock()">
+          <button class="btn btn-outline" onclick="handleGhUnlock()" style="width:100%;justify-content:center;">Unlock with token</button>
+          <div class="login-error" id="ghLoginError">Token rejected. Check it has Contents access to the repo.</div>
+        </div>
       </div>
 
       <!-- Dashboard -->
@@ -815,6 +824,16 @@
     function adminPassword() {
       return sessionStorage.getItem('yh_admin_pw') || '';
     }
+    function ghToken() {
+      return sessionStorage.getItem('yh_gh_token') || '';
+    }
+
+    function unlockDashboard() {
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('dashboard').classList.add('show');
+      loadPosts();
+    }
 
     async function handleLogin() {
       const pw = document.getElementById('passwordInput').value;
@@ -825,26 +844,49 @@
           body: JSON.stringify({ password: pw })
         });
         if (resp.ok) {
-          sessionStorage.setItem(SESSION_KEY, 'true');
           sessionStorage.setItem('yh_admin_pw', pw);
-          document.getElementById('loginBox').style.display = 'none';
-          document.getElementById('dashboard').classList.add('show');
-          loadPosts();
+          unlockDashboard();
         } else {
           let msg = 'Incorrect password. Try again.';
           try { const d = await resp.json(); if (d && d.error) msg = d.error; } catch {}
           const errEl = document.getElementById('loginError');
           errEl.textContent = msg;
           errEl.classList.add('show');
+          // Server has no password configured → offer the no-setup token path.
+          if (/not configured/i.test(msg)) {
+            document.getElementById('ghLoginBox').style.display = 'block';
+          }
         }
       } catch (e) {
         document.getElementById('loginError').classList.add('show');
+        document.getElementById('ghLoginBox').style.display = 'block';
+      }
+    }
+
+    // Fallback unlock: verify the GitHub token directly, no server needed.
+    async function handleGhUnlock() {
+      const tok = document.getElementById('ghTokenInput').value.trim();
+      const errEl = document.getElementById('ghLoginError');
+      errEl.classList.remove('show');
+      if (!tok) { errEl.classList.add('show'); return; }
+      try {
+        const r = await fetch('https://api.github.com/rate_limit', {
+          headers: { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' }
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        sessionStorage.setItem('yh_gh_token', tok);
+        unlockDashboard();
+        showGenSuccess('Unlocked with GitHub token. Publishing commits straight to the site.');
+      } catch (e) {
+        console.error('Token verify failed:', e);
+        errEl.classList.add('show');
       }
     }
 
     function handleLogout() {
       sessionStorage.removeItem(SESSION_KEY);
       sessionStorage.removeItem('yh_admin_pw');
+      sessionStorage.removeItem('yh_gh_token');
       document.getElementById('loginBox').style.display = 'block';
       document.getElementById('dashboard').classList.remove('show');
       document.getElementById('passwordInput').value = '';
@@ -998,20 +1040,13 @@
       showSuccess();
       resetForm();
 
-      // Sync to server: on the live site this commits to GitHub and
-      // Cloudflare redeploys (~2 min). Locally it saves via server.js.
+      // Sync: server first, direct GitHub commit as fallback (no setup needed).
       const postData = id ? posts.find(p => p.id === Number(id)) : posts[posts.length - 1];
       if (postData) {
         showGenSuccess('Publishing... committing to site.');
-        fetch('/api/posts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: adminPassword(), post: postData })
-        }).then(async r => {
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+        publishPost(postData).then(d => {
           showGenSuccess('Committed! Live at ' + (d.url || ('/blog/' + d.slug + '.html')) + ' in ~2 min after rebuild.');
-        }).catch(e => { console.error('Server sync failed:', e); alert('Saved locally but publish failed: ' + e.message + '. Post will NOT show live.'); });
+        }).catch(e => { console.error('Publish failed:', e); alert('Saved locally but publish failed: ' + e.message); });
       }
     }
 
@@ -1046,15 +1081,9 @@
       SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
       loadPosts();
       if (target && target.slug) {
-        fetch('/api/posts?slug=' + encodeURIComponent(target.slug), {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: adminPassword() })
-        }).then(async r => {
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
-          showGenSuccess('Delete committed. Gone from the live site in ~2 min.');
-        }).catch(e => console.error('Server delete failed:', e));
+        deletePostBoth(target.slug)
+          .then(() => showGenSuccess('Delete committed. Gone from the live site in ~2 min.'))
+          .catch(e => console.error('Server delete failed:', e));
       }
     }
 
@@ -1075,11 +1104,8 @@
         }
         savePosts(posts);
         loadPosts();
-        fetch('/api/posts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: adminPassword(), post: { ...post, featured: turningOn } })
-        }).catch(e => console.error('Server sync failed:', e));
+        publishPost({ ...post, featured: turningOn })
+          .catch(e => console.error('Server sync failed:', e));
       }
     }
 
@@ -1252,6 +1278,234 @@
     document.getElementById('postExcerpt').addEventListener('input', () => {
       document.getElementById('excerptCount').textContent = document.getElementById('postExcerpt').value.length;
     });
+
+    // ── Direct GitHub publishing (no Cloudflare setup needed) ──
+    // Used automatically when /api/posts is unavailable or unconfigured.
+    // Commits from this browser with your GitHub token, then Cloudflare rebuilds.
+    const GH_REPO = 'younghadne/young-hadene-site-';
+    const GH_BRANCH = 'main';
+    const GH_SITE_URL = 'https://younghadene.ca';
+    const GH_GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
+    const GH_SPOTIFY_URL = 'https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA';
+    const GH_YOUTUBE_URL = 'https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg';
+
+    function b64enc(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      return btoa(bin);
+    }
+    function b64dec(b64) {
+      const bin = atob(String(b64 || '').replace(/\n/g, ''));
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+    async function ghFile(filePath, token) {
+      const r = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + filePath + '?ref=' + GH_BRANCH, {
+        headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' }
+      });
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error('GitHub read ' + filePath + ': HTTP ' + r.status);
+      const j = await r.json();
+      return { sha: j.sha, text: b64dec(j.content) };
+    }
+    async function ghPut(filePath, text, message, token, sha) {
+      const body = { message, content: b64enc(text), branch: GH_BRANCH };
+      if (sha) body.sha = sha;
+      const r = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + filePath, {
+        method: 'PUT',
+        headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) { const t = await r.text(); throw new Error('GitHub save ' + filePath + ': HTTP ' + r.status + ' ' + t.substring(0, 160)); }
+    }
+    async function ghDel(filePath, message, token, sha) {
+      const r = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + filePath, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, sha, branch: GH_BRANCH })
+      });
+      if (!r.ok && r.status !== 404) throw new Error('GitHub delete ' + filePath + ': HTTP ' + r.status);
+    }
+
+    function pubYtId(url) {
+      const m = String(url || '').match(/(?:youtube\.com\/(?:watch\?[^ ]*v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      return m ? m[1] : null;
+    }
+    function pubYtEmbed(id) {
+      return '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:16px 0;"><iframe src="https://www.youtube.com/embed/' + id + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Embedded video"></iframe></div>';
+    }
+    function fmtPubInline(s) {
+      s = escapeHtml(s);
+      const holders = [];
+      const hold = (html) => { holders.push(html); return ' ' + (holders.length - 1) + ' '; };
+      s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, alt, src) => hold('<img src="' + src + '" alt="' + alt + '" loading="lazy" style="max-width:100%;border-radius:8px;margin:12px 0;">'));
+      s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m, txt, url) => hold('<a href="' + url + '" target="_blank" rel="noopener">' + txt + '</a>'));
+      s = s.replace(/\*\*([^*]+)\*\*/g, (m, txt) => hold('<strong>' + txt + '</strong>'));
+      s = s.replace(/\*([^*]+)\*/g, (m, txt) => hold('<em>' + txt + '</em>'));
+      s = s.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
+        url = url.replace(/[.,;:!?)]+$/, '');
+        const id = pubYtId(url);
+        return hold(id ? pubYtEmbed(id) : '<a href="' + url + '" target="_blank" rel="noopener">' + url + '</a>');
+      });
+      holders.forEach((h, i) => { s = s.split(' ' + i + ' ').join(h); });
+      return s;
+    }
+    function renderPubBody(d) {
+      const lines = String(d.content || '').split('\n');
+      let html = '', toc = [], listOpen = false, para = [];
+      const flush = () => { if (para.length) { html += '<p>' + para.join('<br>') + '</p>'; para = []; } };
+      lines.forEach(raw => {
+        const line = raw.trim();
+        if (line.startsWith('## ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } const h = line.substring(3).trim(); const id = 'sec-' + slugify(h); toc.push({ id, h }); html += '<h2 id="' + id + '">' + escapeHtml(h) + '</h2>'; }
+        else if (line.startsWith('> ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } html += '<blockquote>' + fmtPubInline(line.substring(2).trim()) + '</blockquote>'; }
+        else if (line.startsWith('- ')) { flush(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + fmtPubInline(line.substring(2).trim()) + '</li>'; }
+        else if (line === '') { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } }
+        else if (/^https?:\/\/\S+$/.test(line) && pubYtId(line)) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } html += pubYtEmbed(pubYtId(line)); }
+        else { if (listOpen) { html += '</ul>'; listOpen = false; } para.push(fmtPubInline(raw.trim())); }
+      });
+      flush(); if (listOpen) html += '</ul>';
+      let out = '';
+      const takes = String(d.takeaways || '').split('\n').map(s => s.trim()).filter(Boolean);
+      if (takes.length) out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>' + fmtPubInline(x) + '</li>').join('') + '</ul></div>';
+      if (toc.length > 1) out += '<div class="toc"><h2>Table of Contents</h2><ul>' + toc.map(x => '<li><a href="#' + x.id + '">' + escapeHtml(x.h) + '</a></li>').join('') + '</ul></div>';
+      out += html;
+      const faqs = String(d.faq || '').split('\n').map(s => s.trim()).filter(Boolean);
+      if (faqs.length) {
+        out += '<h2>Frequently Asked Questions</h2>';
+        faqs.forEach(f => { const i = f.indexOf('|'); out += '<h3>' + escapeHtml((i >= 0 ? f.substring(0, i) : f).trim()) + '</h3><p>' + fmtPubInline((i >= 0 ? f.substring(i + 1) : '').trim()) + '</p>'; });
+      }
+      return out;
+    }
+    function buildPublishHtml(d, tagList) {
+      const desc = String(d.excerpt || d.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160);
+      const tagsMeta = tagList.map(t => '<meta property="article:tag" content="' + escapeHtml(t) + '">').join('');
+      const tagsBox = tagList.length
+        ? '<div class="tags-box" style="margin:32px 0;display:flex;flex-wrap:wrap;gap:8px;">' +
+          tagList.map(t => '<span style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:6px 14px;color:var(--text-secondary);">#' + escapeHtml(t) + '</span>').join('') + '</div>'
+        : '';
+      return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+        '<title>' + escapeHtml(d.title) + ' — Young Hadene</title>' +
+        '<meta name="description" content="' + escapeHtml(desc) + '">' +
+        '<link rel="canonical" href="' + GH_SITE_URL + '/blog/' + escapeHtml(d.slug) + '">' +
+        '<meta property="og:title" content="' + escapeHtml(d.title) + '">' +
+        '<meta property="og:description" content="' + escapeHtml(desc) + '">' +
+        '<meta property="og:image" content="' + GH_SITE_URL + '/images/poster1.png">' +
+        '<meta property="og:url" content="' + GH_SITE_URL + '/blog/' + escapeHtml(d.slug) + '">' +
+        '<meta property="og:type" content="article">' + tagsMeta +
+        '<meta name="twitter:card" content="summary_large_image">' +
+        '<link rel="stylesheet" href="/css/style.css">' +
+        '<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><text y=\'28\' font-size=\'28\'>🎤</text></svg>">' +
+        '<script type="application/ld+json">' + JSON.stringify({ '@context': 'https://schema.org', '@type': 'Article', headline: d.title || '', description: desc, author: { '@type': 'Person', name: 'Young Hadene', jobTitle: 'Recording Artist', url: GH_SITE_URL + '/about.html', sameAs: ['https://www.instagram.com/YOUNGHADENE', GH_YOUTUBE_URL, GH_SPOTIFY_URL, GH_GOOGLE_URL] }, datePublished: d.date || '', image: GH_SITE_URL + '/images/poster1.png' }) + '<\/script>' +
+        '<style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap h2{font-size:1.6rem;margin-top:48px;margin-bottom:16px}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic}.article-wrap .cta-box{text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:32px;margin:40px 0}.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px}</style>' +
+        '</head><body>' +
+        '<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>' +
+        '<section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">&#8592; Back to Blog</a><div class="article-wrap">' +
+        '<div class="meta">' + escapeHtml(d.date || '') + ' &middot; <span>' + escapeHtml(d.category || 'Music') + '</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div>' +
+        '<h1>' + escapeHtml(d.title) + '</h1><div>' + renderPubBody(d) + '</div>' + tagsBox +
+        '<div class="cta-box"><h3>Find Young Hadene on Google</h3><p>Follow, get updates & leave a review.</p><p><a href="' + GH_GOOGLE_URL + '" target="_blank" rel="noopener" class="btn btn-primary">★ View Google Profile</a></p></div>' +
+        '</div></div></section>' +
+        '<footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>' +
+        '<script src="/js/main.js"><\/script></body></html>';
+    }
+    function upsertSiteListing(blogHtml, entry) {
+      const re = /<script>var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s;
+      const m = blogHtml.match(re);
+      if (!m) throw new Error('Listing block not found in blog.html');
+      const arr = JSON.parse(m[1]);
+      const idx = arr.findIndex(p => p && p.slug === entry.slug);
+      if (idx >= 0) arr[idx] = { ...arr[idx], ...entry };
+      else arr.unshift(entry);
+      return blogHtml.replace(re, () => '<script>var SERVER_POSTS = ' + JSON.stringify(arr) + ';\n<\/script>');
+    }
+    function removeSiteListing(blogHtml, slug) {
+      const re = /<script>var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s;
+      const m = blogHtml.match(re);
+      if (!m) throw new Error('Listing block not found in blog.html');
+      const arr = JSON.parse(m[1]).filter(p => p && p.slug !== slug);
+      return blogHtml.replace(re, () => '<script>var SERVER_POSTS = ' + JSON.stringify(arr) + ';\n<\/script>');
+    }
+    function normPost(p) {
+      const slug = slugify(p.slug || p.title || '');
+      return {
+        id: p.id || Date.now(), title: String(p.title || ''), slug,
+        category: String(p.category || 'Music'), content: String(p.content || ''),
+        takeaways: String(p.takeaways || ''), faq: String(p.faq || ''),
+        excerpt: String(p.excerpt || ''),
+        tags: String(p.tags || '').split(',').map(t => t.trim()).filter(Boolean).join(', '),
+        date: p.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+        dateNum: p.dateNum || Date.now(), featured: !!p.featured
+      };
+    }
+    async function publishDirect(rawPost, token) {
+      const d = normPost(rawPost);
+      if (!d.title) throw new Error('Title is required');
+      if (!d.content) throw new Error('Content is required');
+      const tagList = d.tags ? d.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+      const html = buildPublishHtml(d, tagList);
+      const existing = await ghFile('blog/' + d.slug + '.html', token);
+      await ghPut('blog/' + d.slug + '.html', html, 'Publish post: ' + d.slug + ' via admin', token, existing ? existing.sha : undefined);
+      const blogPage = await ghFile('blog.html', token);
+      if (!blogPage) throw new Error('blog.html not found in repo');
+      const entry = { id: d.id, title: d.title, slug: d.slug, category: d.category, content: d.content, date: d.date, dateNum: d.dateNum, featured: d.featured, excerpt: d.excerpt, tags: d.tags, takeaways: d.takeaways, faq: d.faq };
+      await ghPut('blog.html', upsertSiteListing(blogPage.text, entry), 'Update listing for post: ' + d.slug, token, blogPage.sha);
+      const sm = await ghFile('sitemap.xml', token);
+      if (sm && !sm.text.includes('/blog/' + d.slug + '.html')) {
+        const entryXml = '  <url><loc>' + GH_SITE_URL + '/blog/' + d.slug + '.html</loc><lastmod>' + new Date().toISOString().substring(0, 10) + '</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>\n';
+        await ghPut('sitemap.xml', sm.text.replace('</urlset>', entryXml + '</urlset>'), 'Update sitemap for post: ' + d.slug, token, sm.sha);
+      }
+      return { ok: true, slug: d.slug, url: GH_SITE_URL + '/blog/' + d.slug + '.html', via: 'github' };
+    }
+    async function deleteDirect(slug, token) {
+      const existing = await ghFile('blog/' + slug + '.html', token);
+      if (existing) await ghDel('blog/' + slug + '.html', 'Delete post: ' + slug + ' via admin', token, existing.sha);
+      const blogPage = await ghFile('blog.html', token);
+      if (blogPage) {
+        const patched = removeSiteListing(blogPage.text, slug);
+        if (patched !== blogPage.text) await ghPut('blog.html', patched, 'Remove listing for post: ' + slug, token, blogPage.sha);
+      }
+      return { ok: true, slug, via: 'github' };
+    }
+    // Server first (fast when configured), direct GitHub commit as fallback.
+    async function publishPost(post) {
+      let serverErr = null;
+      try {
+        const r = await fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword(), post })
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok) return { ...d, via: 'server' };
+        serverErr = new Error(d.error || ('HTTP ' + r.status));
+      } catch (e) {
+        serverErr = e;
+      }
+      if (ghToken()) return publishDirect(post, ghToken());
+      if (serverErr && /not configured/i.test(serverErr.message || '')) {
+        document.getElementById('ghLoginBox').style.display = 'block';
+        document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      throw serverErr;
+    }
+    async function deletePostBoth(slug) {
+      let serverErr = null;
+      try {
+        const r = await fetch('/api/posts?slug=' + encodeURIComponent(slug), {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword() })
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok) return { ...d, via: 'server' };
+        serverErr = new Error(d.error || ('HTTP ' + r.status));
+      } catch (e) {
+        serverErr = e;
+      }
+      if (ghToken()) return deleteDirect(slug, ghToken());
+      throw serverErr;
+    }
 
     // ── AI Auto-Gen (Direct Browser API) ──
     const API_STORAGE = 'yh_apiConfig';
