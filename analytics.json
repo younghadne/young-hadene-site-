@@ -895,33 +895,89 @@
       "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
       "ip": "::1",
       "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791380800683,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/blog.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791380806362,
+      "path": "/blog",
+      "referrer": "",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791380808462,
+      "path": "/music.html",
+      "referrer": "https://younghadene.ca/blog",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Music — Young Hadene | Haitian-Toronto Drill & Dark Trap Discography"
+    },
+    {
+      "ts": 1791380811832,
+      "path": "/index.html",
+      "referrer": "https://younghadene.ca/music.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791380815550,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/index.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791380822974,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/index.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791380830658,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
     }
   ],
   "pages": {
-    "/blog.html": 76,
-    "/index.html": 6,
+    "/blog.html": 80,
+    "/index.html": 7,
     "/blog/young-hadene-rap-game-takes": 8,
     "/contact.html": 8,
-    "/music.html": 8,
+    "/music.html": 9,
     "/blog/top-toronto-rappers": 1,
     "/": 1,
     "/blog/what-to-know-about-underground-canadian-hip-hop-in-2026": 1,
     "/blog/inside-young-hadene-an-honest-look": 1,
     "/blog/basement-to-stage-first-show": 1,
-    "/blog": 1
+    "/blog": 2
   },
   "referrers": {
-    "Direct": 107,
+    "Direct": 114,
     "Referral": 4,
     "Google": 1
   },
   "daily": {
-    "2026-10-07": 112
+    "2026-10-07": 119
   },
   "devices": {
-    "Desktop": 112
+    "Desktop": 119
   },
-  "totalViews": 112,
+  "totalViews": 119,
   "uniqueIps": [
     "::1"
   ]
