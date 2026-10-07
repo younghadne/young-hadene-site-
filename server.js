@@ -159,6 +159,41 @@ function injectSeoMeta(html, post, urlPath) {
 
 function escHtml(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+function slugify(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+// Renders post content with article formatting:
+//   ## Heading  -> h2 with anchor (auto Table of Contents)
+//   > quote     -> blockquote
+//   - item      -> bullet list
+//   blank lines -> paragraph breaks
+// Plus Key Takeaways box (takeaways, one per line) and FAQ section (faq lines as "Question? | Answer").
+function renderArticleBody(d) {
+  const lines = (d.content || '').split('\n');
+  let html = '', toc = [], listOpen = false, para = [];
+  const flushPara = () => { if (para.length) { html += '<p>' + para.join('<br>') + '</p>'; para = []; } };
+  const closeList = () => { if (listOpen) { html += '</ul>'; listOpen = false; } };
+  lines.forEach(raw => {
+    const line = raw.trim();
+    if (line.startsWith('## ')) { flushPara(); closeList(); const h = line.substring(3).trim(); const id = 'sec-' + slugify(h); toc.push({ id, h }); html += '<h2 id="' + id + '">' + escHtml(h) + '</h2>'; }
+    else if (line.startsWith('> ')) { flushPara(); closeList(); html += '<blockquote>' + escHtml(line.substring(2).trim()) + '</blockquote>'; }
+    else if (line.startsWith('- ')) { flushPara(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + escHtml(line.substring(2).trim()) + '</li>'; }
+    else if (line === '') { flushPara(); closeList(); }
+    else { closeList(); para.push(escHtml(raw.trim())); }
+  });
+  flushPara(); closeList();
+  let out = '';
+  const takes = (d.takeaways || '').split('\n').map(s => s.trim()).filter(Boolean);
+  if (takes.length) { out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>' + escHtml(x) + '</li>').join('') + '</ul></div>'; }
+  if (toc.length > 1) { out += '<div class="toc"><h2>Table of Contents</h2><ul>' + toc.map(x => '<li><a href="#' + x.id + '">' + escHtml(x.h) + '</a></li>').join('') + '</ul></div>'; }
+  out += html;
+  const faqs = (d.faq || '').split('\n').map(s => s.trim()).filter(Boolean);
+  if (faqs.length) {
+    out += '<h2>Frequently Asked Questions</h2>';
+    faqs.forEach(f => { const idx = f.indexOf('|'); const q = (idx >= 0 ? f.substring(0, idx) : f).trim(); const a = (idx >= 0 ? f.substring(idx + 1) : '').trim(); out += '<h3>' + escHtml(q) + '</h3><p>' + escHtml(a) + '</p>'; });
+  }
+  return out;
+}
+
 // ── Server ──
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', SITE_URL);
@@ -312,7 +347,7 @@ const server = http.createServer((req, res) => {
     .artist-card.featured { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.05); }
     .artist-card.featured .num { color: #fff; }
     @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
-  </style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="<section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">&#8592; Back to Blog</a><div class="article-wrap"><div class="meta">${data.date} &middot; <span>${escHtml(data.category)}</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1>${escHtml(data.title)}</h1><div>${(data.content || '').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</div><div class="highlight-box" style="max-width:720px;margin:24px auto 0;display:flex;gap:16px;align-items:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px 32px;"><div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div><div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div><div style="font-weight:700;"><a href="/about.html" rel="author" style="color:var(--text-primary);">Young Hadene</a></div><div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist writing on Toronto hip hop, studio life, and the 6ix underground.</div></div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
+  </style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="<section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">&#8592; Back to Blog</a><div class="article-wrap"><div class="meta">${data.date} &middot; <span>${escHtml(data.category)}</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1>${escHtml(data.title)}</h1><div>${renderArticleBody(data)}</div>div class="highlight-box" style="max-width:720px;margin:24px auto 0;display:flex;gap:16px;align-items:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px 32px;"><div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div><div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div><div style="font-weight:700;"><a href="/about.html" rel="author" style="color:var(--text-primary);">Young Hadene</a></div><div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist writing on Toronto hip hop, studio life, and the 6ix underground.</div></div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
         fs.writeFileSync(path.join(blogDir, data.slug + '.html'), tmpl);
         log(`📝 Saved post: "${data.title}" (${data.slug})`);
         return json({ ok: true, slug: data.slug });
@@ -490,7 +525,7 @@ const server = http.createServer((req, res) => {
   <header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a>
     <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>
-  <section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link" style="display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:32px;">&#8592; Back to Blog</a><div class="article-wrap" style="max-width:720px;margin:0 auto;padding:40px 0;"><div class="meta" style="color:var(--text-muted);font-size:0.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:0.08em;">${date} &middot; ${escHtml(post.category || 'Blog')} &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1 style="font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05;">${escHtml(post.title)}</h1><div style="color:var(--text-secondary);line-height:1.8;font-size:0.95rem;"><p>${content}</p></div>
+  <section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link" style="display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:32px;">&#8592; Back to Blog</a><div class="article-wrap" style="max-width:720px;margin:0 auto;padding:40px 0;"><div class="meta" style="color:var(--text-muted);font-size:0.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:0.08em;">${date} &middot; ${escHtml(post.category || 'Blog')} &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1 style="font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05;">${escHtml(post.title)}</h1><div style="color:var(--text-secondary);line-height:1.8;font-size:0.95rem;">${renderArticleBody(post)}</div>
   <div class="highlight-box" style="max-width:720px;margin:24px auto 0;style="display:flex;gap:16px;align-items:center;"><div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div><div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div><div style="font-weight:700;"><a href="/about.html" rel="author" style="color:var(--text-primary);">Young Hadene</a></div><div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist writing on Toronto hip hop, studio life, and the 6ix underground.</div></div></div>
     <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div>
     <div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div>

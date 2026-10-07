@@ -627,8 +627,19 @@
 
           <div class="form-group">
             <label>Content</label>
-            <textarea id="postContent" placeholder="Write your blog post content here..." maxlength="5000"></textarea>
-            <div class="char-count"><span id="contentCount">0</span>/5000</div>
+            <textarea id="postContent" placeholder="Write your blog post content here..." maxlength="8000"></textarea>
+            <div class="char-count"><span id="contentCount">0</span>/8000</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;line-height:1.7;">Formatting: <strong>## Heading</strong> = section (auto Table of Contents) &middot; <strong>- item</strong> = bullet list &middot; <strong>&gt; quote</strong> = pull quote &middot; blank line = new paragraph</div>
+          </div>
+
+          <div class="form-group">
+            <label>Key Takeaways (one per line — shows as the box at the top)</label>
+            <textarea id="postTakeaways" placeholder="One takeaway per line..." maxlength="1000" style="min-height:90px;"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>FAQ (one per line as: Question? | Answer)</label>
+            <textarea id="postFaq" placeholder="When is the next drop? | ..." maxlength="2000" style="min-height:90px;"></textarea>
           </div>
 
           <div class="form-group">
@@ -811,6 +822,8 @@
       const title = document.getElementById('postTitle').value.trim();
       const category = document.getElementById('postCategory').value;
       const content = document.getElementById('postContent').value.trim();
+      const takeaways = document.getElementById('postTakeaways').value.trim();
+      const faq = document.getElementById('postFaq').value.trim();
       const featured = document.getElementById('postFeatured').checked;
 
       if (!title) { alert('Enter a title.'); return; }
@@ -825,7 +838,7 @@
         // Edit existing
         const idx = posts.findIndex(p => p.id === Number(id));
         if (idx !== -1) {
-          posts[idx] = { ...posts[idx], title, category, content, featured, date: dateStr, dateNum: Date.now() };
+          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, featured, date: dateStr, dateNum: Date.now() };
         }
       } else {
         // New post
@@ -835,6 +848,8 @@
           slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
           category,
           content,
+          takeaways,
+          faq,
           date: dateStr,
           dateNum: Date.now(),
           featured
@@ -868,6 +883,8 @@
       document.getElementById('postTitle').value = post.title;
       document.getElementById('postCategory').value = post.category;
       document.getElementById('postContent').value = post.content;
+      document.getElementById('postTakeaways').value = post.takeaways || '';
+      document.getElementById('postFaq').value = post.faq || '';
       document.getElementById('postFeatured').checked = post.featured;
       document.getElementById('cancelBtn').style.display = 'inline-flex';
       updateCounts();
@@ -902,6 +919,8 @@
       document.getElementById('postTitle').value = '';
       document.getElementById('postCategory').value = 'Music';
       document.getElementById('postContent').value = '';
+      document.getElementById('postTakeaways').value = '';
+      document.getElementById('postFaq').value = '';
       document.getElementById('postFeatured').checked = false;
       document.getElementById('cancelBtn').style.display = 'none';
       updateCounts();
