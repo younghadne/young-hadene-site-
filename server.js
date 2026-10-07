@@ -563,8 +563,15 @@ const server = http.createServer((req, res) => {
     return send(res, 200, injectSeoMeta(pageHtml, post, url.pathname), 'text/html', { 'X-Robots-Tag': 'index,follow', 'Link': `<${SITE_URL}/api/sitemap.xml>; rel="alternate"; type="application/xml"` });
   }
 
+  // ── Canonical blog URL: /blog.html and /blog/ permanently redirect to /blog ──
+  if ((url.pathname === '/blog.html' || url.pathname === '/blog/') && req.method === 'GET') {
+    res.writeHead(301, { 'Location': '/blog' });
+    res.end();
+    return;
+  }
+
   // ── Clean URL support (like Cloudflare Pages auto-redirect) ──
-  const cleanPages = { '/blog': '/blog.html', '/blog/': '/blog.html', '/blog/index.html': '/blog.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html', '/about': '/about.html', '/services': '/services.html', '/privacy': '/privacy.html', '/terms': '/terms.html' };
+  const cleanPages = { '/blog': '/blog.html', '/blog/index.html': '/blog.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html', '/about': '/about.html', '/services': '/services.html', '/privacy': '/privacy.html', '/terms': '/terms.html' };
   if (cleanPages[url.pathname]) {
     url.pathname = cleanPages[url.pathname];
   }
