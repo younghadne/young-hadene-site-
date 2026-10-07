@@ -321,11 +321,14 @@ const server = http.createServer((req, res) => {
   }
 
   // ── POST /api/posts — save a blog post ──
+  // Accepts legacy raw-post bodies and the new { password, post } envelope
+  // sent by admin.html (local dev trusts the caller; live Pages uses functions/api/posts.js).
   if (url.pathname === '/api/posts' && req.method === 'POST') {
     let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
     req.on('end', () => {
       try {
-        const data = JSON.parse(body);
+        const raw = JSON.parse(body);
+        const data = (raw && raw.post) ? raw.post : raw;
         if (!data.slug) data.slug = (data.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         // Normalize tags: accept string "a, b" or array
         if (Array.isArray(data.tags)) data.tags = data.tags.join(', ');
@@ -444,10 +447,11 @@ const server = http.createServer((req, res) => {
     return json({ ok: true, uptime: process.uptime(), pid: process.pid, postCount: getBlogPosts().length });
   }
 
-  // ── DELETE /api/posts/:slug — delete a blog post ──
+  // ── DELETE /api/posts/:slug or /api/posts?slug= — delete a blog post ──
   const deleteMatch = url.pathname.match(/^\/api\/posts\/(.+)$/);
-  if (deleteMatch && req.method === 'DELETE') {
-    const slug = deleteMatch[1];
+  const deleteSlug = deleteMatch ? deleteMatch[1] : url.pathname === '/api/posts' ? url.searchParams.get('slug') : null;
+  if (deleteSlug && req.method === 'DELETE') {
+    const slug = deleteSlug;
     let posts = getBlogPosts();
     posts = posts.filter(p => p.slug !== slug);
     fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));

@@ -1,9 +1,8 @@
 // POST /api/auth — admin password check for Cloudflare Pages.
-// Reads the password from the ADMIN_PASSWORD environment variable
-// (Pages project Settings → Environment variables). Falls back to the
-// default only when the variable is not set, so the dashboard keeps
-// working immediately after deploy.
-const FALLBACK_PASSWORD = 'HadeneCalixte1998';
+// Reads the password ONLY from the ADMIN_PASSWORD environment variable
+// (Pages project Settings → Environment variables). Never hardcode secrets:
+// this file is public in the repo, so any fallback password would be visible
+// to everyone and would let strangers publish to the site.
 
 function timingSafeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
@@ -22,7 +21,13 @@ export async function onRequestPost(context) {
     } catch {
       data = {};
     }
-    const expected = (env && env.ADMIN_PASSWORD) || FALLBACK_PASSWORD;
+    const expected = env && env.ADMIN_PASSWORD;
+    if (!expected) {
+      return new Response(JSON.stringify({ ok: false, error: 'ADMIN_PASSWORD not configured on the server' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
     if (data.password && timingSafeEqual(String(data.password), String(expected))) {
       return new Response(JSON.stringify({ ok: true }), {
         status: 200,
