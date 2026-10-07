@@ -2,7 +2,7 @@
 # YOUNG HADENE — Daily Blog Post Cron Setup
 # Run once: bash scripts/setup-cron.sh
 
-SITE_DIR="$HOME/Projects/young-hadene"
+SITE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 NODE_PATH=$(which node)
 CRON_LOG="$SITE_DIR/logs"
 ENV_FILE="$SITE_DIR/.env"
@@ -55,7 +55,7 @@ echo "   npm run generate"
 echo "   Or click 'Generate Now' in admin.html settings"
 echo ""
 echo "🌐 Open admin panel:"
-echo "   http://localhost:3000/admin.html"
+echo "   http://localhost:3456/admin.html"
 echo ""
 echo "📂 Logs: $CRON_LOG"
 echo ""

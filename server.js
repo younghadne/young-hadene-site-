@@ -5,6 +5,27 @@ const path = require('path');
 const { spawn } = require('child_process');
 const zlib = require('zlib');
 
+// Load .env file if present (no dotenv dependency required)
+try {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const eq = trimmed.indexOf('=');
+      if (eq > 0) {
+        const key = trimmed.substring(0, eq).trim();
+        let val = trimmed.substring(eq + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        if (!process.env[key]) process.env[key] = val;
+      }
+    });
+  }
+} catch {}
+
 const PORT = process.env.PORT || 3456;
 const SITE_URL = process.env.SITE_URL || 'https://younghadene.ca';
 const SETTINGS_FILE = path.join(__dirname, 'settings.json');
@@ -89,7 +110,7 @@ function send(res, code, body, contentType, extraHeaders) {
   }
 }
 
-function sendJson(data, code) { send(res, code || 200, JSON.stringify(data), 'application/json'); }
+function sendJson(res, data, code) { send(res, code || 200, JSON.stringify(data), 'application/json'); }
 
 // SEO data injection for blog posts
 function injectSeoMeta(html, post, urlPath) {
@@ -107,7 +128,7 @@ function injectSeoMeta(html, post, urlPath) {
     description: desc,
     image: ogImage,
     datePublished: date,
-    author: { '@type': 'Person', 'name': 'Young Hadene' },
+    author: { '@type': 'Person', 'name': 'Young Hadene', 'jobTitle': 'Recording Artist', 'url': SITE_URL + '/about.html', 'sameAs': ['https://www.instagram.com/YOUNGHADENE', 'https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg', 'https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA'] },
     publisher: { '@type': 'Organization', 'name': 'Young Hadene', 'logo': { '@type': 'ImageObject', 'url': SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
   });
@@ -140,9 +161,13 @@ function escHtml(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 
 // ── Server ──
 const server = http.createServer((req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', SITE_URL);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
 
   const url = new URL(req.url, `http://localhost:${PORT}`);
@@ -208,7 +233,7 @@ const server = http.createServer((req, res) => {
   // ── API endpoints ──
   if (url.pathname === '/api/settings' && req.method === 'GET') { const s = load(); s.nextRun = calcNextRun(s); return json(s); }
   if (url.pathname === '/api/settings' && req.method === 'POST') {
-    let body = ''; req.on('data', c => body += c);
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
     req.on('end', () => { try { const data = JSON.parse(body); const current = load(); const updated = { ...current, ...data }; updated.nextRun = calcNextRun(updated); save(updated); log(`⚙️ Settings updated`); startScheduler(); return json(updated); } catch (e) { return json({ error: e.message }, 400); } });
     return;
   }
@@ -219,12 +244,51 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── POST /api/auth — admin login ──
+  if (url.pathname === '/api/auth' && req.method === 'POST') {
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
+    req.on('end', () => {
+      try {
+        const { password } = JSON.parse(body);
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        if (!adminPassword) { return json({ error: 'Admin password not configured' }, 500); }
+        if (password === adminPassword) { return json({ ok: true }); }
+        return json({ error: 'Invalid password' }, 401);
+      } catch (e) { return json({ error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // ── POST /api/posts — save a blog post ──
+  if (url.pathname === '/api/posts' && req.method === 'POST') {
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        if (!data.slug) data.slug = (data.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        let posts = getBlogPosts();
+        const existing = posts.findIndex(p => p.slug === data.slug);
+        if (existing >= 0) { posts[existing] = { ...posts[existing], ...data }; }
+        else { data.id = Date.now(); data.dateNum = Date.now(); posts.push(data); }
+        fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+        // Generate static HTML file
+        const blogDir = path.join(__dirname, 'blog');
+        if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
+        const tmpl = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${escHtml(data.title)} — Young Hadene</title><meta name="description" content="${escHtml((data.excerpt || data.content || '').substring(0, 160))}"><link rel="canonical" href="${SITE_URL}/blog/${escHtml(data.slug)}"><meta property="og:title" content="${escHtml(data.title)}"><meta property="og:description" content="${escHtml((data.excerpt || data.content || '').substring(0, 160))}"><meta property="og:image" content="${SITE_URL}/images/poster1.png"><meta property="og:url" content="${SITE_URL}/blog/${escHtml(data.slug)}"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"${escHtml(data.title)}","description":"${escHtml((data.excerpt || data.content || '').substring(0, 160))}","author":{"@type":"Person","name":"Young Hadene","jobTitle":"Recording Artist","url":"${SITE_URL}/about.html","sameAs":["https://www.instagram.com/YOUNGHADENE","https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg","https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA"]},"datePublished":"${data.date || new Date().toISOString().split('T')[0]}","image":"${SITE_URL}/images/poster1.png"}</script></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="page-hero"><div class="container"><span class="section-label">${escHtml(data.category || 'Blog')}</span><h1 class="section-title">${escHtml(data.title)}</h1><p class="section-subtitle">${data.date || ''} &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></p></div></section><section class="section" style="padding:40px 0 100px"><div class="container"><div class="card" style="padding:40px;max-width:800px;margin:0 auto;font-size:1rem;line-height:1.9;color:var(--text-secondary)">${(data.content || '').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</div><div class="card" style="padding:24px 32px;max-width:800px;margin:24px auto 0;display:flex;gap:16px;align-items:center;"><div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div><div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div><div style="font-weight:700;"><a href="/about.html" rel="author" style="color:var(--text-primary);">Young Hadene</a></div><div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist writing on Toronto hip hop, studio life, and the 6ix underground.</div></div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
+        fs.writeFileSync(path.join(blogDir, data.slug + '.html'), tmpl);
+        log(`📝 Saved post: "${data.title}" (${data.slug})`);
+        return json({ ok: true, slug: data.slug });
+      } catch (e) { return json({ error: e.message }, 400); }
+    });
+    return;
+  }
+
   // ── Analytics ──
   function loadAnalytics() { try { return JSON.parse(fs.readFileSync(ANALYTICS_FILE, 'utf8')); } catch { return { hits: [], pages: {}, referrers: {}, daily: {}, devices: {}, totalViews: 0, uniqueIps: [] }; } }
   function saveAnalytics(a) { fs.writeFileSync(ANALYTICS_FILE, JSON.stringify(a, null, 2)); }
 
   if (url.pathname === '/api/track' && req.method === 'POST') {
-    let body = ''; req.on('data', c => body += c);
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
     req.on('end', () => {
       try {
         const data = JSON.parse(body); const ip = req.socket.remoteAddress || req.headers['x-forwarded-for'] || 'unknown'; const ts = Date.now();
@@ -270,9 +334,22 @@ const server = http.createServer((req, res) => {
     return json({ ok: true, uptime: process.uptime(), pid: process.pid, postCount: getBlogPosts().length });
   }
 
+  // ── DELETE /api/posts/:slug — delete a blog post ──
+  const deleteMatch = url.pathname.match(/^\/api\/posts\/(.+)$/);
+  if (deleteMatch && req.method === 'DELETE') {
+    const slug = deleteMatch[1];
+    let posts = getBlogPosts();
+    posts = posts.filter(p => p.slug !== slug);
+    fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+    const staticFile = path.join(__dirname, 'blog', slug + '.html');
+    if (fs.existsSync(staticFile)) fs.unlinkSync(staticFile);
+    log(`🗑️ Deleted post: ${slug}`);
+    return json({ ok: true });
+  }
+
   // ── Cloudflare API Proxy ──
   if (url.pathname === '/api/cf-proxy' && req.method === 'POST') {
-    let body = ''; req.on('data', c => body += c);
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
     req.on('end', () => {
       try {
         const { method, path, headers: reqHeaders, data } = JSON.parse(body);
@@ -300,7 +377,7 @@ const server = http.createServer((req, res) => {
   // ── AI Chat Proxy (uses opencode.json API key) ──
   if (url.pathname === '/api/ai-chat' && (req.method === 'POST' || req.method === 'OPTIONS')) {
     if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
-    let body = ''; req.on('data', c => body += c);
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
     req.on('end', () => {
       try {
         let key;
@@ -351,6 +428,11 @@ const server = http.createServer((req, res) => {
   const blogMatch = url.pathname.match(/^\/blog\/(.+)\.html$/) || (url.pathname !== '/blog' && url.pathname !== '/blog.html' && url.pathname.match(/^\/blog\/(.+)$/));
   if (blogMatch) {
     const slug = blogMatch[1];
+    const staticFile = path.join(__dirname, 'blog', slug + '.html');
+    if (fs.existsSync(staticFile)) {
+      const html = fs.readFileSync(staticFile, 'utf8');
+      return send(res, 200, html, 'text/html', { 'X-Robots-Tag': 'index,follow' });
+    }
     const posts = getBlogPosts();
     const post = posts.find(p => p.slug === slug);
     if (!post) { res.writeHead(404, { 'Content-Type': 'text/html' }); return res.end('<!DOCTYPE html><html><head><title>Post Not Found</title><meta name="robots" content="noindex"></head><body><h1>Not Found</h1></body></html>'); }
@@ -371,7 +453,13 @@ const server = http.createServer((req, res) => {
     <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>
   <section class="page-hero"><div class="container"><span class="section-label">${escHtml(post.category || 'Blog')}</span><h1 class="section-title">${escHtml(post.title)}</h1><p class="section-subtitle">${date}</p></div></section>
-  <section class="section" style="padding:40px 0 100px"><div class="container"><div class="card" style="padding:40px;max-width:800px;margin:0 auto;font-size:1rem;line-height:1.9;color:var(--text-secondary)"><p>${content}</p></div></div></section>
+  <section class="section" style="padding:40px 0 100px"><div class="container"><div class="card" style="padding:40px;max-width:800px;margin:0 auto;font-size:1rem;line-height:1.9;color:var(--text-secondary)"><p>${content}</p></div>
+  <div class="card" style="padding:24px 32px;max-width:800px;margin:24px auto 0;display:flex;gap:16px;align-items:center;">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div>
+    <div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div>
+    <div style="font-weight:700;"><a href="/about.html" rel="author" style="color:var(--text-primary);">Young Hadene</a></div>
+    <div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist. Haitian-born, Toronto-raised — writing on Toronto hip hop, studio life, and the 6ix underground.</div></div>
+  </div></div></section>
   <footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>
   <script src="/js/main.js"></script>
   <script>(function(){var d={path:location.pathname,referrer:document.referrer||'',ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon('/api/track',JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open('POST','/api/track',true);x.setRequestHeader('Content-Type','application/json');x.send(JSON.stringify(d))}})();</script>
@@ -397,6 +485,14 @@ const server = http.createServer((req, res) => {
     }
     try {
       let html = fs.readFileSync(filePath, 'utf8');
+      // Inject blog posts data into blog listing page
+      if (url.pathname === '/blog.html' || url.pathname === '/blog/') {
+        const posts = getBlogPosts();
+        if (posts.length > 0) {
+          const postsJson = JSON.stringify(posts);
+          html = html.replace('</head>', '<script>var SERVER_POSTS = ' + postsJson + ';\n</script>\n</head>');
+        }
+      }
       // Add RSS alternate link + additional meta to all HTML pages
       const rssLink = `<link rel="alternate" type="application/rss+xml" title="Young Hadene Blog RSS" href="${SITE_URL}/api/rss.xml">\n`;
       const webSiteSchema = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Young Hadene","url":"${SITE_URL}","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"${SITE_URL}/blog.html?search={search_term_string}"},"query-input":"required name=search_term_string"}}</script>\n`;
