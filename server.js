@@ -601,7 +601,7 @@ const server = http.createServer((req, res) => {
       const breadcrumbSchema = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"${SITE_URL}/"},{"@type":"ListItem","position":2,"name":"${url.pathname === '/' ? 'Home' : url.pathname.replace(/\.html$/,'').replace(/^\//,'')}","item":"${SITE_URL}${url.pathname}"}]}</script>\n`;
       html = html.replace('</head>', rssLink + webSiteSchema + breadcrumbSchema + '\n</head>');
 
-      const cacheMaxAge = url.pathname.includes('.html') ? 600 : 86400;
+      const cacheMaxAge = ext === '.html' ? 60 : 86400;
       const h = { 'Cache-Control': `public, max-age=${cacheMaxAge}`, 'X-Robots-Tag': 'index,follow', 'Link': `<${SITE_URL}/api/sitemap.xml>; rel="alternate"; type="application/xml"` };
       return send(res, 200, html, MIME[ext] || 'text/html', h);
     } catch (e) {
@@ -619,7 +619,7 @@ const server = http.createServer((req, res) => {
     return send(res, 404, notFound, 'text/html');
   }
 
-  const cacheMaxAge = ext === '.html' ? 600 : ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.webp' || ext === '.svg' || ext === '.ico' ? 86400 : 3600;
+  const cacheMaxAge = ext === '.html' ? 60 : ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.webp' || ext === '.svg' || ext === '.ico' ? 86400 : 3600;
   const h = { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Cache-Control': `public, max-age=${cacheMaxAge}` };
   if (ext === '.html') h['X-Robots-Tag'] = 'index,follow';
 
