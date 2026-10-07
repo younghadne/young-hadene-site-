@@ -156,7 +156,7 @@
   <!-- ===== HEADER ===== -->
   <header class="header">
     <div class="header-inner">
-      <a href="index.html" class="logo">
+      <a href="/" class="logo">
         YOUNG<span class="logo-accent">HADENE</span>
         <span class="logo-sub">Toronto • Dark Trap</span>
       </a>
@@ -167,11 +167,11 @@
       </button>
       <nav>
         <ul class="nav-list">
-          <li><a href="index.html" class="nav-link active">Home</a></li>
-          <li><a href="music.html" class="nav-link">Music</a></li>
-          <li><a href="blog.html" class="nav-link">Blog</a></li>
-          <li><a href="contact.html" class="nav-link">Contact</a></li>
-          <li><a href="admin.html" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
+          <li><a href="/" class="nav-link active">Home</a></li>
+          <li><a href="/music" class="nav-link">Music</a></li>
+          <li><a href="/blog" class="nav-link">Blog</a></li>
+          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/admin" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
         </ul>
       </nav>
     </div>
@@ -513,7 +513,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="index.html" class="logo">
+          <a href="/" class="logo">
             YOUNG<span class="logo-accent">HADENE</span>
             <span class="logo-sub">Toronto • Dark Trap</span>
           </a>
@@ -529,11 +529,11 @@
         <div>
           <h4>Navigate</h4>
           <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="music.html">Music</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="admin.html">Admin</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/music">Music</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/admin">Admin</a></li>
           </ul>
         </div>
         <div>
@@ -558,13 +558,14 @@
       <div class="footer-bottom">
         <p>&copy; 2026 Young Hadene. All rights reserved. Toronto. 6ix.</p>
         <div class="footer-bottom-links">
-          <a href="/privacy.html">Privacy</a>
-          <a href="/terms.html">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
         </div>
       </div>
     </div>
   </footer>
 
   <script src="js/main.js"></script>
+  <script>(function(){var d={path:location.pathname,referrer:document.referrer||"",ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon("/api/track",JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open("POST","/api/track",true);x.setRequestHeader("Content-Type","application/json");x.send(JSON.stringify(d))}})();</script>
 </body>
 </html>
