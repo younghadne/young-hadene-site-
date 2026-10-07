@@ -165,8 +165,31 @@ function slugify(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
 //   ## Heading  -> h2 with anchor (auto Table of Contents)
 //   > quote     -> blockquote
 //   - item      -> bullet list
+//   [text](url) -> hyperlink, ![alt](url) -> image, bare URLs auto-link
+//   YouTube link alone on a line -> embedded video
 //   blank lines -> paragraph breaks
 // Plus Key Takeaways box (takeaways, one per line) and FAQ section (faq lines as "Question? | Answer").
+function ytId(url) {
+  const m = (url || '').match(/(?:youtube\.com\/(?:watch\?[^ ]*v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  return m ? m[1] : null;
+}
+function ytEmbed(id) {
+  return '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:16px 0;"><iframe src="https://www.youtube.com/embed/' + id + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Embedded video"></iframe></div>';
+}
+function fmtInline(s) {
+  s = escHtml(s);
+  const holders = [];
+  const hold = (html) => { holders.push(html); return ' ' + (holders.length - 1) + ' '; };
+  s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, alt, src) => hold('<img src="' + src + '" alt="' + alt + '" loading="lazy" style="max-width:100%;border-radius:8px;margin:12px 0;">'));
+  s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m, txt, url) => hold('<a href="' + url + '" target="_blank" rel="noopener">' + txt + '</a>'));
+  s = s.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
+    url = url.replace(/[.,;:!?)]+$/, '');
+    const id = ytId(url);
+    return hold(id ? ytEmbed(id) : '<a href="' + url + '" target="_blank" rel="noopener">' + url + '</a>');
+  });
+  holders.forEach((h, i) => { s = s.split(' ' + i + ' ').join(h); });
+  return s;
+}
 function renderArticleBody(d) {
   const lines = (d.content || '').split('\n');
   let html = '', toc = [], listOpen = false, para = [];
@@ -175,21 +198,22 @@ function renderArticleBody(d) {
   lines.forEach(raw => {
     const line = raw.trim();
     if (line.startsWith('## ')) { flushPara(); closeList(); const h = line.substring(3).trim(); const id = 'sec-' + slugify(h); toc.push({ id, h }); html += '<h2 id="' + id + '">' + escHtml(h) + '</h2>'; }
-    else if (line.startsWith('> ')) { flushPara(); closeList(); html += '<blockquote>' + escHtml(line.substring(2).trim()) + '</blockquote>'; }
-    else if (line.startsWith('- ')) { flushPara(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + escHtml(line.substring(2).trim()) + '</li>'; }
+    else if (line.startsWith('> ')) { flushPara(); closeList(); html += '<blockquote>' + fmtInline(line.substring(2).trim()) + '</blockquote>'; }
+    else if (line.startsWith('- ')) { flushPara(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + fmtInline(line.substring(2).trim()) + '</li>'; }
     else if (line === '') { flushPara(); closeList(); }
-    else { closeList(); para.push(escHtml(raw.trim())); }
+    else if (/^https?:\/\/\S+$/.test(line) && ytId(line)) { flushPara(); closeList(); html += ytEmbed(ytId(line)); }
+    else { closeList(); para.push(fmtInline(raw.trim())); }
   });
   flushPara(); closeList();
   let out = '';
   const takes = (d.takeaways || '').split('\n').map(s => s.trim()).filter(Boolean);
-  if (takes.length) { out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>' + escHtml(x) + '</li>').join('') + '</ul></div>'; }
+  if (takes.length) { out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>' + fmtInline(x) + '</li>').join('') + '</ul></div>'; }
   if (toc.length > 1) { out += '<div class="toc"><h2>Table of Contents</h2><ul>' + toc.map(x => '<li><a href="#' + x.id + '">' + escHtml(x.h) + '</a></li>').join('') + '</ul></div>'; }
   out += html;
   const faqs = (d.faq || '').split('\n').map(s => s.trim()).filter(Boolean);
   if (faqs.length) {
     out += '<h2>Frequently Asked Questions</h2>';
-    faqs.forEach(f => { const idx = f.indexOf('|'); const q = (idx >= 0 ? f.substring(0, idx) : f).trim(); const a = (idx >= 0 ? f.substring(idx + 1) : '').trim(); out += '<h3>' + escHtml(q) + '</h3><p>' + escHtml(a) + '</p>'; });
+    faqs.forEach(f => { const idx = f.indexOf('|'); const q = (idx >= 0 ? f.substring(0, idx) : f).trim(); const a = (idx >= 0 ? f.substring(idx + 1) : '').trim(); out += '<h3>' + escHtml(q) + '</h3><p>' + fmtInline(a) + '</p>'; });
   }
   return out;
 }

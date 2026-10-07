@@ -627,9 +627,9 @@
 
           <div class="form-group">
             <label>Content</label>
-            <textarea id="postContent" placeholder="Write your blog post content here..."></textarea>
+            <textarea id="postContent" placeholder="Write your blog post content here..." style="min-height:420px;"></textarea>
             <div class="char-count"><span id="contentCount">0</span> characters, no limit</div>
-            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;line-height:1.7;">Formatting: <strong>## Heading</strong> = section (auto Table of Contents) &middot; <strong>- item</strong> = bullet list &middot; <strong>&gt; quote</strong> = pull quote &middot; blank line = new paragraph</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;line-height:1.7;">Formatting: <strong>## Heading</strong> = section (auto Table of Contents) &middot; <strong>- item</strong> = bullet list &middot; <strong>&gt; quote</strong> = pull quote &middot; <strong>[text](https://…)</strong> = link &middot; <strong>![alt](https://…image)</strong> = image &middot; paste a <strong>YouTube link</strong> on its own line = embedded video &middot; blank line = new paragraph</div>
           </div>
 
           <div class="form-group">
@@ -1023,6 +1023,27 @@
     // ---- Live article preview (mirrors server renderer) ----
     function slugify(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 
+    function ytId(url) {
+      const m = (url || '').match(/(?:youtube\.com\/(?:watch\?[^ ]*v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      return m ? m[1] : null;
+    }
+    function ytEmbed(id) {
+      return '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:16px 0;"><div style="position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg-card);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:0.8rem;">▶ YouTube video (plays on the live post)</div></div>';
+    }
+    function fmtInline(s) {
+      s = escapeHtml(s);
+      const holders = [];
+      const hold = (html) => { holders.push(html); return ' ' + (holders.length - 1) + ' '; };
+      s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, alt, src) => hold('<em>🖼 Image:</em> ' + alt));
+      s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m, txt, url) => hold('<a>' + txt + '</a>'));
+      s = s.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
+        url = url.replace(/[.,;:!?)]+$/, '');
+        return hold(ytId(url) ? '▶ [embedded video]' : url);
+      });
+      holders.forEach((h, i) => { s = s.split(' ' + i + ' ').join(h); });
+      return s;
+    }
+
     function renderPreviewBody(content, takeaways, faq) {
       const lines = (content || '').split('\n');
       let html = '', toc = [], listOpen = false, para = [];
@@ -1030,21 +1051,22 @@
       lines.forEach(raw => {
         const line = raw.trim();
         if (line.startsWith('## ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } const h = line.substring(3).trim(); const id = 'sec-' + slugify(h); toc.push({ id, h }); html += '<h2>' + escapeHtml(h) + '</h2>'; }
-        else if (line.startsWith('> ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } html += '<blockquote>' + escapeHtml(line.substring(2).trim()) + '</blockquote>'; }
-        else if (line.startsWith('- ')) { flush(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + escapeHtml(line.substring(2).trim()) + '</li>'; }
+        else if (line.startsWith('> ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } html += '<blockquote>' + fmtInline(line.substring(2).trim()) + '</blockquote>'; }
+        else if (line.startsWith('- ')) { flush(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + fmtInline(line.substring(2).trim()) + '</li>'; }
         else if (line === '') { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } }
-        else { if (listOpen) { html += '</ul>'; listOpen = false; } para.push(escapeHtml(raw.trim())); }
+        else if (/^https?:\/\/\S+$/.test(line) && ytId(line)) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } html += ytEmbed(ytId(line)); }
+        else { if (listOpen) { html += '</ul>'; listOpen = false; } para.push(fmtInline(raw.trim())); }
       });
       flush(); if (listOpen) html += '</ul>';
       let out = '';
       const takes = (takeaways || '').split('\n').map(s => s.trim()).filter(Boolean);
-      if (takes.length) out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>✓ ' + escapeHtml(x) + '</li>').join('') + '</ul></div>';
+      if (takes.length) out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>✓ ' + fmtInline(x) + '</li>').join('') + '</ul></div>';
       if (toc.length > 1) out += '<div class="toc"><h2>Table of Contents</h2><ul>' + toc.map(x => '<li><a>' + escapeHtml(x.h) + '</a></li>').join('') + '</ul></div>';
       out += html;
       const faqs = (faq || '').split('\n').map(s => s.trim()).filter(Boolean);
       if (faqs.length) {
         out += '<h2>Frequently Asked Questions</h2>';
-        faqs.forEach(f => { const i = f.indexOf('|'); out += '<h3>' + escapeHtml((i >= 0 ? f.substring(0, i) : f).trim()) + '</h3><p>' + escapeHtml((i >= 0 ? f.substring(i + 1) : '').trim()) + '</p>'; });
+        faqs.forEach(f => { const i = f.indexOf('|'); out += '<h3>' + escapeHtml((i >= 0 ? f.substring(0, i) : f).trim()) + '</h3><p>' + fmtInline((i >= 0 ? f.substring(i + 1) : '').trim()) + '</p>'; });
       }
       return out;
     }

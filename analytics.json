@@ -319,23 +319,31 @@
       "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
       "ip": "::1",
       "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791378138965,
+      "path": "/blog.html",
+      "referrer": "https://younghadene.ca/admin.html",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
     }
   ],
   "pages": {
-    "/blog.html": 39,
+    "/blog.html": 40,
     "/index.html": 1
   },
   "referrers": {
-    "Direct": 37,
+    "Direct": 38,
     "Referral": 3
   },
   "daily": {
-    "2026-10-07": 40
+    "2026-10-07": 41
   },
   "devices": {
-    "Desktop": 40
+    "Desktop": 41
   },
-  "totalViews": 40,
+  "totalViews": 41,
   "uniqueIps": [
     "::1"
   ]
