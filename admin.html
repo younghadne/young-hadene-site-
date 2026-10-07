@@ -588,15 +588,6 @@
         </div>
         <button class="btn btn-primary" onclick="handleLogin()">Unlock</button>
         <div class="login-error" id="loginError">Incorrect password. Try again.</div>
-
-        <!-- Fallback: unlock with GitHub token when the server has no password configured -->
-        <div id="ghLoginBox" style="display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border-color);text-align:left;">
-          <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-secondary);margin-bottom:6px;">Or unlock with GitHub token</label>
-          <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px;">No Cloudflare setup needed. Create a token at GitHub → Settings → Developer settings → Personal access tokens (fine-grained) → give it <strong>Contents: Read &amp; Write</strong> on <strong>younghadne/young-hadene-site-</strong>, then paste it here. Publishing commits straight to the site from this browser.</p>
-          <input type="password" id="ghTokenInput" placeholder="github_pat_..." style="width:100%;padding:14px 16px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:0.9rem;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')handleGhUnlock()">
-          <button class="btn btn-outline" onclick="handleGhUnlock()" style="width:100%;justify-content:center;">Unlock with token</button>
-          <div class="login-error" id="ghLoginError">Token rejected. Check it has Contents access to the repo.</div>
-        </div>
       </div>
 
       <!-- Dashboard -->
@@ -835,8 +826,29 @@
       loadPosts();
     }
 
+    // One field unlocks both ways: server password when the server is set
+    // up, otherwise the typed value is tried as a GitHub token (verified
+    // with the API, then publishing commits straight to the site).
+    async function tryTokenLogin(pw) {
+      try {
+        const r = await fetch('https://api.github.com/rate_limit', {
+          headers: { Authorization: 'Bearer ' + pw, Accept: 'application/vnd.github+json' }
+        });
+        if (!r.ok) return false;
+        sessionStorage.setItem('yh_gh_token', pw);
+        unlockDashboard();
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
     async function handleLogin() {
       const pw = document.getElementById('passwordInput').value;
+      if (!pw) {
+        document.getElementById('loginError').classList.add('show');
+        return;
+      }
       try {
         const resp = await fetch('/api/auth', {
           method: 'POST',
@@ -846,40 +858,21 @@
         if (resp.ok) {
           sessionStorage.setItem('yh_admin_pw', pw);
           unlockDashboard();
-        } else {
-          let msg = 'Incorrect password. Try again.';
-          try { const d = await resp.json(); if (d && d.error) msg = d.error; } catch {}
-          const errEl = document.getElementById('loginError');
-          errEl.textContent = msg;
-          errEl.classList.add('show');
-          // Server has no password configured → offer the no-setup token path.
-          if (/not configured/i.test(msg)) {
-            document.getElementById('ghLoginBox').style.display = 'block';
-          }
+          return;
         }
-      } catch (e) {
-        document.getElementById('loginError').classList.add('show');
-        document.getElementById('ghLoginBox').style.display = 'block';
-      }
-    }
-
-    // Fallback unlock: verify the GitHub token directly, no server needed.
-    async function handleGhUnlock() {
-      const tok = document.getElementById('ghTokenInput').value.trim();
-      const errEl = document.getElementById('ghLoginError');
-      errEl.classList.remove('show');
-      if (!tok) { errEl.classList.add('show'); return; }
-      try {
-        const r = await fetch('https://api.github.com/rate_limit', {
-          headers: { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' }
-        });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        sessionStorage.setItem('yh_gh_token', tok);
-        unlockDashboard();
-        showGenSuccess('Unlocked with GitHub token. Publishing commits straight to the site.');
-      } catch (e) {
-        console.error('Token verify failed:', e);
+        let msg = 'Incorrect password. Try again.';
+        try { const d = await resp.json(); if (d && d.error) msg = d.error; } catch {}
+        if (/not configured/i.test(msg)) {
+          // Server isn't set up — this password may be a GitHub token.
+          if (await tryTokenLogin(pw)) return;
+          msg = 'Server login is not set up. Paste a GitHub token instead (Settings → Developer settings → Personal access tokens, Contents Read & Write on younghadne/young-hadene-site-).';
+        }
+        const errEl = document.getElementById('loginError');
+        errEl.textContent = msg;
         errEl.classList.add('show');
+      } catch (e) {
+        if (await tryTokenLogin(pw)) return;
+        document.getElementById('loginError').classList.add('show');
       }
     }
 
@@ -1483,10 +1476,6 @@
         serverErr = e;
       }
       if (ghToken()) return publishDirect(post, ghToken());
-      if (serverErr && /not configured/i.test(serverErr.message || '')) {
-        document.getElementById('ghLoginBox').style.display = 'block';
-        document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
       throw serverErr;
     }
     async function deletePostBoth(slug) {
