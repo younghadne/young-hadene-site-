@@ -642,6 +642,21 @@
             <textarea id="postFaq" placeholder="When is the next drop? | ..." maxlength="2000" style="min-height:90px;"></textarea>
           </div>
 
+          <div class="form-row">
+            <div class="form-group">
+              <label>Excerpt (shows in search + previews)</label>
+              <input type="text" id="postExcerpt" placeholder="Short summary..." maxlength="160">
+              <div class="char-count"><span id="excerptCount">0</span>/160</div>
+            </div>
+            <div class="form-group">
+              <label>URL Slug (auto from title)</label>
+              <input type="text" id="postSlug" placeholder="auto-generated" readonly style="opacity:0.7">
+            </div>
+          </div>
+          <div class="form-group">
+            <div style="font-size:0.75rem;color:var(--text-muted);"><span id="wordCount">0 words</span> &middot; <span id="readTime">0 min read</span></div>
+          </div>
+
           <div class="form-group">
             <label>
               <input type="checkbox" id="postFeatured" style="width:auto;accent-color:var(--accent);margin-right:8px">
@@ -651,7 +666,26 @@
 
           <div class="form-actions">
             <button class="btn btn-primary" onclick="savePost()">Publish Post</button>
+            <button class="btn btn-outline" onclick="togglePreview()">Preview</button>
             <button class="btn btn-ghost" onclick="resetForm()" style="display:none" id="cancelBtn">Cancel</button>
+          </div>
+
+          <style>
+            #previewBody h1 { font-size: 1.8rem; margin-bottom: 12px; line-height: 1.1; }
+            #previewBody h2 { font-size: 1.3rem; margin-top: 28px; margin-bottom: 10px; font-family: var(--font-heading); }
+            #previewBody h3 { font-size: 1rem; margin-top: 18px; margin-bottom: 8px; color: var(--accent); }
+            #previewBody p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 14px; font-size: 0.9rem; }
+            #previewBody ul { color: var(--text-secondary); line-height: 1.8; margin-bottom: 14px; padding-left: 24px; font-size: 0.9rem; }
+            #previewBody blockquote { border-left: 3px solid var(--accent); padding: 12px 16px; margin: 16px 0; background: var(--bg-card); font-style: italic; color: var(--text-secondary); }
+            #previewBody .takeaways, #previewBody .toc { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 18px 20px; margin-bottom: 18px; }
+            #previewBody .takeaways h2, #previewBody .toc h2 { margin-top: 0; font-size: 1.05rem; }
+            #previewBody .takeaways li { list-style: none; }
+            #previewBody .toc ul { list-style: none; padding: 0; margin: 0; }
+            #previewBody .toc a { color: var(--text-secondary); font-size: 0.82rem; }
+          </style>
+          <div id="previewPane" style="display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border-color);">
+            <label style="display:block;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-secondary);margin-bottom:12px;">Live Preview — exactly how it publishes</label>
+            <div id="previewBody" class="article-wrap" style="background:var(--bg-primary);border:1px solid var(--border-color);border-radius:var(--radius);padding:32px;"></div>
           </div>
         </div>
 
@@ -659,6 +693,35 @@
         <div class="posts-list">
           <h3>All Posts</h3>
           <div id="postsContainer"></div>
+        </div>
+
+        <!-- Site Stats -->
+        <div class="settings-section">
+          <h3>Site <span class="text-accent">Stats</span></h3>
+          <div class="settings-desc">Page views tracked across the whole site. <span id="statsUpdated"></span></div>
+          <div class="settings-status" id="statsBoxes">
+            <div class="stat-box"><div class="stat-num" id="stViews">–</div><div class="stat-label">Total Views</div></div>
+            <div class="stat-box"><div class="stat-num" id="stUnique">–</div><div class="stat-label">Unique Visitors</div></div>
+            <div class="stat-box"><div class="stat-num" id="stMonth">–</div><div class="stat-label">Views (30d)</div></div>
+            <div class="stat-box"><div class="stat-num" id="stBounce">–</div><div class="stat-label">Bounce Rate</div></div>
+          </div>
+          <div class="settings-grid" style="margin-top:16px">
+            <div class="settings-card full">
+              <label>Views — last 30 days</label>
+              <div id="statsChart" style="display:flex;align-items:flex-end;gap:3px;height:90px;margin-top:8px;"></div>
+            </div>
+            <div class="settings-card full">
+              <label>Top pages</label>
+              <div id="statsPages" class="mono-box" style="margin-top:8px;line-height:2;"></div>
+            </div>
+            <div class="settings-card full">
+              <label>Latest visits</label>
+              <div id="statsRecent" class="mono-box" style="margin-top:8px;line-height:2;"></div>
+            </div>
+          </div>
+          <div class="form-actions" style="margin-top:16px">
+            <button class="btn btn-outline" onclick="loadStats()">Refresh Stats</button>
+          </div>
         </div>
 
         <!-- AI Auto-Gen Settings -->
@@ -824,6 +887,7 @@
       const content = document.getElementById('postContent').value.trim();
       const takeaways = document.getElementById('postTakeaways').value.trim();
       const faq = document.getElementById('postFaq').value.trim();
+      const excerpt = document.getElementById('postExcerpt').value.trim();
       const featured = document.getElementById('postFeatured').checked;
 
       if (!title) { alert('Enter a title.'); return; }
@@ -838,7 +902,7 @@
         // Edit existing
         const idx = posts.findIndex(p => p.id === Number(id));
         if (idx !== -1) {
-          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, featured, date: dateStr, dateNum: Date.now() };
+          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, excerpt, featured, date: dateStr, dateNum: Date.now() };
         }
       } else {
         // New post
@@ -850,6 +914,7 @@
           content,
           takeaways,
           faq,
+          excerpt,
           date: dateStr,
           dateNum: Date.now(),
           featured
@@ -885,7 +950,9 @@
       document.getElementById('postContent').value = post.content;
       document.getElementById('postTakeaways').value = post.takeaways || '';
       document.getElementById('postFaq').value = post.faq || '';
+      document.getElementById('postExcerpt').value = post.excerpt || '';
       document.getElementById('postFeatured').checked = post.featured;
+      refreshPreview();
       document.getElementById('cancelBtn').style.display = 'inline-flex';
       updateCounts();
       document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -921,6 +988,11 @@
       document.getElementById('postContent').value = '';
       document.getElementById('postTakeaways').value = '';
       document.getElementById('postFaq').value = '';
+      document.getElementById('postExcerpt').value = '';
+      document.getElementById('postSlug').value = '';
+      document.getElementById('previewPane').style.display = 'none';
+      document.getElementById('wordCount').textContent = '0 words';
+      document.getElementById('readTime').textContent = '0 min read';
       document.getElementById('postFeatured').checked = false;
       document.getElementById('cancelBtn').style.display = 'none';
       updateCounts();
@@ -947,6 +1019,67 @@
       div.textContent = str;
       return div.innerHTML;
     }
+
+    // ---- Live article preview (mirrors server renderer) ----
+    function slugify(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+    function renderPreviewBody(content, takeaways, faq) {
+      const lines = (content || '').split('\n');
+      let html = '', toc = [], listOpen = false, para = [];
+      const flush = () => { if (para.length) { html += '<p>' + para.join('<br>') + '</p>'; para = []; } };
+      lines.forEach(raw => {
+        const line = raw.trim();
+        if (line.startsWith('## ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } const h = line.substring(3).trim(); const id = 'sec-' + slugify(h); toc.push({ id, h }); html += '<h2>' + escapeHtml(h) + '</h2>'; }
+        else if (line.startsWith('> ')) { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } html += '<blockquote>' + escapeHtml(line.substring(2).trim()) + '</blockquote>'; }
+        else if (line.startsWith('- ')) { flush(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + escapeHtml(line.substring(2).trim()) + '</li>'; }
+        else if (line === '') { flush(); if (listOpen) { html += '</ul>'; listOpen = false; } }
+        else { if (listOpen) { html += '</ul>'; listOpen = false; } para.push(escapeHtml(raw.trim())); }
+      });
+      flush(); if (listOpen) html += '</ul>';
+      let out = '';
+      const takes = (takeaways || '').split('\n').map(s => s.trim()).filter(Boolean);
+      if (takes.length) out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>✓ ' + escapeHtml(x) + '</li>').join('') + '</ul></div>';
+      if (toc.length > 1) out += '<div class="toc"><h2>Table of Contents</h2><ul>' + toc.map(x => '<li><a>' + escapeHtml(x.h) + '</a></li>').join('') + '</ul></div>';
+      out += html;
+      const faqs = (faq || '').split('\n').map(s => s.trim()).filter(Boolean);
+      if (faqs.length) {
+        out += '<h2>Frequently Asked Questions</h2>';
+        faqs.forEach(f => { const i = f.indexOf('|'); out += '<h3>' + escapeHtml((i >= 0 ? f.substring(0, i) : f).trim()) + '</h3><p>' + escapeHtml((i >= 0 ? f.substring(i + 1) : '').trim()) + '</p>'; });
+      }
+      return out;
+    }
+
+    function refreshPreview() {
+      const title = document.getElementById('postTitle').value.trim() || 'Untitled Post';
+      const content = document.getElementById('postContent').value;
+      const takeaways = document.getElementById('postTakeaways').value;
+      const faq = document.getElementById('postFaq').value;
+      document.getElementById('previewBody').innerHTML = '<h1>' + escapeHtml(title) + '</h1>' + renderPreviewBody(content, takeaways, faq);
+      const words = (content.trim() ? content.trim().split(/\s+/).length : 0);
+      document.getElementById('wordCount').textContent = words + ' words';
+      document.getElementById('readTime').textContent = Math.max(1, Math.round(words / 200)) + ' min read';
+      document.getElementById('postSlug').value = slugify(title);
+      const ex = document.getElementById('postExcerpt');
+      if (ex) document.getElementById('excerptCount').textContent = ex.value.length;
+    }
+
+    function togglePreview() {
+      const pane = document.getElementById('previewPane');
+      const show = pane.style.display === 'none';
+      if (show) refreshPreview();
+      pane.style.display = show ? 'block' : 'none';
+      if (show) pane.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    ['postTitle', 'postContent', 'postTakeaways', 'postFaq'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        refreshPreview();
+        if (document.getElementById('previewPane').style.display !== 'none') refreshPreview();
+      });
+    });
+    document.getElementById('postExcerpt').addEventListener('input', () => {
+      document.getElementById('excerptCount').textContent = document.getElementById('postExcerpt').value.length;
+    });
 
     // ── AI Auto-Gen (Direct Browser API) ──
     const API_STORAGE = 'yh_apiConfig';
@@ -1164,12 +1297,42 @@
       localStorage.setItem('yh_cfConfig', JSON.stringify({ cfAccount: CF_ACCOUNT, cfProject: CF_PROJECT }));
     }
 
+    // ---- Site Stats ----
+    async function loadStats() {
+      try {
+        const r = await fetch('/api/analytics');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const a = await r.json();
+        document.getElementById('stViews').textContent = (a.totalViews || 0).toLocaleString();
+        document.getElementById('stUnique').textContent = (a.uniqueVisitors || 0).toLocaleString();
+        document.getElementById('stMonth').textContent = (a.monthViews || 0).toLocaleString();
+        document.getElementById('stBounce').textContent = (a.bounceRate || 0) + '%';
+        document.getElementById('statsUpdated').textContent = 'Updated ' + new Date(a.lastUpdated).toLocaleString();
+        const days = a.daily || [];
+        const max = Math.max(1, ...days.map(d => d.count));
+        document.getElementById('statsChart').innerHTML = days.map(d =>
+          `<div title="${d.date}: ${d.count}" style="flex:1;background:var(--accent);opacity:${0.25 + 0.75 * (d.count / max)};height:${Math.max(3, Math.round(90 * d.count / max))}px;border-radius:2px;min-width:2px;"></div>`
+        ).join('');
+        const pages = a.topPages || [];
+        document.getElementById('statsPages').innerHTML = pages.length
+          ? pages.map(p => `<div>${escapeHtml(p.path)} — <strong style="color:var(--accent)">${p.count}</strong></div>`).join('')
+          : 'No page views yet.';
+        const recent = a.recent || [];
+        document.getElementById('statsRecent').innerHTML = recent.length
+          ? recent.map(h => `<div>${new Date(h.time).toLocaleString()} — ${escapeHtml(h.pageTitle || h.path)}</div>`).join('')
+          : 'No visits yet.';
+      } catch (e) {
+        document.getElementById('statsPages').textContent = 'Could not load stats (' + e.message + '). Is the server running?';
+      }
+    }
+
     // Init on dashboard load
     const origLoadPosts = loadPosts;
     loadPosts = function() {
       origLoadPosts();
       loadApiConfig();
       loadCfConfig();
+      loadStats();
       document.getElementById('statTotal').textContent = getGenLog().length;
     };
   </script>
