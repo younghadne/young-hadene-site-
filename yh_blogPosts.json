@@ -1,4 +1,114 @@
-[
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes</title>
+  <meta name="description" content="Young Hadene's blog — Toronto hip-hop, studio sessions, lifestyle, behind the scenes, and dark trap culture from the 6ix.">
+  <link rel="canonical" href="https://younghadene.ca/blog.html">
+  <meta property="og:title" content="Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes">
+  <meta property="og:description" content="Toronto hip-hop, studio sessions, lifestyle, behind the scenes, and dark trap culture from the 6ix.">
+  <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
+  <meta property="og:url" content="https://younghadene.ca/blog.html">
+  <meta property="og:type" content="blog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Blog — Young Hadene: Toronto Music & Culture">
+  <meta name="twitter:image" content="https://younghadene.ca/images/poster1.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Young Hadene Blog",
+    "description": "Toronto hip-hop, studio sessions, lifestyle, and dark trap culture from the 6ix.",
+    "url": "https://younghadene.ca/blog.html",
+    "author": {
+      "@type": "MusicGroup",
+      "name": "Young Hadene"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎧</text></svg>">
+  <style>
+    .blog-list-view { display: block; }
+    .blog-list-view.hidden { display: none; }
+    .blog-single-view { display: none; }
+    .blog-single-view.show { display: block; }
+
+    .post-full {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+
+    .post-full .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 32px;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+
+    .post-full .back-link:hover { color: var(--accent); }
+
+    .post-full .post-full-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-full .post-full-header .post-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .post-full .post-full-header .category-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .post-full .post-full-header h2 {
+      font-size: 2rem;
+      font-family: var(--font-heading);
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+
+    .post-full .post-full-body {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .post-full .post-full-body p {
+      margin-bottom: 20px;
+    }
+
+    .no-posts-msg {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+    .no-posts-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .no-posts-msg p { font-size: 0.9rem; }
+  </style>
+<!-- BAKED_POSTS (refreshed on publish; server skips re-inject) --><script>var SERVER_POSTS = [
   {
     "id": 1791380158190,
     "title": "Who Are the Top Toronto Rappers in 2026?",
@@ -427,4 +537,613 @@
     "dateNum": 1780286400000,
     "featured": false
   }
-]
+];</script>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        YOUNG<span class="logo-accent">HADENE</span>
+        <span class="logo-sub">Toronto • Dark Trap</span>
+      </a>
+      <button class="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/music" class="nav-link">Music</a></li>
+          <li><a href="/blog" class="nav-link active">Blog</a></li>
+          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/admin" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-label">The 6ix Voice</span>
+      <h1 class="section-title">The <span class="text-accent">Blog</span></h1>
+      <p class="section-subtitle">Toronto music, studio stories, lifestyle, and everything behind the curtain.</p>
+      <div class="blog-categories" id="categoryFilters">
+        <a href="#" data-cat="all" class="active">All</a>
+        <a href="#" data-cat="Music">Music</a>
+        <a href="#" data-cat="Toronto">Toronto</a>
+        <a href="#" data-cat="Lifestyle">Lifestyle</a>
+        <a href="#" data-cat="Behind The Scenes">Behind The Scenes</a>
+        <a href="#" data-cat="Studio Sessions">Studio Sessions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOG LIST VIEW ===== -->
+  <div style="display:none" id="preRenderedPosts" data-posts='[{"id":178000000016,"title":"Inside Young Hadene: An Honest Look at the Haitian-Toronto Drill Artist","slug":"inside-young-hadene-an-honest-look","category":"Behind The Scenes","date":"June 4, 2026","dateNum":1780624000000,"featured":false,"content":"An honest, in-depth look at Young Hadene — the Haitian-Toronto drill and dark trap artist representing the 6ix. His story, his sound, his vision. Read the full article on younghadene.ca/blog/inside-young-hadene-an-honest-look.html"},{"id":1780263692026,"title":"What to Know About how to grow rap audience on YouTube in 2026","slug":"what-to-know-about-how-to-grow-rap-audience-on-youtube-in-20","category":"Behind The Scenes","date":"May 31, 2026","dateNum":1780263692026,"featured":false,"content":"A deep dive into how to grow rap audience on YouTube."},{"id":1780261642831,"title":"What to Know About independent rappers Canada 2026 in 2026","slug":"what-to-know-about-independent-rappers-canada-2026-in-2026","category":"Music","date":"May 31, 2026","dateNum":1780261642831,"featured":false,"content":"A deep dive into independent rappers Canada 2026."},{"id":1780258957500,"title":"What to Know About Spotify playlist pitching for rappers in 2026","slug":"what-to-know-about-spotify-playlist-pitching-for-rappers-in-","category":"Behind The Scenes","date":"May 31, 2026","dateNum":1780258957500,"featured":false,"content":"A deep dive into Spotify playlist pitching for rappers."},{"id":1780258321927,"title":"What to Know About melodic drill rap artists in 2026","slug":"what-to-know-about-melodic-drill-rap-artists-in-2026","category":"Music","date":"May 31, 2026","dateNum":1780258321927,"featured":false,"content":"A deep dive into melodic drill rap artists."},{"id":1780257977431,"title":"What to Know About Caribbean influence on drill music in 2026","slug":"what-to-know-about-caribbean-influence-on-drill-music-in-202","category":"Toronto","date":"May 31, 2026","dateNum":1780257977431,"featured":false,"content":"A deep dive into Caribbean influence on drill music."},{"id":1780257953675,"title":"What to Know About Haitian-Toronto music fusion in 2026","slug":"what-to-know-about-haitian-toronto-music-fusion-in-2026","category":"Toronto","date":"May 31, 2026","dateNum":1780257953675,"featured":false,"content":"A deep dive into Haitian-Toronto music fusion."},{"id":1780257768027,"title":"What to Know About Haitian Canadian artists to know in 2026","slug":"what-to-know-about-haitian-canadian-artists-to-know-in-2026","category":"Toronto","date":"May 31, 2026","dateNum":1780257768027,"featured":false,"content":"A deep dive into Haitian Canadian artists to know."},{"id":8,"title":"Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked","slug":"top-toronto-rappers","category":"Music","date":"May 31, 2026","dateNum":1748736000000,"featured":true,"content":"The definitive list of the best Toronto rappers — from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more. Read the full article: https://younghadene.ca/blog/top-toronto-rappers.html"},{"id":1,"title":"The Underground Toronto Sound: Why 2026 Is Different","slug":"underground-toronto-sound-2026","category":"Toronto","date":"May 28, 2026","dateNum":1748448000000,"featured":false,"content":"The city's hip-hop scene has shifted. From basement studios in Scarborough to sold-out shows at the Danforth Music Hall, Toronto's underground is louder and more authentic than ever. Here's what changed and who's leading it."},{"id":2,"title":"Late Night in the Lab — Building \"No Sleep\"","slug":"late-night-lab-no-sleep","category":"Studio Sessions","date":"May 20, 2026","dateNum":1747785600000,"featured":false,"content":"The making of the heaviest track yet. From 3 AM melodies to 808s that shake the walls. Every great track starts with a late night. This one was no different — pulling inspiration from the empty Toronto streets at 3 AM, the hum of the city that never quite sleeps."},{"id":3,"title":"Toronto After Midnight — A Dark Trap Diary","slug":"toronto-after-midnight","category":"Lifestyle","date":"May 14, 2026","dateNum":1747267200000,"featured":false,"content":"Night drives through the 6ix, empty streets, and the inspiration that only comes after midnight. There is something about this city when the lights dim and the crowds disappear."},{"id":4,"title":"From Basement to Stage — The First Show","slug":"basement-to-stage-first-show","category":"Behind The Scenes","date":"May 7, 2026","dateNum":1746662400000,"featured":false,"content":"Behind the scenes of the first live performance. The nerves, the energy, the moments they don't show you. Walking on stage for the first time is something you never forget."},{"id":5,"title":"Top 10 Underground Toronto Tracks (2026)","slug":"top-10-underground-toronto-tracks-2026","category":"Music","date":"Apr 28, 2026","dateNum":1745884800000,"featured":false,"content":"The songs that are defining the current wave. Heavy beats, raw lyricism, and real Toronto energy. From Scarborough to Rexdale, these are the tracks that matter right now."},{"id":6,"title":"The Venues That Built Toronto's Sound","slug":"venues-built-toronto-sound","category":"Toronto","date":"Apr 19, 2026","dateNum":1745107200000,"featured":false,"content":"From the Phoenix to Smiling Buddha, a look at the stages that shaped the 6ix music scene. These venues were more than just rooms — they were launching pads."},{"id":7,"title":"Studio Gear Setup — The Dark Trap Signal Chain","slug":"studio-gear-dark-trap-signal-chain","category":"Studio Sessions","date":"Apr 10, 2026","dateNum":1744329600000,"featured":false,"content":"Breaking down the hardware and software that creates the signature heavy sound. Mic, preamp, interface, plugins. Here is exactly what goes into the signal chain."}]'></div>
+  <div class="blog-list-view" id="blogListView">
+
+    <!-- Featured Article -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="featured-article fade-in" id="featuredArticle"><div class="featured-card">
+  <div class="featured-image">
+    <span class="featured-image-label">MUSI</span>
+    <div class="featured-image-overlay"><span class="category-badge">Music</span></div>
+  </div>
+  <div class="featured-content">
+    <span class="post-date">May 31, 2026</span>
+    <h2>Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked</h2>
+    <p>The definitive list of the best Toronto rappers — from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz...</p>
+    <a href="/blog/top-toronto-rappers" class="read-more">Read Full Article &#8594;</a>
+  </div>
+</div></div>
+      </div>
+    </section>
+
+    <!-- Blog Grid -->
+    <section class="blog-grid-section">
+      <div class="container">
+        <div class="blog-grid" id="blogGrid"><article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">BEHIND</span>
+      <span class="category-tag">Behind The Scenes</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">June 4, 2026</span>
+      <h3>Inside Young Hadene: An Honest Look at the Haitian-Toronto Drill Artist</h3>
+      <p>An honest, in-depth look at Young Hadene — the Haitian-Toronto drill and dark trap artist representing the 6ix. His...</p>
+      <a href="/blog/inside-young-hadene-an-honest-look" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">BEHIND</span>
+      <span class="category-tag">Behind The Scenes</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About how to grow rap audience on YouTube in 2026</h3>
+      <p>A deep dive into how to grow rap audience on YouTube.</p>
+      <a href="/blog/what-to-know-about-how-to-grow-rap-audience-on-youtube-in-20" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">MUSIC</span>
+      <span class="category-tag">Music</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About independent rappers Canada 2026 in 2026</h3>
+      <p>A deep dive into independent rappers Canada 2026.</p>
+      <a href="/blog/what-to-know-about-independent-rappers-canada-2026-in-2026" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">BEHIND</span>
+      <span class="category-tag">Behind The Scenes</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About Spotify playlist pitching for rappers in 2026</h3>
+      <p>A deep dive into Spotify playlist pitching for rappers.</p>
+      <a href="/blog/what-to-know-about-spotify-playlist-pitching-for-rappers-in-" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">MUSIC</span>
+      <span class="category-tag">Music</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About melodic drill rap artists in 2026</h3>
+      <p>A deep dive into melodic drill rap artists.</p>
+      <a href="/blog/what-to-know-about-melodic-drill-rap-artists-in-2026" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">TORONT</span>
+      <span class="category-tag">Toronto</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About Caribbean influence on drill music in 2026</h3>
+      <p>A deep dive into Caribbean influence on drill music.</p>
+      <a href="/blog/what-to-know-about-caribbean-influence-on-drill-music-in-202" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">TORONT</span>
+      <span class="category-tag">Toronto</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About Haitian-Toronto music fusion in 2026</h3>
+      <p>A deep dive into Haitian-Toronto music fusion.</p>
+      <a href="/blog/what-to-know-about-haitian-toronto-music-fusion-in-2026" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">TORONT</span>
+      <span class="category-tag">Toronto</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 31, 2026</span>
+      <h3>What to Know About Haitian Canadian artists to know in 2026</h3>
+      <p>A deep dive into Haitian Canadian artists to know.</p>
+      <a href="/blog/what-to-know-about-haitian-canadian-artists-to-know-in-2026" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">TORONT</span>
+      <span class="category-tag">Toronto</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 28, 2026</span>
+      <h3>The Underground Toronto Sound: Why 2026 Is Different</h3>
+      <p>The city's hip-hop scene has shifted. From basement studios in Scarborough to sold-out shows at the Danforth Music...</p>
+      <a href="/blog/underground-toronto-sound-2026" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">STUDIO</span>
+      <span class="category-tag">Studio Sessions</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 20, 2026</span>
+      <h3>Late Night in the Lab — Building &quot;No Sleep&quot;</h3>
+      <p>The making of the heaviest track yet. From 3 AM melodies to 808s that shake the walls. Every great track starts with a...</p>
+      <a href="/blog/late-night-lab-no-sleep" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">LIFEST</span>
+      <span class="category-tag">Lifestyle</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 14, 2026</span>
+      <h3>Toronto After Midnight — A Dark Trap Diary</h3>
+      <p>Night drives through the 6ix, empty streets, and the inspiration that only comes after midnight. There is something...</p>
+      <a href="/blog/toronto-after-midnight" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">BEHIND</span>
+      <span class="category-tag">Behind The Scenes</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">May 7, 2026</span>
+      <h3>From Basement to Stage — The First Show</h3>
+      <p>Behind the scenes of the first live performance. The nerves, the energy, the moments they don't show you. Walking on...</p>
+      <a href="/blog/basement-to-stage-first-show" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">MUSIC</span>
+      <span class="category-tag">Music</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">Apr 28, 2026</span>
+      <h3>Top 10 Underground Toronto Tracks (2026)</h3>
+      <p>The songs that are defining the current wave. Heavy beats, raw lyricism, and real Toronto energy. From Scarborough to...</p>
+      <a href="/blog/top-10-underground-toronto-tracks-2026" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">TORONT</span>
+      <span class="category-tag">Toronto</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">Apr 19, 2026</span>
+      <h3>The Venues That Built Toronto's Sound</h3>
+      <p>From the Phoenix to Smiling Buddha, a look at the stages that shaped the 6ix music scene. These venues were more than...</p>
+      <a href="/blog/venues-built-toronto-sound" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article>
+        <article class="blog-card">
+    <div class="blog-card-image">
+      <span class="card-art-label">STUDIO</span>
+      <span class="category-tag">Studio Sessions</span>
+    </div>
+    <div class="blog-card-body">
+      <span class="post-date">Apr 10, 2026</span>
+      <h3>Studio Gear Setup — The Dark Trap Signal Chain</h3>
+      <p>Breaking down the hardware and software that creates the signature heavy sound. Mic, preamp, interface, plugins. Here...</p>
+      <a href="/blog/studio-gear-dark-trap-signal-chain" class="read-more">Read Full Article &#8594;</a>
+    </div>
+  </article></div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== BLOG SINGLE POST VIEW ===== -->
+  <div class="blog-single-view section" id="blogSingleView">
+    <div class="container">
+      <div class="post-full">
+        <a class="back-link" onclick="backToList()">&#8592; Back to all posts</a>
+        <div id="postFullContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            YOUNG<span class="logo-accent">HADENE</span>
+            <span class="logo-sub">Toronto • Dark Trap</span>
+          </a>
+          <p>Heavy 808s from the 6ix. Built different. Representing Toronto's underground sound worldwide.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/YOUNGHADENE" target="_blank" rel="noopener">&#x1F4F7;</a>
+            <a href="#" aria-label="Twitter / X">&#x1D54F;</a>
+            <a href="https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg" target="_blank" rel="noopener">&#x25B6;</a>
+            <a href="#" aria-label="Spotify">&#x266B;</a>
+            <a href="#" aria-label="SoundCloud">&#x2601;</a>
+          </div>
+        </div>
+        <div>
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/music">Music</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/admin">Admin</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Music</h4>
+          <ul>
+            <li><a href="#">Spotify</a></li>
+            <li><a href="#">Apple Music</a></li>
+            <li><a href="#">SoundCloud</a></li>
+            <li><a href="#">YouTube Music</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:contact@younghadene.ca">Email</a></li>
+            <li><a href="#">Bookings</a></li>
+            <li><a href="#">Press Kit</a></li>
+            <li><a href="#">Collaborate</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Hadene. All rights reserved. Toronto. 6ix.</p>
+        <div class="footer-bottom-links">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const STORAGE_KEY = 'yh_blogPosts';
+
+    // ---- Default fallback posts ----
+    const DEFAULT_POSTS = [
+      { id: 1786971654304, title: 'What to Know About drill music storytelling techniques in 2026', slug: 'what-to-know-about-drill-music-storytelling-techniques-in-20', category: 'Studio Sessions', date: 'August 17, 2026', dateNum: 1786971654304, featured: false, content: 'A deep dive into drill music storytelling techniques.' },
+      { id: 1786626021928, title: 'Drill Music Storytelling Techniques: How Toronto’s Finest Paint Real Pictures', slug: 'drill-music-storytelling-techniques-how-toronto-s-finest-pai', category: 'Studio Sessions', date: 'August 13, 2026', dateNum: 1786626021928, featured: false, content: 'Drill music storytelling techniques are about survival, not fairy tales. Here’s how artists like Young Hadene turn street pain into cinematic audio.' },
+      { id: 1786194040835, title: 'Rap Artist Branding Tips 2026: Build A Name That Hits Different', slug: 'rap-artist-branding-tips-2026-build-a-name-that-hits-differe', category: 'Lifestyle', date: 'August 8, 2026', dateNum: 1786194040835, featured: false, content: 'The game changed. Your music is only half the battle. These rap artist branding tips 2026 will separate you from the noise and build a legacy that lasts.' },
+      { id: 1786021232517, title: 'What to Know About drill music storytelling techniques in 2026', slug: 'what-to-know-about-drill-music-storytelling-techniques-in-20', category: 'Studio Sessions', date: 'August 6, 2026', dateNum: 1786021232517, featured: false, content: 'A deep dive into drill music storytelling techniques.' },
+      { id: 1785675627823, title: 'Spotify Playlist Pitching for Rappers: The Real Hustle', slug: 'spotify-playlist-pitching-for-rappers-the-real-hustle', category: 'Behind The Scenes', date: 'August 2, 2026', dateNum: 1785675627823, featured: false, content: 'Stop chasing fake streams. Here is how Spotify playlist pitching for rappers actually works, straight from the streets to your next big break.' },
+      { id: 1785502825851, title: 'What to Know About how to promote underground rap in 2026', slug: 'what-to-know-about-how-to-promote-underground-rap-in-2026', category: 'Behind The Scenes', date: 'July 31, 2026', dateNum: 1785502825851, featured: false, content: 'A deep dive into how to promote underground rap.' },
+      { id: 1785416428349, title: 'What to Know About Toronto hip hop producers 2026 in 2026', slug: 'what-to-know-about-toronto-hip-hop-producers-2026-in-2026', category: 'Music', date: 'July 30, 2026', dateNum: 1785416428349, featured: false, content: 'A deep dive into Toronto hip hop producers 2026.' },
+      { id: 1785157228789, title: 'What to Know About Toronto drill beat production in 2026', slug: 'what-to-know-about-toronto-drill-beat-production-in-2026', category: 'Studio Sessions', date: 'July 27, 2026', dateNum: 1785157228789, featured: false, content: 'A deep dive into Toronto drill beat production.' },
+      { id: 1785070830408, title: 'What to Know About Haitian musicians in Toronto in 2026', slug: 'what-to-know-about-haitian-musicians-in-toronto-in-2026', category: 'Toronto', date: 'July 26, 2026', dateNum: 1785070830408, featured: false, content: 'A deep dive into Haitian musicians in Toronto.' },
+      { id: 1784898010848, title: 'Toronto Drill Artists 2026: The New Wave Taking Over the City', slug: 'toronto-drill-artists-2026-the-new-wave-taking-over-the-city', category: 'Music', date: 'July 24, 2026', dateNum: 1784898010848, featured: false, content: 'Toronto drill artists 2026 are redefining the sound. Young Hadene leads the Haitian-Toronto movement with dark trap energy. Read more.' },
+      { id: 1784811710350, title: 'Haitian Musicians in Toronto: The Rise of Drill, Dark Trap, and Real Street Narratives', slug: 'haitian-musicians-in-toronto-the-rise-of-drill-dark-trap-and', category: 'Toronto', date: 'July 23, 2026', dateNum: 1784811710350, featured: false, content: 'Toronto’s Haitian music scene is reshaping drill and dark trap. From raw storytelling to global influence, Haitian musicians in Toronto are carving a lane. Young Hadene leads the charge.' },
+      { id: 1784552430854, title: 'What to Know About Spotify playlist pitching for rappers in 2026', slug: 'what-to-know-about-spotify-playlist-pitching-for-rappers-in-', category: 'Behind The Scenes', date: 'July 20, 2026', dateNum: 1784552430854, featured: false, content: 'A deep dive into Spotify playlist pitching for rappers.' },
+      { id: 1784466035983, title: 'What to Know About best Canadian rap 2026 in 2026', slug: 'what-to-know-about-best-canadian-rap-2026-in-2026', category: 'Music', date: 'July 19, 2026', dateNum: 1784466035983, featured: false, content: 'A deep dive into best Canadian rap 2026.' },
+      { id: 1784379632565, title: 'What to Know About how to grow rap audience on YouTube in 2026', slug: 'what-to-know-about-how-to-grow-rap-audience-on-youtube-in-20', category: 'Behind The Scenes', date: 'July 18, 2026', dateNum: 1784379632565, featured: false, content: 'A deep dive into how to grow rap audience on YouTube.' },
+      { id: 1784206834384, title: 'What to Know About Caribbean influence on drill music in 2026', slug: 'what-to-know-about-caribbean-influence-on-drill-music-in-202', category: 'Toronto', date: 'July 16, 2026', dateNum: 1784206834384, featured: false, content: 'A deep dive into Caribbean influence on drill music.' },
+      { id: 1784120433381, title: 'What to Know About drill music storytelling techniques in 2026', slug: 'what-to-know-about-drill-music-storytelling-techniques-in-20', category: 'Studio Sessions', date: 'July 15, 2026', dateNum: 1784120433381, featured: false, content: 'A deep dive into drill music storytelling techniques.' },
+      { id: 1784034029365, title: 'What to Know About Toronto rap studio culture in 2026', slug: 'what-to-know-about-toronto-rap-studio-culture-in-2026', category: 'Studio Sessions', date: 'July 14, 2026', dateNum: 1784034029365, featured: false, content: 'A deep dive into Toronto rap studio culture.' },
+      { id: 1783861234155, title: 'What to Know About Caribbean influence on drill music in 2026', slug: 'what-to-know-about-caribbean-influence-on-drill-music-in-202', category: 'Toronto', date: 'July 12, 2026', dateNum: 1783861234155, featured: false, content: 'A deep dive into Caribbean influence on drill music.' },
+      { id: 1783774828898, title: 'What to Know About underground rap visual branding in 2026', slug: 'what-to-know-about-underground-rap-visual-branding-in-2026', category: 'Lifestyle', date: 'July 11, 2026', dateNum: 1783774828898, featured: false, content: 'A deep dive into underground rap visual branding.' },
+      { id: 1783602027126, title: 'What to Know About melodic drill rap artists in 2026', slug: 'what-to-know-about-melodic-drill-rap-artists-in-2026', category: 'Music', date: 'July 9, 2026', dateNum: 1783602027126, featured: false, content: 'A deep dive into melodic drill rap artists.' },
+      { id: 1783342832817, title: 'What to Know About Toronto rap studio culture in 2026', slug: 'what-to-know-about-toronto-rap-studio-culture-in-2026', category: 'Studio Sessions', date: 'July 6, 2026', dateNum: 1783342832817, featured: false, content: 'A deep dive into Toronto rap studio culture.' },
+      { id: 1783170029687, title: 'What to Know About Haitian musicians in Toronto in 2026', slug: 'what-to-know-about-haitian-musicians-in-toronto-in-2026', category: 'Toronto', date: 'July 4, 2026', dateNum: 1783170029687, featured: false, content: 'A deep dive into Haitian musicians in Toronto.' },
+      { id: 1782997230373, title: 'What to Know About Toronto music venues history in 2026', slug: 'what-to-know-about-toronto-music-venues-history-in-2026', category: 'Toronto', date: 'July 2, 2026', dateNum: 1782997230373, featured: false, content: 'A deep dive into Toronto music venues history.' },
+      { id: 1782910828034, title: 'What to Know About how to promote underground rap in 2026', slug: 'what-to-know-about-how-to-promote-underground-rap-in-2026', category: 'Behind The Scenes', date: 'July 1, 2026', dateNum: 1782910828034, featured: false, content: 'A deep dive into how to promote underground rap.' },
+      { id: 1782824434938, title: 'What to Know About Toronto hip hop producers 2026 in 2026', slug: 'what-to-know-about-toronto-hip-hop-producers-2026-in-2026', category: 'Music', date: 'June 30, 2026', dateNum: 1782824434938, featured: false, content: 'A deep dive into Toronto hip hop producers 2026.' },
+      { id: 1782653215455, title: 'What to Know About Toronto music venues history in 2026', slug: 'what-to-know-about-toronto-music-venues-history-in-2026', category: 'Toronto', date: 'June 28, 2026', dateNum: 1782653215455, featured: false, content: 'A deep dive into Toronto music venues history.' },
+      { id: 1782565230964, title: 'What to Know About dark trap music scene in 2026', slug: 'what-to-know-about-dark-trap-music-scene-in-2026', category: 'Music', date: 'June 27, 2026', dateNum: 1782565230964, featured: false, content: 'A deep dive into dark trap music scene.' },
+      { id: 1782478834323, title: 'What to Know About Toronto drill beat production in 2026', slug: 'what-to-know-about-toronto-drill-beat-production-in-2026', category: 'Studio Sessions', date: 'June 26, 2026', dateNum: 1782478834323, featured: false, content: 'A deep dive into Toronto drill beat production.' },
+      { id: 1782392422117, title: 'What to Know About Toronto drill beat production in 2026', slug: 'what-to-know-about-toronto-drill-beat-production-in-2026', category: 'Studio Sessions', date: 'June 25, 2026', dateNum: 1782392422117, featured: false, content: 'A deep dive into Toronto drill beat production.' },
+      { id: 1782306027526, title: 'What to Know About Toronto hip hop producers 2026 in 2026', slug: 'what-to-know-about-toronto-hip-hop-producers-2026-in-2026', category: 'Music', date: 'June 24, 2026', dateNum: 1782306027526, featured: false, content: 'A deep dive into Toronto hip hop producers 2026.' },
+      { id: 1782133311603, title: 'What to Know About melodic drill rap artists in 2026', slug: 'what-to-know-about-melodic-drill-rap-artists-in-2026', category: 'Music', date: 'June 22, 2026', dateNum: 1782133311603, featured: false, content: 'A deep dive into melodic drill rap artists.' },
+      { id: 1781874031060, title: 'What to Know About Toronto drill artists 2026 in 2026', slug: 'what-to-know-about-toronto-drill-artists-2026-in-2026', category: 'Music', date: 'June 19, 2026', dateNum: 1781874031060, featured: false, content: 'A deep dive into Toronto drill artists 2026.' },
+      { id: 1781701310047, title: 'What to Know About rap artist branding tips 2026 in 2026', slug: 'what-to-know-about-rap-artist-branding-tips-2026-in-2026', category: 'Lifestyle', date: 'June 17, 2026', dateNum: 1781701310047, featured: false, content: 'A deep dive into rap artist branding tips 2026.' },
+      { id: 1781614833119, title: 'What to Know About how to grow rap audience on YouTube in 2026', slug: 'what-to-know-about-how-to-grow-rap-audience-on-youtube-in-20', category: 'Behind The Scenes', date: 'June 16, 2026', dateNum: 1781614833119, featured: false, content: 'A deep dive into how to grow rap audience on YouTube.' },
+      { id: 1781528435250, title: 'What to Know About Toronto music venues history in 2026', slug: 'what-to-know-about-toronto-music-venues-history-in-2026', category: 'Toronto', date: 'June 15, 2026', dateNum: 1781528435250, featured: false, content: 'A deep dive into Toronto music venues history.' },
+      { id: 1781442019653, title: 'What to Know About Toronto drill artists 2026 in 2026', slug: 'what-to-know-about-toronto-drill-artists-2026-in-2026', category: 'Music', date: 'June 14, 2026', dateNum: 1781442019653, featured: false, content: 'A deep dive into Toronto drill artists 2026.' },
+      { id: 1781355628079, title: 'What to Know About underground Canadian hip hop in 2026', slug: 'what-to-know-about-underground-canadian-hip-hop-in-2026', category: 'Music', date: 'June 13, 2026', dateNum: 1781355628079, featured: false, content: 'A deep dive into underground Canadian hip hop.' },
+      { id: 1781096436899, title: 'What to Know About Toronto hip hop producers 2026 in 2026', slug: 'what-to-know-about-toronto-hip-hop-producers-2026-in-2026', category: 'Music', date: 'June 10, 2026', dateNum: 1781096436899, featured: false, content: 'A deep dive into Toronto hip hop producers 2026.' },
+      { id: 1781010030226, title: 'What to Know About how to grow rap audience on YouTube in 2026', slug: 'what-to-know-about-how-to-grow-rap-audience-on-youtube-in-20', category: 'Behind The Scenes', date: 'June 9, 2026', dateNum: 1781010030226, featured: false, content: 'A deep dive into how to grow rap audience on YouTube.' },
+      { id: 1780923951233, title: 'What to Know About rap artist branding tips 2026 in 2026', slug: 'what-to-know-about-rap-artist-branding-tips-2026-in-2026', category: 'Lifestyle', date: 'June 8, 2026', dateNum: 1780923951233, featured: false, content: 'A deep dive into rap artist branding tips 2026.' },
+      { id: 1780837363964, title: 'What to Know About Toronto drill beat production in 2026', slug: 'what-to-know-about-toronto-drill-beat-production-in-2026', category: 'Studio Sessions', date: 'June 7, 2026', dateNum: 1780837363964, featured: false, content: 'A deep dive into Toronto drill beat production.' },
+      { id: 1780624000000, title: 'Inside Young Hadene: An Honest Look at the Haitian-Toronto Drill Artist', slug: 'inside-young-hadene-an-honest-look', category: 'Behind The Scenes', date: 'June 4, 2026', dateNum: 1780624000000, featured: true, content: 'An honest, in-depth look at Young Hadene — the Haitian-Toronto drill and dark trap artist representing the 6ix. His story, his sound, his vision.' },
+      { id: 1780263692026, title: 'What to Know About how to grow rap audience on YouTube in 2026', slug: 'what-to-know-about-how-to-grow-rap-audience-on-youtube-in-20', category: 'Behind The Scenes', date: 'May 31, 2026', dateNum: 1780263692026, featured: false, content: 'A deep dive into how to grow rap audience on YouTube.' },
+      { id: 1780261642831, title: 'What to Know About independent rappers Canada 2026 in 2026', slug: 'what-to-know-about-independent-rappers-canada-2026-in-2026', category: 'Music', date: 'May 31, 2026', dateNum: 1780261642831, featured: false, content: 'A deep dive into independent rappers Canada 2026.' },
+      { id: 1780258957500, title: 'What to Know About Spotify playlist pitching for rappers in 2026', slug: 'what-to-know-about-spotify-playlist-pitching-for-rappers-in-', category: 'Behind The Scenes', date: 'May 31, 2026', dateNum: 1780258957500, featured: false, content: 'A deep dive into Spotify playlist pitching for rappers.' },
+      { id: 1780258321927, title: 'What to Know About melodic drill rap artists in 2026', slug: 'what-to-know-about-melodic-drill-rap-artists-in-2026', category: 'Music', date: 'May 31, 2026', dateNum: 1780258321927, featured: false, content: 'A deep dive into melodic drill rap artists.' },
+      { id: 1780257977431, title: 'What to Know About Caribbean influence on drill music in 2026', slug: 'what-to-know-about-caribbean-influence-on-drill-music-in-202', category: 'Toronto', date: 'May 31, 2026', dateNum: 1780257977431, featured: false, content: 'A deep dive into Caribbean influence on drill music.' },
+      { id: 1780257953675, title: 'What to Know About Haitian-Toronto music fusion in 2026', slug: 'what-to-know-about-haitian-toronto-music-fusion-in-2026', category: 'Toronto', date: 'May 31, 2026', dateNum: 1780257953675, featured: false, content: 'A deep dive into Haitian-Toronto music fusion.' },
+      { id: 1780257768027, title: 'What to Know About Haitian Canadian artists to know in 2026', slug: 'what-to-know-about-haitian-canadian-artists-to-know-in-2026', category: 'Toronto', date: 'May 31, 2026', dateNum: 1780257768027, featured: false, content: 'A deep dive into Haitian Canadian artists to know.' },
+      { id: 8, title: 'Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked', slug: 'top-toronto-rappers', category: 'Music', date: 'May 31, 2026', dateNum: 1748736000000, featured: true, content: "The definitive list of the best Toronto rappers — from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more. Read the full article: https://younghadene.ca/blog/top-toronto-rappers.html" },
+      { id: 1, title: 'The Underground Toronto Sound: Why 2026 Is Different', slug: 'underground-toronto-sound-2026', category: 'Toronto', date: 'May 28, 2026', dateNum: 1748448000000, featured: false, content: "The city's hip-hop scene has shifted. From basement studios in Scarborough to sold-out shows at the Danforth Music Hall, Toronto's underground is louder and more authentic than ever. Here's what changed and who's leading it." },
+      { id: 2, title: 'Late Night in the Lab — Building "No Sleep"', slug: 'late-night-lab-no-sleep', category: 'Studio Sessions', date: 'May 20, 2026', dateNum: 1747785600000, featured: false, content: 'The making of the heaviest track yet. From 3 AM melodies to 808s that shake the walls. Every great track starts with a late night. This one was no different — pulling inspiration from the empty Toronto streets at 3 AM, the hum of the city that never quite sleeps.' },
+      { id: 3, title: 'Toronto After Midnight — A Dark Trap Diary', slug: 'toronto-after-midnight', category: 'Lifestyle', date: 'May 14, 2026', dateNum: 1747267200000, featured: false, content: 'Night drives through the 6ix, empty streets, and the inspiration that only comes after midnight. There is something about this city when the lights dim and the crowds disappear.' },
+      { id: 4, title: 'From Basement to Stage — The First Show', slug: 'basement-to-stage-first-show', category: 'Behind The Scenes', date: 'May 7, 2026', dateNum: 1746662400000, featured: false, content: 'Behind the scenes of the first live performance. The nerves, the energy, the moments they don\'t show you. Walking on stage for the first time is something you never forget.' },
+      { id: 5, title: 'Top 10 Underground Toronto Tracks (2026)', slug: 'top-10-underground-toronto-tracks-2026', category: 'Music', date: 'Apr 28, 2026', dateNum: 1745884800000, featured: false, content: 'The songs that are defining the current wave. Heavy beats, raw lyricism, and real Toronto energy. From Scarborough to Rexdale, these are the tracks that matter right now.' },
+      { id: 6, title: 'The Venues That Built Toronto\'s Sound', slug: 'venues-built-toronto-sound', category: 'Toronto', date: 'Apr 19, 2026', dateNum: 1745107200000, featured: false, content: 'From the Phoenix to Smiling Buddha, a look at the stages that shaped the 6ix music scene. These venues were more than just rooms — they were launching pads.' },
+      { id: 7, title: 'Studio Gear Setup — The Dark Trap Signal Chain', slug: 'studio-gear-dark-trap-signal-chain', category: 'Studio Sessions', date: 'Apr 10, 2026', dateNum: 1744329600000, featured: false, content: 'Breaking down the hardware and software that creates the signature heavy sound. Mic, preamp, interface, plugins. Here is exactly what goes into the signal chain.' }
+    ];
+
+    function getPosts() {
+      // Use server-injected data first (source of truth)
+      if (typeof SERVER_POSTS !== 'undefined' && SERVER_POSTS.length > 0) {
+        return SERVER_POSTS;
+      }
+      // Fall back to localStorage
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.length > 0) return parsed;
+        }
+      } catch {}
+      // Fall back to hardcoded defaults
+      return DEFAULT_POSTS;
+    }
+
+    let currentCategory = 'all';
+    let posts = [];
+
+    function renderBlog() {
+      posts = getPosts();
+      posts.sort((a, b) => b.dateNum - a.dateNum);
+
+      renderFeatured();
+      renderGrid();
+      renderPagination();
+    }
+
+    function renderFeatured() {
+      const container = document.getElementById('featuredArticle');
+      const featured = posts.find(p => p.featured) || posts[0];
+      if (!featured) { container.innerHTML = ''; return; }
+
+      const featuredUrl = featured.slug ? `/blog/${featured.slug}` : '#';
+      container.innerHTML = `
+        <div class="featured-card">
+          <div class="featured-image">
+            <span class="featured-image-label">${featured.category.substring(0, 4).toUpperCase()}</span>
+            <div class="featured-image-overlay">
+              <span class="category-badge">${escapeHtml(featured.category)}</span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <span class="post-date">${featured.date}</span>
+            <h2>${escapeHtml(featured.title)}</h2>
+            <p>${escapeHtml(truncate(stripMarkdown(featured.content), 150))}</p>
+            <a href="${featuredUrl}" class="read-more">Read Full Article &#8594;</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGrid() {
+      const container = document.getElementById('blogGrid');
+      const filtered = currentCategory === 'all'
+        ? posts.filter(p => !p.featured || posts.filter(x => x.featured).length === 0)
+        : posts.filter(p => p.category === currentCategory && !p.featured);
+
+      // If we have a featured post, exclude it from the grid
+      const hasFeatured = posts.some(p => p.featured);
+      const gridPosts = hasFeatured ? filtered.filter(p => !p.featured) : filtered;
+      // If no filter active and no featured, show all
+      const displayPosts = currentCategory === 'all' && !hasFeatured ? posts : gridPosts;
+      // Recalculate properly
+      let finalPosts;
+      if (currentCategory === 'all') {
+        finalPosts = hasFeatured ? posts.filter(p => !p.featured) : posts;
+      } else {
+        finalPosts = posts.filter(p => p.category === currentCategory);
+      }
+
+      if (finalPosts.length === 0) {
+        container.innerHTML = '<div class="no-posts-msg"><div class="icon">📝</div><p>No posts in this category yet. Check back soon.</p></div>';
+        return;
+      }
+
+      container.innerHTML = finalPosts.map(post => {
+        // Always link to the on-site article (never hijack to external URLs found in content)
+        const cleanContent = stripMarkdown(post.content || '');
+        const postUrl = post.slug ? `/blog/${post.slug}` : '#';
+        return `
+        <article class="blog-card fade-in">
+          <div class="blog-card-image">
+            <span class="card-art-label">${post.category.substring(0, 6).toUpperCase()}</span>
+            <span class="category-tag">${escapeHtml(post.category)}</span>
+          </div>
+          <div class="blog-card-body">
+            <span class="post-date">${post.date}</span>
+            <h3>${escapeHtml(post.title)}</h3>
+            <p>${escapeHtml(truncate(cleanContent, 120))}</p>
+            <a href="${postUrl}" class="read-more">Read Full Article &#8594;</a>
+          </div>
+        </article>`;
+      }).join('');
+
+      // Re-trigger fade-in on new elements
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#blogGrid .fade-in').forEach(el => {
+          el.classList.add('visible');
+        });
+      });
+    }
+
+    function renderPagination() {
+      const container = document.getElementById('pagination');
+      const filtered = currentCategory === 'all' ? posts.filter(p => !p.featured) : posts.filter(p => p.category === currentCategory);
+      if (filtered.length <= 6) { container.innerHTML = ''; return; }
+      const pages = Math.ceil(filtered.length / 6);
+      container.innerHTML = Array.from({ length: pages }, (_, i) =>
+        `<a href="#" class="${i === 0 ? 'active' : ''}">${i + 1}</a>`
+      ).join('') + '<a href="#">&#8594;</a>';
+    }
+
+    // ---- Category filter ----
+    document.getElementById('categoryFilters').addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      e.preventDefault();
+      document.querySelectorAll('#categoryFilters a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+      currentCategory = link.dataset.cat;
+      renderGrid();
+      renderPagination();
+    });
+
+    // ---- Single post view ----
+    function openPost(id) {
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+
+      document.getElementById('blogListView').classList.add('hidden');
+      document.getElementById('blogSingleView').classList.add('show');
+
+      document.getElementById('postFullContent').innerHTML = `
+        <div class="post-full-header">
+          <span class="category-tag">${escapeHtml(post.category)}</span>
+          <span class="post-date">${post.date} &middot; By <a href="/about" rel="author" style="color:var(--accent)">Young Hadene</a></span>
+          <h2>${escapeHtml(post.title)}</h2>
+        </div>
+        <div class="post-full-body">
+          ${post.content.split('\n').filter(p => p.trim()).map(p => `<p>${escapeHtml(p.trim())}</p>`).join('')}
+        </div>
+        <div class="feature-card" style="padding:24px;display:flex;gap:16px;align-items:center;margin-top:32px;">
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">🎤</div>
+          <div>
+            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Written by</div>
+            <div style="font-weight:700;"><a href="/about" rel="author">Young Hadene</a></div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">Haitian-Toronto drill &amp; dark trap artist writing on Toronto hip hop, studio life, and the 6ix underground.</div>
+          </div>
+        </div>
+      `;
+
+      // Inject Article schema for this post
+      let schema = document.getElementById('postSchema');
+      if (!schema) {
+        schema = document.createElement('script');
+        schema.id = 'postSchema';
+        schema.type = 'application/ld+json';
+        document.head.appendChild(schema);
+      }
+      schema.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": post.title,
+        "datePublished": post.date,
+        "author": {
+          "@type": "Person",
+          "name": "Young Hadene",
+          "jobTitle": "Recording Artist",
+          "url": "https://younghadene.ca/about.html",
+          "sameAs": [
+            "https://www.instagram.com/YOUNGHADENE",
+            "https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg",
+            "https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA"
+          ]
+        },
+        "url": "https://younghadene.ca/blog.html",
+        "articleSection": post.category
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function backToList() {
+      document.getElementById('blogSingleView').classList.remove('show');
+      document.getElementById('blogListView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---- Utilities ----
+    // Strip markdown markers + raw URLs so card excerpts read clean
+    function stripMarkdown(str) {
+      return (str || '')
+        .replace(/^#{1,3}\s+/gm, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1$2')
+        .replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, '$1')
+        .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '$1')
+        .replace(/https?:\/\/[^\s<]+/g, '')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+    function truncate(str, len) {
+      if (str.length <= len) return str;
+      return str.substring(0, len).replace(/\s+\S*$/, '') + '...';
+    }
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ---- Init ----
+    document.addEventListener('DOMContentLoaded', renderBlog);
+  </script>
+  <script src="js/main.js"></script>
+  <script>(function(){var d={path:location.pathname,referrer:document.referrer||'',ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon('/api/track',JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open('POST','/api/track',true);x.setRequestHeader('Content-Type','application/json');x.send(JSON.stringify(d))}})();</script>
+</body>
+</html>
