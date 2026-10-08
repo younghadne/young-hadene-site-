@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /api/
 
-Sitemap: https://younghadene.ca/api/sitemap.xml
+Sitemap: https://younghadene.ca/sitemap.xml

@@ -951,6 +951,118 @@
       "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
       "ip": "::1",
       "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791462566689,
+      "path": "/",
+      "referrer": "",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791462569298,
+      "path": "/music",
+      "referrer": "http://localhost:3456/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Music — Young Hadene | Haitian-Toronto Drill & Dark Trap Discography"
+    },
+    {
+      "ts": 1791462571099,
+      "path": "/contact",
+      "referrer": "http://localhost:3456/music",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Contact & Booking — Young Hadene | Haitian-Toronto Drill Artist"
+    },
+    {
+      "ts": 1791462572635,
+      "path": "/blog",
+      "referrer": "http://localhost:3456/contact",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791462578675,
+      "path": "/contact",
+      "referrer": "http://localhost:3456/blog",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Contact & Booking — Young Hadene | Haitian-Toronto Drill Artist"
+    },
+    {
+      "ts": 1791462645293,
+      "path": "/contact",
+      "referrer": "http://localhost:3456/admin",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Contact & Booking — Young Hadene | Haitian-Toronto Drill Artist"
+    },
+    {
+      "ts": 1791482163007,
+      "path": "/",
+      "referrer": "",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791482165325,
+      "path": "/blog",
+      "referrer": "http://localhost:3456/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791482166809,
+      "path": "/contact",
+      "referrer": "http://localhost:3456/blog",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Contact & Booking — Young Hadene | Haitian-Toronto Drill Artist"
+    },
+    {
+      "ts": 1791482172728,
+      "path": "/contact",
+      "referrer": "http://localhost:3456/admin",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Contact & Booking — Young Hadene | Haitian-Toronto Drill Artist"
+    },
+    {
+      "ts": 1791482173709,
+      "path": "/blog",
+      "referrer": "http://localhost:3456/contact",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791482174853,
+      "path": "/music",
+      "referrer": "http://localhost:3456/blog",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Music — Young Hadene | Haitian-Toronto Drill & Dark Trap Discography"
+    },
+    {
+      "ts": 1791482175681,
+      "path": "/",
+      "referrer": "http://localhost:3456/music",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791482270662,
+      "path": "/",
+      "referrer": "",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
     }
   ],
   "pages": {
@@ -960,24 +1072,27 @@
     "/contact.html": 8,
     "/music.html": 9,
     "/blog/top-toronto-rappers": 1,
-    "/": 1,
+    "/": 5,
     "/blog/what-to-know-about-underground-canadian-hip-hop-in-2026": 1,
     "/blog/inside-young-hadene-an-honest-look": 1,
     "/blog/basement-to-stage-first-show": 1,
-    "/blog": 2
+    "/blog": 5,
+    "/music": 2,
+    "/contact": 5
   },
   "referrers": {
-    "Direct": 114,
+    "Direct": 128,
     "Referral": 4,
     "Google": 1
   },
   "daily": {
-    "2026-10-07": 119
+    "2026-10-07": 119,
+    "2026-10-08": 14
   },
   "devices": {
-    "Desktop": 119
+    "Desktop": 133
   },
-  "totalViews": 119,
+  "totalViews": 133,
   "uniqueIps": [
     "::1"
   ]

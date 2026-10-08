@@ -12,5 +12,5 @@ services:
         sync: false
       - key: SITE_URL
         value: https://younghadne.ca
-      - key: DEEPSEEK_API_KEY
+      - key: GROQ_API_KEY
         sync: false
