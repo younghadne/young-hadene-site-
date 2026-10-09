@@ -955,7 +955,24 @@
       sessionStorage.setItem(SESSION_KEY, 'true');
       document.getElementById('loginBox').style.display = 'none';
       document.getElementById('dashboard').classList.add('show');
-      loadPosts();
+      restoreDashboard();
+    }
+
+    function loadGitHubPat() {
+      try {
+        const pat = localStorage.getItem(GITHUB_PAT_KEY) || '';
+        const input = document.getElementById('ghToken');
+        if (input && pat) input.value = pat;
+        const repoInput = document.getElementById('ghRepo');
+        if (repoInput && !repoInput.value) repoInput.value = GITHUB_REPO;
+      } catch {}
+      checkGitHubPatStatus();
+    }
+
+    function restoreDashboard() {
+      loadGitHubPat();
+      try { loadApiConfig(); } catch (e) { console.error('loadApiConfig failed:', e); }
+      try { loadPosts(); } catch (e) { console.error('loadPosts failed:', e); }
     }
 
     async function handleLogin() {
@@ -995,7 +1012,7 @@
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
-        loadGitHubPat();
+        restoreDashboard();
       }
     })();
 
@@ -1852,8 +1869,9 @@
     }
 
     // Cloudflare config — set these via the admin settings
-    let CF_ACCOUNT = '';
-    let CF_PROJECT = '';
+    // (var, not let: read during early session restore before this line runs)
+    var CF_ACCOUNT = '';
+    var CF_PROJECT = '';
 
     function loadCfConfig() {
       try {
