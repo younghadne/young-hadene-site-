@@ -1079,6 +1079,86 @@
       "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
       "ip": "::1",
       "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791547417739,
+      "path": "/",
+      "referrer": "",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791547464702,
+      "path": "/",
+      "referrer": "http://localhost:3456/admin",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791547466554,
+      "path": "/music",
+      "referrer": "http://localhost:3456/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Music — Young Hadene | Haitian-Toronto Drill & Dark Trap Discography"
+    },
+    {
+      "ts": 1791547467711,
+      "path": "/blog",
+      "referrer": "http://localhost:3456/music",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791547476306,
+      "path": "/contact",
+      "referrer": "http://localhost:3456/admin",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Contact & Booking — Young Hadene | Haitian-Toronto Drill Artist"
+    },
+    {
+      "ts": 1791547477943,
+      "path": "/blog",
+      "referrer": "http://localhost:3456/contact",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791547483239,
+      "path": "/blog/toronto-after-midnight",
+      "referrer": "http://localhost:3456/blog",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Toronto After Midnight — A Dark Trap Diary — Young Hadene"
+    },
+    {
+      "ts": 1791547485725,
+      "path": "/",
+      "referrer": "http://localhost:3456/blog/toronto-after-midnight",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Young Hadene | Haitian-Toronto Drill & Dark Trap Artist"
+    },
+    {
+      "ts": 1791547490490,
+      "path": "/blog",
+      "referrer": "http://localhost:3456/",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes"
+    },
+    {
+      "ts": 1791547495097,
+      "path": "/blog/what-to-know-about-underground-canadian-hip-hop-in-2026",
+      "referrer": "http://localhost:3456/blog",
+      "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+      "ip": "::1",
+      "pageTitle": "Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked"
     }
   ],
   "pages": {
@@ -1088,28 +1168,29 @@
     "/contact.html": 8,
     "/music.html": 9,
     "/blog/top-toronto-rappers": 1,
-    "/": 6,
-    "/blog/what-to-know-about-underground-canadian-hip-hop-in-2026": 1,
+    "/": 9,
+    "/blog/what-to-know-about-underground-canadian-hip-hop-in-2026": 2,
     "/blog/inside-young-hadene-an-honest-look": 1,
     "/blog/basement-to-stage-first-show": 1,
-    "/blog": 6,
-    "/music": 2,
-    "/contact": 5
+    "/blog": 9,
+    "/music": 3,
+    "/contact": 6,
+    "/blog/toronto-after-midnight": 1
   },
   "referrers": {
-    "Direct": 130,
+    "Direct": 140,
     "Referral": 4,
     "Google": 1
   },
   "daily": {
     "2026-10-07": 119,
     "2026-10-08": 14,
-    "2026-10-09": 2
+    "2026-10-09": 12
   },
   "devices": {
-    "Desktop": 135
+    "Desktop": 145
   },
-  "totalViews": 135,
+  "totalViews": 145,
   "uniqueIps": [
     "::1"
   ]

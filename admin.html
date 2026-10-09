@@ -13,6 +13,18 @@
     .gen-log .fail { color: #ef4444; }
     .gen-log .info { color: var(--text-muted); }
     .gen-log .warn { color: #eab308; }
+
+    /* NEW: Feature badges */
+    .badge { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 12px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-feature { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .badge-post { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+
+    /* NEW: Card hover effect */
+    .card-hover:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px); transition: box-shadow 0.2s, transform 0.2s; }
+
+    /* NEW: Success/Error toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 20px; border-radius: var(--radius); color: var(--text-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; opacity: 0; transition: opacity 0.3s, transform 0.3s; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(24px); }
   </style>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔐</text></svg>">
@@ -706,8 +718,16 @@
 
         <!-- Posts List -->
         <div class="posts-list">
-          <h3>All Posts</h3>
+          <h3>All Posts <span class="badge badge-feature">★ Featured</span></h3>
+          <div style="margin-top:16px">
+            <button class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="loadPosts()">Refresh</button>
+            <span style="margin-left:12px;font-size:0.7rem;color:var(--text-muted)">★ = Featured at top</span>
+          </div>
           <div id="postsContainer"></div>
+          <div id="emptyState" style="display:none;padding:48px 24px;background:var(--bg-card);border:1px dashed var(--border-color);border-radius:var(--radius);color:var(--text-muted);text-align:center;margin-top:16px">
+            <div style="font-size:2.5rem;margin-bottom:12px">📝</div>
+            <p>No posts yet. Write your first blog post above.</p>
+          </div>
         </div>
 
         <!-- Site Stats -->
@@ -948,6 +968,11 @@
       }, token);
     }
 
+    async function githubDeleteFile(repo, branch, filePath, message, token, sha) {
+      const existingSha = sha || (await githubGetFile(repo, branch, filePath, token)).sha;
+      return githubApi(repo, filePath, 'DELETE', { sha, }, token);
+    }
+
     function getAllPosts() {
       const local = getPosts();
       const seen = new Set(local.map(p => p.slug));
@@ -1077,8 +1102,23 @@
       // Commit to GitHub (triggers GitHub Actions workflow → auto-deploy).
       const pat = getGitHubPat();
       if (!pat) { alert('Enter your GitHub PAT in Admin Settings first.'); return; }
+
+      // Build post data from the just-saved localStorage entry
+      const latestId = posts.length > 0 ? posts[posts.length - 1].id : null;
+      const postData = id ? posts.find(p => p.id === Number(id)) : posts.find(p => p.id === latestId) || {
+        title: title,
+        slug: slugify(title),
+        category: category,
+        content: content,
+        takeaways: takeaways,
+        faq: faq,
+        excerpt: excerpt,
+        tags: tags,
+        featured: featured
+      };
+
       const repo = GITHUB_REPO;
-      const slug = postData.slug;
+      const slug = postData.slug || slugify(title);
       const branch = DEFAULT_BRANCH;
 
       // 1. Generate article HTML and commit blog/<slug>.html
@@ -1191,9 +1231,35 @@
       // Remove from the cached site list too so it disappears immediately.
       SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
       loadPosts();
-      if (target && target.slug) {
-        fetch('/api/posts/' + encodeURIComponent(target.slug), { method: 'DELETE' })
-          .catch(e => console.error('Server delete failed:', e));
+      if (target && target.slug && pat) {
+        // Delete from GitHub
+        const repo = GITHUB_REPO;
+        const branch = DEFAULT_BRANCH;
+        // Delete the article file
+        githubDeleteFile(repo, branch, `blog/${target.slug}.html`, `Delete post: ${target.slug} via admin`, pat)
+          .then(() => {
+            // Read and update posts.json
+            githubGetFile(repo, branch, 'blog/posts.json', pat)
+              .then(existing => {
+                let postsJson = [];
+                if (existing && existing.text) {
+                  postsJson = JSON.parse(atob(existing.content.replace(/\n/g, '')));
+                }
+                // Remove entry with matching slug
+                postsJson = postsJson.filter(p => p && p.slug !== target.slug);
+                // Commit updated posts.json
+                return githubPutFile(repo, branch, 'blog/posts.json', JSON.stringify(postsJson, null, 2),
+                  `Remove post: ${target.slug} via admin`, pat);
+              })
+              .then(() => {
+                // Refresh the UI to reflect deletion
+                showGenSuccess('Post deleted');
+              })
+              .catch(e => console.error('GitHub delete failed:', e));
+          })
+          .catch(e => console.error('GitHub delete failed:', e));
+      } else if (!pat) {
+        alert('Enter your GitHub PAT first.');
       }
     }
 
@@ -1242,10 +1308,50 @@
     }
 
     function showSuccess() {
+      // Show toast notification
+      const toast = document.getElementById('formToast');
+      if (toast) {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+      // Also keep the old success banner for backward compatibility
       const el = document.getElementById('formSuccess');
       el.classList.add('show');
       setTimeout(() => el.classList.remove('show'), 3000);
     }
+
+    function showError(message) {
+      // Show error toast
+      const toast = document.getElementById('formToast');
+      if (toast) {
+        toast.className = 'toast fail';
+        toast.querySelector('span').textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    }
+
+    function showGenSuccess(message) {
+      const toast = document.getElementById('formToast');
+      if (toast) {
+        toast.className = 'toast ok';
+        toast.querySelector('span').textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    }
+
+    // Create toast element if not exists
+    (function() {
+      let toast = document.getElementById('formToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'formToast';
+        toast.className = 'toast ok';
+        toast.innerHTML = '<span></span>';
+        document.body.appendChild(toast);
+      }
+    })();
 
     // ---- Char counts ----
     document.getElementById('postTitle').addEventListener('input', updateCounts);
