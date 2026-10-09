@@ -341,7 +341,17 @@ const server = http.createServer((req, res) => {
         const existing = posts.findIndex(p => p.slug === data.slug);
         if (existing >= 0) { posts[existing] = { ...posts[existing], ...data }; }
         else { data.id = Date.now(); data.dateNum = Date.now(); posts.push(data); }
-        fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+    fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+        // Keep blog/posts.json (live listing source) in sync instantly
+        try {
+          const pjPath = path.join(__dirname, 'blog', 'posts.json');
+          let pj = [];
+          try { pj = JSON.parse(fs.readFileSync(pjPath, 'utf8')) || []; } catch {}
+          const pi = pj.findIndex(p => p && p.slug === data.slug);
+          if (pi >= 0) pj[pi] = { ...pj[pi], ...data }; else pj.push({ ...data });
+          pj.sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
+          fs.writeFileSync(pjPath, JSON.stringify(pj, null, 2));
+        } catch (e) { log(`⚠️ posts.json sync failed: ${e.message}`); }
         // Generate static HTML file
         const blogDir = path.join(__dirname, 'blog');
         if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
@@ -463,6 +473,13 @@ const server = http.createServer((req, res) => {
     let posts = getBlogPosts();
     posts = posts.filter(p => p.slug !== slug);
     fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
+    try {
+      const pjPath = path.join(__dirname, 'blog', 'posts.json');
+      let pj = [];
+      try { pj = JSON.parse(fs.readFileSync(pjPath, 'utf8')) || []; } catch {}
+      pj = pj.filter(p => p && p.slug !== slug);
+      fs.writeFileSync(pjPath, JSON.stringify(pj, null, 2));
+    } catch (e) { log(`⚠️ posts.json sync failed: ${e.message}`); }
     const staticFile = path.join(__dirname, 'blog', slug + '.html');
     if (fs.existsSync(staticFile)) fs.unlinkSync(staticFile);
     log(`🗑️ Deleted post: ${slug}`);

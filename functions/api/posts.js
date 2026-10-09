@@ -292,39 +292,67 @@ export async function onRequestPost(context) {
       featured: !!p.featured,
     };
 
-    // 1. Upsert the article file
-    const html = buildArticleHtml(data, tagList);
-    const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
-    await ghPutFile(cfg.repo, cfg.branch, `blog/${slug}.html`, html,
-      `Publish post: ${slug} via admin`, cfg.token, existing ? existing.sha : undefined);
+    // Commit order matters for instant publishing (no rebuild wait):
+    //   1. blog/posts.json FIRST — /api/posts-list reads this live from GitHub,
+    //      so the post appears in the blog listing within seconds.
+    //   2. Article file — functions/blog/[slug].js serves it straight from
+    //      GitHub, so the URL works within seconds.
+    //   3. blog.html baked listing + sitemap are best-effort (SEO/fallback);
+    //      their failure must never block a publish.
+    const warnings = [];
 
-    // 2. Patch the baked listing in blog.html
-    const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
-    if (!blogPage) throw new Error('blog.html not found in repo');
+    // 1. Maintain blog/posts.json (live listing source) — critical
     const entry = { id: data.id, title: data.title, slug: data.slug, category: data.category, content: data.content, date: data.date, dateNum: data.dateNum, featured: data.featured, excerpt: data.excerpt, tags: data.tags, takeaways: data.takeaways, faq: data.faq };
-    const patchedBlog = upsertListingEntry(blogPage.text, entry);
-    await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
-      `Update listing for post: ${slug}`, cfg.token, blogPage.sha);
-
-    // 3. Patch sitemap.xml
-    const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
-    if (sm) {
-      const patchedSm = upsertSitemapEntry(sm.text, slug, now.toISOString().substring(0, 10));
-      if (patchedSm !== sm.text) {
-        await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
-          `Update sitemap for post: ${slug}`, cfg.token, sm.sha);
+    try {
+      const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
+      const updatedPj = upsertPostsJsonEntry(pj ? pj.text : '[]', entry);
+      if (!pj || updatedPj !== pj.text) {
+        await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
+          `Update posts: ${slug} via admin`, cfg.token, pj ? pj.sha : undefined);
       }
+    } catch (e) {
+      return json({ error: 'Could not update listing: ' + e.message }, 500);
     }
 
-    // 4. Maintain blog/posts.json (live listing source)
-    const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
-    const updatedPj = upsertPostsJsonEntry(pj ? pj.text : '[]', entry);
-    if (!pj || updatedPj !== pj.text) {
-      await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
-        `Update posts: ${slug} via admin`, cfg.token, pj ? pj.sha : undefined);
+    // 2. Upsert the article file — critical
+    try {
+      const html = buildArticleHtml(data, tagList);
+      const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
+      await ghPutFile(cfg.repo, cfg.branch, `blog/${slug}.html`, html,
+        `Publish post: ${slug} via admin`, cfg.token, existing ? existing.sha : undefined);
+    } catch (e) {
+      return json({ error: 'Listed but article save failed: ' + e.message, slug }, 500);
     }
 
-    return json({ ok: true, slug, url: `${SITE_URL}/blog/${slug}.html` });
+    // 3. Patch the baked listing in blog.html — best effort
+    try {
+      const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
+      if (blogPage) {
+        const patchedBlog = upsertListingEntry(blogPage.text, entry);
+        if (patchedBlog !== blogPage.text) {
+          await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
+            `Update listing for post: ${slug}`, cfg.token, blogPage.sha);
+        }
+      }
+    } catch (e) {
+      warnings.push('baked listing: ' + e.message);
+    }
+
+    // 4. Patch sitemap.xml — best effort
+    try {
+      const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
+      if (sm) {
+        const patchedSm = upsertSitemapEntry(sm.text, slug, now.toISOString().substring(0, 10));
+        if (patchedSm !== sm.text) {
+          await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
+            `Update sitemap for post: ${slug}`, cfg.token, sm.sha);
+        }
+      }
+    } catch (e) {
+      warnings.push('sitemap: ' + e.message);
+    }
+
+    return json({ ok: true, slug, url: `${SITE_URL}/blog/${slug}.html`, warnings });
   } catch (e) {
     return json({ error: e.message }, 500);
   }
