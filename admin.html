@@ -985,8 +985,9 @@
 
     // ---- Blog CRUD ----
     // Local drafts/unpublished edits live in localStorage. Published posts
-    // live on the site itself (blog.html baked SERVER_POSTS). The manager
-    // merges both so the "All Posts" tab always shows the real catalog.
+    // come from the live /api/posts-list index (blog.html baked SERVER_POSTS
+    // is only a fallback). The manager merges both so the "All Posts" tab
+    // always shows the real catalog.
     let SITE_POSTS = [];
     let SITE_POSTS_LOADED = false;
 
@@ -1007,11 +1008,26 @@
     }
 
     async function fetchSitePosts() {
+      // Live index first (seconds-fresh, updates the moment posts.json commits).
+      try {
+        const r = await fetch('/api/posts-list', { cache: 'no-store' });
+        if (r.ok) {
+          const d = await r.json();
+          if (d && Array.isArray(d.posts) && d.posts.length) {
+            SITE_POSTS = d.posts;
+            SITE_POSTS_LOADED = true;
+            return;
+          }
+        }
+      } catch (e) {
+        console.error('Live index unavailable, falling back to baked listing:', e);
+      }
+      // Fallback: scrape the baked listing out of blog.html.
       try {
         const r = await fetch('/blog.html', { cache: 'no-store' });
         if (!r.ok) return;
         const html = await r.text();
-        const m = html.match(/var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s);
+        const m = html.match(/var SERVER_POSTS = (\[.*\]);\s*\n?<\/script>/s);
         if (!m) return;
         const arr = JSON.parse(m[1]);
         if (Array.isArray(arr) && arr.length) {
