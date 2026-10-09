@@ -447,6 +447,14 @@ const server = http.createServer((req, res) => {
     return json({ ok: true, uptime: process.uptime(), pid: process.pid, postCount: getBlogPosts().length });
   }
 
+  // ── GET /api/posts-list — live blog index for local dev ──
+  // Matches functions/api/posts-list.js shape: { ok, posts[] sorted newest first }
+  if (url.pathname === '/api/posts-list' && req.method === 'GET') {
+    const posts = getBlogPosts().sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify({ ok: true, posts }));
+  }
+
   // ── DELETE /api/posts/:slug or /api/posts?slug= — delete a blog post ──
   const deleteMatch = url.pathname.match(/^\/api\/posts\/(.+)$/);
   const deleteSlug = deleteMatch ? deleteMatch[1] : url.pathname === '/api/posts' ? url.searchParams.get('slug') : null;
