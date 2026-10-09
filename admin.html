@@ -7,13 +7,111 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="Young Hadene admin panel for managing blog posts.">
   <style>
-    .mono-box { font-family: monospace; font-size: 0.7rem; }
-    .gen-log { background: var(--bg-primary); padding: 12px 16px; border-radius: 6px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 0.75rem; line-height: 1.6; margin-top: 12px; white-space: pre-wrap; }
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --bg-card: #161616;
+      --bg-card-hover: #1d1d1d;
+      --bg-elevated: #1a1a1a;
+      --accent: #dc2626;
+      --accent-dark: #b91c1c;
+      --accent-glow: rgba(220, 38, 38, 0.3);
+      --accent-subtle: rgba(220, 38, 38, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: #a3a3a3;
+      --text-muted: #6b6b6b;
+      --border-color: #222222;
+      --border-accent: #dc2626;
+      --font-heading: 'Bebas Neue', 'Impact', sans-serif;
+      --font-subheading: 'Anton', 'Impact', sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 30px rgba(220, 38, 38, 0.15);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    .mono-box { font-family: var(--font-body), monospace; font-size: 0.7rem; }
+    .gen-log { background: var(--bg-primary); padding: 12px 16px; border-radius: var(--radius); max-height: 400px; overflow-y: auto; font-family: var(--font-body); font-size: 0.75rem; line-height: 1.6; margin-top: 12px; white-space: pre-wrap; }
     .gen-log .ok { color: #22c55e; }
     .gen-log .fail { color: #ef4444; }
     .gen-log .info { color: var(--text-muted); }
     .gen-log .warn { color: #eab308; }
-  </style>
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keymospheses { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } 70% { box-shadow: 0 0 20px 10px rgba(220,38,38,0.3); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
+
+    /* Badges */
+    .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+    .badge-feature { background: var(--accent-subtle); color: var(--accent); }
+    .badge-post { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .badge-draft { background: rgba(100, 100, 100, 0.15); color: var(--text-muted); }
+
+    /* Cards */
+    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); transition: all 0.3s ease; }
+    .card:hover { border-color: var(--accent); box-shadow: var(--shadow-card); }
+    .card:focus-within { border-color: var(--accent); }
+    .card:focus { outline: none; }
+
+    /* Inputs */
+    input, select, textarea { 
+      background: var(--bg-primary); 
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius); 
+      color: var(--text-primary); 
+      font-family: var(--font-body); 
+      font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-subtle);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+    /* Buttons */
+    .btn { 
+      border-radius: var(--radius); 
+      font-family: var(--font-body); 
+      font-size: 0.85rem; 
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); color: #fff; border: none; }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: none; padding: 8px 16px; }
+    .btn-ghost:hover { color: var(--accent); }
+
+    /* Status indicators */
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .status-online { background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2s ease infinite; }
+    .status-offline { background: var(--text-muted); }
+
+    /* Tables & Lists */
+    .table th { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
+    .table td { padding: 16px 0; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
+    .table tbody tr:hover td { background: var(--bg-card-hover); }
+
+    /* Empty states */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state h3 { color: var(--text-muted); margin-bottom: 8px; }
+    .empty-state p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+</style>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔐</text></svg>">
   <style>
@@ -662,6 +760,12 @@
               <input type="text" id="postSlug" placeholder="auto-generated" readonly style="opacity:0.7">
             </div>
           </div>
+
+          <div class="form-group">
+            <label>Tags (comma-separated — powers SEO + blog filtering)</label>
+            <input type="text" id="postTags" placeholder="Toronto drill, new Toronto rappers, dark trap 2026" maxlength="300">
+            <div class="char-count">e.g. Toronto drill, Toronto underground rap, new Toronto music</div>
+          </div>
           <div class="form-group">
             <div style="font-size:0.75rem;color:var(--text-muted);"><span id="wordCount">0 words</span> &middot; <span id="readTime">0 min read</span></div>
           </div>
@@ -700,8 +804,16 @@
 
         <!-- Posts List -->
         <div class="posts-list">
-          <h3>All Posts</h3>
+          <h3>All Posts <span class="badge badge-feature">★ Featured</span></h3>
+          <div style="margin-top:16px">
+            <button class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="loadPosts()">Refresh</button>
+            <span style="margin-left:12px;font-size:0.7rem;color:var(--text-muted)">★ = Featured at top</span>
+          </div>
           <div id="postsContainer"></div>
+          <div id="emptyState" style="display:none;padding:48px 24px;background:var(--bg-card);border:1px dashed var(--border-color);border-radius:var(--radius);color:var(--text-muted);text-align:center;margin-top:16px">
+            <div style="font-size:2.5rem;margin-bottom:12px">📝</div>
+            <p>No posts yet. Write your first blog post above.</p>
+          </div>
         </div>
 
         <!-- Site Stats -->
@@ -762,6 +874,32 @@
             <button class="btn btn-outline" onclick="testApiConnection()">Test Connection</button>
           </div>
 
+          <!-- GitHub PAT Config -->
+          <div class="settings-section" style="margin-top:24px">
+            <h3>GitHub <span class="text-accent">PAT</span></h3>
+            <div class="settings-desc">Use a GitHub Personal Access Token to commit posts directly to your repo. Posts deploy automatically via GitHub Actions in ~1-2 min. <a href="https://github.com/settings/tokens/new?scopes=repo&description=younghadene-admin" target="_blank" style="color:var(--accent)">Generate a PAT here</a></div>
+
+            <div class="settings-grid" style="margin-bottom:16px">
+              <div class="settings-card full">
+                <label>GitHub PAT</label>
+                <input type="password" id="ghToken" placeholder="ghp_... your personal access token">
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Required. Generate at <code>github.com/settings/tokens</code> with <strong>repo: contents</strong> permission.</div>
+              </div>
+              <div class="settings-card">
+                <label>Repo</label>
+                <input type="text" id="ghRepo" value="younghadne/young-hadene-site-" placeholder="younghadne/young-hadene-site-">
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Your GitHub repo name (usually owner/repo-)</div>
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top:16px">
+              <button class="btn btn-primary" onclick="saveGitHubPat()">Save PAT</button>
+              <button class="btn btn-outline" onclick="clearGitHubPat()">Clear</button>
+            </div>
+
+            <div id="githubApiStatus" class="server-status offline"><span class="dot"></span> Not configured</div>
+          </div>
+
           <!-- Generation -->
           <div class="settings-grid">
             <div class="settings-card">
@@ -804,8 +942,22 @@
   <script>
     const STORAGE_KEY = 'yh_blogPosts';
     const SESSION_KEY = 'yh_admin';
+    const GITHUB_PAT_KEY = 'yh_github_pat';
+    const GITHUB_REPO = 'younghadne/young-hadene-site-';
+    const DEFAULT_BRANCH = 'main';
 
     // ---- Auth ----
+    function adminPassword() {
+      return sessionStorage.getItem('yh_admin_pw') || '';
+    }
+
+    function unlockDashboard() {
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('dashboard').classList.add('show');
+      loadPosts();
+    }
+
     async function handleLogin() {
       const pw = document.getElementById('passwordInput').value;
       try {
@@ -815,12 +967,14 @@
           body: JSON.stringify({ password: pw })
         });
         if (resp.ok) {
-          sessionStorage.setItem(SESSION_KEY, 'true');
-          document.getElementById('loginBox').style.display = 'none';
-          document.getElementById('dashboard').classList.add('show');
-          loadPosts();
+          sessionStorage.setItem('yh_admin_pw', pw);
+          unlockDashboard();
         } else {
-          document.getElementById('loginError').classList.add('show');
+          let msg = 'Incorrect password. Try again.';
+          try { const d = await resp.json(); if (d && d.error) msg = d.error; } catch {}
+          const errEl = document.getElementById('loginError');
+          errEl.textContent = msg;
+          errEl.classList.add('show');
         }
       } catch (e) {
         document.getElementById('loginError').classList.add('show');
@@ -829,6 +983,7 @@
 
     function handleLogout() {
       sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem('yh_admin_pw');
       document.getElementById('loginBox').style.display = 'block';
       document.getElementById('dashboard').classList.remove('show');
       document.getElementById('passwordInput').value = '';
@@ -840,14 +995,95 @@
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
+        loadGitHubPat();
       }
     })();
 
     // ---- Blog CRUD ----
+    // Local drafts/unpublished edits live in localStorage. Published posts
+    // live on the site itself (blog.html baked SERVER_POSTS). The manager
+    // merges both so the "All Posts" tab always shows the real catalog.
+    let SITE_POSTS = [];
+    let SITE_POSTS_LOADED = false;
+
     function getPosts() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       } catch { return []; }
+    }
+
+    function getGitHubPat() {
+      try { return localStorage.getItem(GITHUB_PAT_KEY) || ''; } catch { return ''; }
+    }
+
+    function setGitHubPat(pat) {
+      try { localStorage.setItem(GITHUB_PAT_KEY, pat); } catch {}
+    }
+
+    async function githubApi(repo, path, method, body, token) {
+      const url = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g, '/')}`;
+      const headers = {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'younghadene-admin',
+      };
+      const init = { method, headers, body: JSON.stringify(body) };
+      const r = await fetch(url, init);
+      if (!r.ok) {
+        const err = await r.text();
+        throw new Error(`GitHub API ${method} ${path}: HTTP ${r.status} ${err}`);
+      }
+      return r.json();
+    }
+
+    async function githubGetFile(repo, branch, filePath, token) {
+      return githubApi(repo, filePath, 'GET', {}, token);
+    }
+
+    async function githubPutFile(repo, branch, filePath, content, message, token, sha) {
+      const b64 = btoa(content);
+      const existingSha = sha || (await githubGetFile(repo, branch, filePath, token)).sha;
+      return githubPutFileFn(repo, branch, filePath, b64, message, token, existingSha);
+    }
+
+    function githubPutFileFn(repo, branch, filePath, b64Content, message, token, sha) {
+      return githubApi(repo, filePath, 'PUT', {
+        message, content: b64Content, branch,
+        ...(sha ? { sha } : {}),
+      }, token);
+    }
+
+    async function githubDeleteFile(repo, branch, filePath, message, token, sha) {
+      const existingSha = sha || (await githubGetFile(repo, branch, filePath, token)).sha;
+      return githubApi(repo, filePath, 'DELETE', { sha, }, token);
+    }
+
+    function getAllPosts() {
+      const local = getPosts();
+      const seen = new Set(local.map(p => p.slug));
+      const merged = [...local];
+      for (const p of SITE_POSTS) {
+        if (p && p.slug && !seen.has(p.slug)) merged.push(p);
+      }
+      return merged;
+    }
+
+    async function fetchSitePosts() {
+      try {
+        const r = await fetch('/blog.html', { cache: 'no-store' });
+        if (!r.ok) return;
+        const html = await r.text();
+        const m = html.match(/var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s);
+        if (!m) return;
+        const arr = JSON.parse(m[1]);
+        if (Array.isArray(arr) && arr.length) {
+          SITE_POSTS = arr;
+          SITE_POSTS_LOADED = true;
+        }
+      } catch (e) {
+        console.error('Could not load site posts:', e);
+      }
     }
 
     function savePosts(posts) {
@@ -855,7 +1091,12 @@
     }
 
     function loadPosts() {
-      const posts = getPosts();
+      renderPostsList(getAllPosts(), SITE_POSTS_LOADED);
+      // Then pull the live site index in the background and re-render merged.
+      fetchSitePosts().then(() => renderPostsList(getAllPosts(), SITE_POSTS_LOADED));
+    }
+
+    function renderPostsList(posts, fromSite) {
       const container = document.getElementById('postsContainer');
 
       if (posts.length === 0) {
@@ -870,7 +1111,9 @@
 
       posts.sort((a, b) => b.dateNum - a.dateNum);
 
-      container.innerHTML = posts.map(post => `
+      const hint = fromSite ? `<p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:12px;">Showing ${posts.length} posts from the live site + your local drafts.</p>` : '';
+
+      container.innerHTML = hint + posts.map(post => `
         <div class="post-item">
           <div class="post-item-info">
             <h4>${escapeHtml(post.title)}</h4>
@@ -897,6 +1140,7 @@
       const takeaways = document.getElementById('postTakeaways').value.trim();
       const faq = document.getElementById('postFaq').value.trim();
       const excerpt = document.getElementById('postExcerpt').value.trim();
+      const tags = document.getElementById('postTags').value.trim();
       const featured = document.getElementById('postFeatured').checked;
 
       if (!title) { alert('Enter a title.'); return; }
@@ -908,10 +1152,14 @@
       let posts = getPosts();
 
       if (id) {
-        // Edit existing
+        // Edit existing (may be a live-site post not yet in local drafts)
         const idx = posts.findIndex(p => p.id === Number(id));
+        const updated = { title, category, content, takeaways, faq, excerpt, tags, featured, date: dateStr, dateNum: Date.now() };
         if (idx !== -1) {
-          posts[idx] = { ...posts[idx], title, category, content, takeaways, faq, excerpt, featured, date: dateStr, dateNum: Date.now() };
+          posts[idx] = { ...posts[idx], ...updated };
+        } else {
+          const original = getAllPosts().find(p => p.id === Number(id));
+          posts.push({ id: Number(id), slug: (original && original.slug) || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), ...updated });
         }
       } else {
         // New post
@@ -924,6 +1172,7 @@
           takeaways,
           faq,
           excerpt,
+          tags,
           date: dateStr,
           dateNum: Date.now(),
           featured
@@ -936,19 +1185,110 @@
       showSuccess();
       resetForm();
 
-      // Sync to server
-      const postData = id ? posts.find(p => p.id === Number(id)) : posts[posts.length - 1];
-      if (postData) {
-        fetch('/api/posts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(postData)
-        }).catch(e => console.error('Server sync failed:', e));
+      // Commit to GitHub (triggers GitHub Actions workflow → auto-deploy).
+      const pat = getGitHubPat();
+      if (!pat) { alert('Enter your GitHub PAT in Admin Settings first.'); return; }
+
+      // Build post data from the just-saved localStorage entry
+      const latestId = posts.length > 0 ? posts[posts.length - 1].id : null;
+      const postData = id ? posts.find(p => p.id === Number(id)) : posts.find(p => p.id === latestId) || {
+        title: title,
+        slug: slugify(title),
+        category: category,
+        content: content,
+        takeaways: takeaways,
+        faq: faq,
+        excerpt: excerpt,
+        tags: tags,
+        featured: featured
+      };
+
+      const repo = GITHUB_REPO;
+      const slug = postData.slug || slugify(title);
+      const branch = DEFAULT_BRANCH;
+
+      // 1. Generate article HTML and commit blog/<slug>.html
+      const title = postData.title;
+      const category = postData.category;
+      const content = postData.content || '';
+      const takeaways = postData.takeaways || '';
+      const faq = postData.faq || '';
+      const excerpt = postData.excerpt || '';
+      const tags = postData.tags || '';
+      const featured = postData.featured || false;
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      const articleHtml = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title} — Young Hadene</title>
+<meta name="description" content="${excerpt}">
+<link rel="canonical" href="https://younghadene.ca/blog/${slug}">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${excerpt}">
+<meta property="og:image" content="https://younghadene.ca/images/poster1.png">
+<meta property="og:url" content="https://younghadene.ca/blog/${slug}">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta span{color:var(--accent)}.article-wrap h2{font-size:1.6rem;margin-top:48px;margin-bottom:16px;font-family:var(--font-heading);letter-spacing:.04em}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem}.article-wrap li{margin-bottom:8px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic;color:var(--text-secondary)}.article-wrap .cta-box{text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:32px;margin:40px 0}.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px}</style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">← Back to Blog</a><div class="article-wrap"><div class="meta">${dateStr} &middot; <span>${category}</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1>${title}</h1><div>${content}</div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
+
+      async function commitPost() {
+        try {
+          // Commit article file
+          await githubPutFile(repo, branch, `blog/${slug}.html`, articleHtml,
+            `Publish post: ${slug} via admin`, pat);
+
+          // 2. Read and update blog/posts.json
+          let postsJson = [];
+          try {
+            const existing = await githubGetFile(repo, branch, 'blog/posts.json', pat);
+            if (existing && existing.text) {
+              postsJson = JSON.parse(atob(existing.content.replace(/\n/g, '')));
+            }
+          } catch (e) {
+            // posts.json doesn't exist yet, start fresh
+          }
+
+          // Add new post entry
+          const newEntry = {
+            id: postData.id,
+            title, slug,
+            category,
+            date: dateStr,
+            dateNum: postData.dateNum,
+            featured,
+            excerpt,
+            tags,
+            takeaways,
+            faq,
+            content
+          };
+
+          // Check if slug already exists, if so update it
+          const existingIdx = postsJson.findIndex(p => p && p.slug === slug);
+          if (existingIdx >= 0) {
+            postsJson[existingIdx] = { ...postsJson[existingIdx], ...newEntry };
+          } else {
+            postsJson.push(newEntry);
+          }
+
+          // Sort by dateNum descending
+          postsJson.sort((a, b) => b.dateNum - a.dateNum);
+
+          // Commit updated posts.json
+          await githubPutFile(repo, branch, 'blog/posts.json', JSON.stringify(postsJson, null, 2),
+            `Update posts: ${slug} via admin`, pat);
+
+          showGenSuccess('Published live: /blog/' + slug + '.html');
+        } catch (e) {
+          console.error('GitHub commit failed:', e);
+          alert('Failed to publish to GitHub: ' + e.message);
+        }
       }
-    }
+
+      commitPost();
 
     function editPost(id) {
-      const posts = getPosts();
+      const posts = getAllPosts();
       const post = posts.find(p => p.id === id);
       if (!post) return;
 
@@ -960,6 +1300,7 @@
       document.getElementById('postTakeaways').value = post.takeaways || '';
       document.getElementById('postFaq').value = post.faq || '';
       document.getElementById('postExcerpt').value = post.excerpt || '';
+      document.getElementById('postTags').value = post.tags || '';
       document.getElementById('postFeatured').checked = post.featured;
       refreshPreview();
       document.getElementById('cancelBtn').style.display = 'inline-flex';
@@ -969,23 +1310,67 @@
 
     function deletePost(id) {
       if (!confirm('Delete this post?')) return;
+      const target = getAllPosts().find(p => p.id === id);
       let posts = getPosts();
       posts = posts.filter(p => p.id !== id);
       savePosts(posts);
+      // Remove from the cached site list too so it disappears immediately.
+      SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
       loadPosts();
+      if (target && target.slug && pat) {
+        // Delete from GitHub
+        const repo = GITHUB_REPO;
+        const branch = DEFAULT_BRANCH;
+        // Delete the article file
+        githubDeleteFile(repo, branch, `blog/${target.slug}.html`, `Delete post: ${target.slug} via admin`, pat)
+          .then(() => {
+            // Read and update posts.json
+            githubGetFile(repo, branch, 'blog/posts.json', pat)
+              .then(existing => {
+                let postsJson = [];
+                if (existing && existing.text) {
+                  postsJson = JSON.parse(atob(existing.content.replace(/\n/g, '')));
+                }
+                // Remove entry with matching slug
+                postsJson = postsJson.filter(p => p && p.slug !== target.slug);
+                // Commit updated posts.json
+                return githubPutFile(repo, branch, 'blog/posts.json', JSON.stringify(postsJson, null, 2),
+                  `Remove post: ${target.slug} via admin`, pat);
+              })
+              .then(() => {
+                // Refresh the UI to reflect deletion
+                showGenSuccess('Post deleted');
+              })
+              .catch(e => console.error('GitHub delete failed:', e));
+          })
+          .catch(e => console.error('GitHub delete failed:', e));
+      } else if (!pat) {
+        alert('Enter your GitHub PAT first.');
+      }
     }
 
     function toggleFeatured(id) {
-      let posts = getPosts();
-      const post = posts.find(p => p.id === id);
+      const all = getAllPosts();
+      const post = all.find(p => p.id === id);
       if (post) {
-        // Only one featured at a time
-        if (!post.featured) {
-          posts.forEach(p => p.featured = false);
+        const turningOn = !post.featured;
+        // Persist locally (creates a local copy for live-site posts).
+        let posts = getPosts();
+        posts.forEach(p => p.featured = false);
+        SITE_POSTS.forEach(p => p.featured = false);
+        const idx = posts.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          posts[idx].featured = turningOn;
+        } else {
+          posts.push({ ...post, featured: turningOn });
         }
-        post.featured = !post.featured;
         savePosts(posts);
         loadPosts();
+        fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword(), post: { ...post, featured: turningOn } })
+        }).catch(e => console.error('Server sync failed:', e));
       }
     }
 
@@ -998,6 +1383,7 @@
       document.getElementById('postTakeaways').value = '';
       document.getElementById('postFaq').value = '';
       document.getElementById('postExcerpt').value = '';
+      document.getElementById('postTags').value = '';
       document.getElementById('postSlug').value = '';
       document.getElementById('previewPane').style.display = 'none';
       document.getElementById('wordCount').textContent = '0 words';
@@ -1008,10 +1394,50 @@
     }
 
     function showSuccess() {
+      // Show toast notification
+      const toast = document.getElementById('formToast');
+      if (toast) {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+      // Also keep the old success banner for backward compatibility
       const el = document.getElementById('formSuccess');
       el.classList.add('show');
       setTimeout(() => el.classList.remove('show'), 3000);
     }
+
+    function showError(message) {
+      // Show error toast
+      const toast = document.getElementById('formToast');
+      if (toast) {
+        toast.className = 'toast fail';
+        toast.querySelector('span').textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    }
+
+    function showGenSuccess(message) {
+      const toast = document.getElementById('formToast');
+      if (toast) {
+        toast.className = 'toast ok';
+        toast.querySelector('span').textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    }
+
+    // Create toast element if not exists
+    (function() {
+      let toast = document.getElementById('formToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'formToast';
+        toast.className = 'toast ok';
+        toast.innerHTML = '<span></span>';
+        document.body.appendChild(toast);
+      }
+    })();
 
     // ---- Char counts ----
     document.getElementById('postTitle').addEventListener('input', updateCounts);
@@ -1193,6 +1619,43 @@
       }
     }
 
+    function getGitHubPat() {
+      try { return localStorage.getItem(GITHUB_PAT_KEY) || ''; } catch { return ''; }
+    }
+
+    function setGitHubPat(pat) {
+      try { localStorage.setItem(GITHUB_PAT_KEY, pat); } catch {}
+    }
+
+    function saveGitHubPat() {
+      const token = document.getElementById('ghToken').value.trim();
+      const repo = document.getElementById('ghRepo').value.trim();
+      if (!token) { alert('Enter your GitHub PAT.'); return; }
+      setGitHubPat(token);
+      checkGitHubPatStatus();
+      showGenSuccess('GitHub PAT saved');
+    }
+
+    function clearGitHubPat() {
+      setGitHubPat('');
+      const el = document.getElementById('githubApiStatus');
+      el.className = 'server-status offline';
+      el.innerHTML = '<span class="dot"></span> Not configured';
+      showGenSuccess('GitHub PAT cleared');
+    }
+
+    function checkGitHubPatStatus() {
+      const pat = getGitHubPat();
+      const el = document.getElementById('githubApiStatus');
+      if (pat) {
+        el.className = 'server-status online';
+        el.innerHTML = '<span class="dot"></span> GitHub PAT configured';
+      } else {
+        el.className = 'server-status offline';
+        el.innerHTML = '<span class="dot"></span> Enter your GitHub PAT above';
+      }
+    }
+
     function testApiConnection() {
       saveApiConfig();
       saveCfConfig();
@@ -1231,6 +1694,11 @@
     }
 
     function loadApiConfig() {
+      // Load Cloudflare token from storage (takes priority over empty)
+      const storedToken = localStorage.getItem('yh_cfToken');
+      if (storedToken) {
+        localStorage.setItem('yh_apiConfig', JSON.stringify({ cfToken: storedToken }));
+      }
       const cfg = getApiConfig();
       if (cfg.cfToken) document.getElementById('cfToken').value = cfg.cfToken;
       loadCfConfig();
@@ -1372,6 +1840,12 @@
       CF_ACCOUNT = document.getElementById('cfAccount').value.trim();
       CF_PROJECT = document.getElementById('cfProject').value.trim();
       localStorage.setItem('yh_cfConfig', JSON.stringify({ cfAccount: CF_ACCOUNT, cfProject: CF_PROJECT }));
+      // Save Cloudflare API token for later use
+      const cfToken = document.getElementById('cfToken').value.trim();
+      if (cfToken) {
+        localStorage.setItem('yh_cfToken', cfToken);
+        checkApiStatus();
+      }
     }
 
     // ---- Site Stats ----

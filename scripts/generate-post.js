@@ -28,12 +28,13 @@ if (fs.existsSync(envPath)) {
   }
 }
 
-const API_KEY = process.env.DEEPSEEK_API_KEY;
-const BASE_URL = process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
-const MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
+const API_KEY = process.env.GROQ_API_KEY;
+const BASE_URL = process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1';
+const MODEL = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+const MAX_TOKENS = parseInt(process.env.GROQ_MAX_TOKENS) || 1500;
 
 if (!API_KEY) {
-  console.error('❌ Set DEEPSEEK_API_KEY env var   (Get one: https://platform.deepseek.com/api_keys)');
+  console.error('❌ Set GROQ_API_KEY env var   (Get one: https://console.groq.com/keys)');
   process.exit(1);
 }
 
@@ -117,7 +118,7 @@ BODY:
 
   const r = await client.chat.completions.create({
     model: MODEL, messages: [{ role: 'user', content: prompt }],
-    temperature: 0.8, max_tokens: 2200,
+    temperature: 0.8, max_tokens: MAX_TOKENS,
   });
   return r.choices[0].message.content;
 }
