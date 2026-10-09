@@ -7,7 +7,7 @@
     "content": "dgdfdf",
     "date": "October 9, 2026",
     "dateNum": 1791561007087,
-    "featured": true,
+    "featured": false,
     "excerpt": "",
     "tags": "",
     "takeaways": "",
@@ -45,7 +45,11 @@
     "content": "Discover Young Hadene and Young Torys in this Toronto hiphop collaboration. Watch the YouTube video and explore Young Hadene's Canadian rap music.",
     "date": "October 9, 2026",
     "dateNum": 1791551775149,
-    "featured": false
+    "featured": true,
+    "excerpt": "",
+    "tags": "",
+    "takeaways": "",
+    "faq": ""
   },
   {
     "id": 1791551775148,
