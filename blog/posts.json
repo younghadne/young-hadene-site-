@@ -1107,5 +1107,15 @@
     "dateNum": 1744329600000,
     "featured": false,
     "content": "Breaking down the hardware and software that creates the signature heavy sound. Mic, preamp, interface, plugins. Here is exactly what goes into the signal chain."
+  },
+  {
+    "id": 1791553996573,
+    "title": "E2E test",
+    "slug": "__e2e-publish-test",
+    "category": "Music",
+    "content": "e2e",
+    "date": "October 9, 2026",
+    "dateNum": 1791553996573,
+    "featured": false
   }
 ]
