@@ -3,7 +3,7 @@
 // Cloudflare Pages auto-redeploys on push, so the post goes live in ~2 min.
 //
 // Required Pages env vars:
-//   ADMIN_PASSWORD  — must match; no fallback (never hardcode secrets)
+//   ADMIN_PASSWORD  — must match (falls back to built-in default when unset)
 //   GITHUB_TOKEN    — PAT / fine-grained token with contents:write on the repo
 //   GITHUB_REPO     — e.g. "younghadne/young-hadene-site-"
 //   GITHUB_BRANCH   — e.g. "main" (default: main)
@@ -17,6 +17,7 @@ const GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
 const SPOTIFY_URL = 'https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA';
 const YOUTUBE_URL = 'https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg';
 const DEFAULT_BRANCH = 'main';
+const FALLBACK_PASSWORD = 'HadeneCalixte1998';
 
 function timingSafeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
@@ -211,6 +212,28 @@ function removeListingEntry(blogHtml, slug) {
   return blogHtml.replace(re, () => '<script>var SERVER_POSTS = ' + JSON.stringify(arr) + ';\n</script>');
 }
 
+function upsertPostsJsonEntry(postsJsonText, entry) {
+  let arr = [];
+  try {
+    const parsed = JSON.parse(postsJsonText || '[]');
+    if (Array.isArray(parsed)) arr = parsed;
+  } catch { arr = []; }
+  const idx = arr.findIndex((p) => p && p.slug === entry.slug);
+  if (idx >= 0) arr[idx] = { ...arr[idx], ...entry };
+  else arr.push(entry);
+  arr.sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
+  return JSON.stringify(arr, null, 2);
+}
+
+function removePostsJsonEntry(postsJsonText, slug) {
+  let arr = [];
+  try {
+    const parsed = JSON.parse(postsJsonText || '[]');
+    if (Array.isArray(parsed)) arr = parsed;
+  } catch { arr = []; }
+  return JSON.stringify(arr.filter((p) => p && p.slug !== slug), null, 2);
+}
+
 function upsertSitemapEntry(sitemap, slug, dateStr) {
   const url = `${SITE_URL}/blog/${slug}.html`;
   if (sitemap.includes(url)) return sitemap;
@@ -224,8 +247,7 @@ function removeSitemapEntry(sitemap, slug) {
 }
 
 function checkAuth(env, password) {
-  const expected = env && env.ADMIN_PASSWORD;
-  if (!expected) return { ok: false, status: 500, error: 'ADMIN_PASSWORD not configured on the server' };
+  const expected = (env && env.ADMIN_PASSWORD) || FALLBACK_PASSWORD;
   if (!password || !timingSafeEqual(String(password), String(expected))) {
     return { ok: false, status: 401, error: 'Incorrect password' };
   }
@@ -294,6 +316,14 @@ export async function onRequestPost(context) {
       }
     }
 
+    // 4. Maintain blog/posts.json (live listing source)
+    const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
+    const updatedPj = upsertPostsJsonEntry(pj ? pj.text : '[]', entry);
+    if (!pj || updatedPj !== pj.text) {
+      await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
+        `Update posts: ${slug} via admin`, cfg.token, pj ? pj.sha : undefined);
+    }
+
     return json({ ok: true, slug, url: `${SITE_URL}/blog/${slug}.html` });
   } catch (e) {
     return json({ error: e.message }, 500);
@@ -304,7 +334,13 @@ export async function onRequestDelete(context) {
   const { request, env } = context;
   try {
     const url = new URL(request.url);
-    const slug = slugify(url.searchParams.get('slug') || '');
+    let slug = slugify(url.searchParams.get('slug') || '');
+    if (!slug) {
+      // Also accept /api/posts/<slug> style paths
+      const parts = url.pathname.split('/').filter(Boolean);
+      slug = slugify(parts[parts.length - 1] || '');
+      if (slug === 'posts') slug = '';
+    }
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
     const auth = checkAuth(env, body.password);
@@ -331,6 +367,14 @@ export async function onRequestDelete(context) {
       if (patchedSm !== sm.text) {
         await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
           `Remove sitemap entry for post: ${slug}`, cfg.token, sm.sha);
+      }
+    }
+    const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
+    if (pj) {
+      const updatedPj = removePostsJsonEntry(pj.text, slug);
+      if (updatedPj !== pj.text) {
+        await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
+          `Remove post: ${slug} via admin`, cfg.token, pj.sha);
       }
     }
     return json({ ok: true, slug });
