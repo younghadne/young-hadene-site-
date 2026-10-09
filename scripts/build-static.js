@@ -84,33 +84,66 @@ for (const p of staticPages) {
   xml += `  <url><loc>${SITE_URL}${p.loc}</loc><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>\n`;
 }
 
-// Build SERVER_POSTS from posts.json + on-disk HTML files
+// Build SERVER_POSTS from posts.json + the existing baked listing in blog.html
+// (the admin historically patched blog.html directly, so merge both and
+// dedupe by slug — posts.json wins on conflict).
 let posts = readPostsJson();
 
-// Also collect any posts from on-disk HTML files that aren't in posts.json
-// (for robustness - the admin may have committed HTML without updating posts.json yet)
-const onDiskPosts = {};
-for (const f of htmlFiles) {
-  const full = path.join(blogDir, f);
+function readBakedListing() {
   try {
-    const content = fs.readFileSync(full, 'utf8');
-    // Try to extract SERVER_POSTS from the file itself
-    const m = content.match(/<script>var SERVER_POSTS = (\[.*?\]);?\s*<\/script>/s);
-    if (m) {
-      try {
-        const diskArr = JSON.parse(m[1]);
-        diskArr.forEach(p => { onDiskPosts[p.slug] = p; });
-      } catch {}
-    }
-  } catch {}
+    const html = fs.readFileSync(path.join(ROOT, 'blog.html'), 'utf8');
+    const m = html.match(/<script>var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s);
+    if (!m) return [];
+    const arr = JSON.parse(m[1]);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
 }
 
-// Merge: posts.json takes priority, fill in from on-disk
+const bakedPosts = readBakedListing();
+
+// Merge: posts.json takes priority, fill in from baked listing
 const mergedPosts = [...posts];
-for (const [slug, p] of Object.entries(onDiskPosts)) {
-  if (!mergedPosts.some(q => q && q.slug === slug)) {
+for (const p of bakedPosts) {
+  if (p && p.slug && !mergedPosts.some((q) => q && q.slug === p.slug)) {
     mergedPosts.push(p);
   }
+}
+
+// Self-heal: synthesize entries for article files on disk that are
+// missing from the listing (e.g. committed by older admin versions).
+function titleFromHtml(filePath) {
+  try {
+    const html = fs.readFileSync(filePath, 'utf8');
+    const m = html.match(/<title>([^<]*)<\/title>/);
+    if (!m) return null;
+    return m[1].replace(/\s*—\s*Young Hadene\s*$/, '').trim() || null;
+  } catch {
+    return null;
+  }
+}
+function descFromHtml(filePath) {
+  try {
+    const html = fs.readFileSync(filePath, 'utf8');
+    const m = html.match(/<meta name="description" content="([^"]*)"/);
+    return m ? m[1] : '';
+  } catch {
+    return '';
+  }
+}
+for (const f of htmlFiles) {
+  const slug = f.replace(/\.html$/, '');
+  if (slug === 'index' || mergedPosts.some((q) => q && q.slug === slug)) continue;
+  const full = path.join(blogDir, f);
+  const title = titleFromHtml(full) || slug;
+  let mtime = Date.now();
+  try { mtime = fs.statSync(full).mtime.getTime(); } catch {}
+  const dateStr = new Date(mtime).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  mergedPosts.push({
+    id: mtime, title, slug, category: 'Music',
+    content: descFromHtml(full), date: dateStr, dateNum: mtime, featured: false,
+  });
 }
 
 // Build SERVER_POSTS block
@@ -129,7 +162,7 @@ try {
   // If SERVER_POSTS already exists, replace it; if not, inject after <meta name="viewport"
   const existingMatch = blogHtml.match(/<script>var SERVER_POSTS =/);
   if (existingMatch) {
-    blogHtml = blogHtml.replace(/<script>var SERVER_POSTS =.*?<\/script>/, serverPostsBlock);
+    blogHtml = blogHtml.replace(/<script>var SERVER_POSTS =.*?<\/script>/s, () => serverPostsBlock);
   } else {
     // Find position after the closing > of the viewport meta tag
     const viewportMeta = blogHtml.indexOf('<meta name="viewport"');
