@@ -1185,7 +1185,9 @@
       loadPosts();
       if (target && target.slug) {
         publishStatus('Deleting…');
-        fetch('/api/posts/' + encodeURIComponent(target.slug) + '?password=' + encodeURIComponent(adminPassword()), {
+        // Query-style slug works on both local server.js and Cloudflare Pages
+        // Functions (path-style /api/posts/<slug> has no function route live).
+        fetch('/api/posts?slug=' + encodeURIComponent(target.slug) + '&password=' + encodeURIComponent(adminPassword()), {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password: adminPassword() })
