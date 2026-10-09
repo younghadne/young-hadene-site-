@@ -532,6 +532,8 @@
     }
 
     let currentCategory = 'all';
+    let currentPage = 1;
+    const PAGE_SIZE = 6;
     let posts = [];
 
     function renderBlog() {
@@ -541,6 +543,24 @@
       renderFeatured();
       renderGrid();
       renderPagination();
+    }
+
+    // Shared listing: featured post stays in the hero, grid shows the rest.
+    function getFinalPosts() {
+      const hasFeatured = posts.some(p => p.featured);
+      if (currentCategory === 'all') {
+        return hasFeatured ? posts.filter(p => !p.featured) : posts.slice();
+      }
+      return posts.filter(p => p.category === currentCategory);
+    }
+
+    function gotoPage(n) {
+      const total = Math.max(1, Math.ceil(getFinalPosts().length / PAGE_SIZE));
+      currentPage = Math.min(Math.max(1, n), total);
+      renderGrid();
+      renderPagination();
+      const grid = document.getElementById('blogGrid');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function renderFeatured() {
@@ -569,29 +589,18 @@
 
     function renderGrid() {
       const container = document.getElementById('blogGrid');
-      const filtered = currentCategory === 'all'
-        ? posts.filter(p => !p.featured || posts.filter(x => x.featured).length === 0)
-        : posts.filter(p => p.category === currentCategory && !p.featured);
-
-      // If we have a featured post, exclude it from the grid
-      const hasFeatured = posts.some(p => p.featured);
-      const gridPosts = hasFeatured ? filtered.filter(p => !p.featured) : filtered;
-      // If no filter active and no featured, show all
-      const displayPosts = currentCategory === 'all' && !hasFeatured ? posts : gridPosts;
-      // Recalculate properly
-      let finalPosts;
-      if (currentCategory === 'all') {
-        finalPosts = hasFeatured ? posts.filter(p => !p.featured) : posts;
-      } else {
-        finalPosts = posts.filter(p => p.category === currentCategory);
-      }
+      const finalPosts = getFinalPosts();
 
       if (finalPosts.length === 0) {
         container.innerHTML = '<div class="no-posts-msg"><div class="icon">📝</div><p>No posts in this category yet. Check back soon.</p></div>';
         return;
       }
 
-      container.innerHTML = finalPosts.map(post => {
+      const totalPages = Math.max(1, Math.ceil(finalPosts.length / PAGE_SIZE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const pagePosts = finalPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+      container.innerHTML = pagePosts.map(post => {
         // Always link to the on-site article (never hijack to external URLs found in content)
         const cleanContent = stripMarkdown(post.content || '');
         const postUrl = post.slug ? `/blog/${post.slug}` : '#';
@@ -620,13 +629,26 @@
 
     function renderPagination() {
       const container = document.getElementById('pagination');
-      const filtered = currentCategory === 'all' ? posts.filter(p => !p.featured) : posts.filter(p => p.category === currentCategory);
-      if (filtered.length <= 6) { container.innerHTML = ''; return; }
-      const pages = Math.ceil(filtered.length / 6);
-      container.innerHTML = Array.from({ length: pages }, (_, i) =>
-        `<a href="#" class="${i === 0 ? 'active' : ''}">${i + 1}</a>`
-      ).join('') + '<a href="#">&#8594;</a>';
+      const finalPosts = getFinalPosts();
+      if (finalPosts.length <= PAGE_SIZE) { container.innerHTML = ''; return; }
+      const pages = Math.ceil(finalPosts.length / PAGE_SIZE);
+      if (currentPage > pages) currentPage = pages;
+      let html = `<a href="#" data-page="${currentPage - 1}" class="${currentPage === 1 ? 'disabled' : ''}" aria-label="Previous page">&#8592;</a>`;
+      for (let i = 1; i <= pages; i++) {
+        html += `<a href="#" data-page="${i}" class="${i === currentPage ? 'active' : ''}">${i}</a>`;
+      }
+      html += `<a href="#" data-page="${currentPage + 1}" class="${currentPage === pages ? 'disabled' : ''}" aria-label="Next page">&#8594;</a>`;
+      container.innerHTML = html;
     }
+
+    // Pagination clicks (delegated — links re-render every page change).
+    document.getElementById('pagination').addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-page]');
+      if (!link) return;
+      e.preventDefault();
+      if (link.classList.contains('disabled')) return;
+      gotoPage(parseInt(link.dataset.page, 10) || 1);
+    });
 
     // ---- Category filter ----
     document.getElementById('categoryFilters').addEventListener('click', (e) => {
@@ -636,6 +658,7 @@
       document.querySelectorAll('#categoryFilters a').forEach(a => a.classList.remove('active'));
       link.classList.add('active');
       currentCategory = link.dataset.cat;
+      currentPage = 1;
       renderGrid();
       renderPagination();
     });
