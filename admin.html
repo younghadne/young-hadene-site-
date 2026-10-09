@@ -768,6 +768,32 @@
             <button class="btn btn-outline" onclick="testApiConnection()">Test Connection</button>
           </div>
 
+          <!-- GitHub PAT Config -->
+          <div class="settings-section" style="margin-top:24px">
+            <h3>GitHub <span class="text-accent">PAT</span></h3>
+            <div class="settings-desc">Use a GitHub Personal Access Token to commit posts directly to your repo. Posts deploy automatically via GitHub Actions in ~1-2 min. <a href="https://github.com/settings/tokens/new?scopes=repo&description=younghadene-admin" target="_blank" style="color:var(--accent)">Generate a PAT here</a></div>
+
+            <div class="settings-grid" style="margin-bottom:16px">
+              <div class="settings-card full">
+                <label>GitHub PAT</label>
+                <input type="password" id="ghToken" placeholder="ghp_... your personal access token">
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Required. Generate at <code>github.com/settings/tokens</code> with <strong>repo: contents</strong> permission.</div>
+              </div>
+              <div class="settings-card">
+                <label>Repo</label>
+                <input type="text" id="ghRepo" value="younghadne/young-hadene-site-" placeholder="younghadne/young-hadene-site-">
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Your GitHub repo name (usually owner/repo-)</div>
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top:16px">
+              <button class="btn btn-primary" onclick="saveGitHubPat()">Save PAT</button>
+              <button class="btn btn-outline" onclick="clearGitHubPat()">Clear</button>
+            </div>
+
+            <div id="githubApiStatus" class="server-status offline"><span class="dot"></span> Not configured</div>
+          </div>
+
           <!-- Generation -->
           <div class="settings-grid">
             <div class="settings-card">
@@ -810,6 +836,9 @@
   <script>
     const STORAGE_KEY = 'yh_blogPosts';
     const SESSION_KEY = 'yh_admin';
+    const GITHUB_PAT_KEY = 'yh_github_pat';
+    const GITHUB_REPO = 'younghadne/young-hadene-site-';
+    const DEFAULT_BRANCH = 'main';
 
     // ---- Auth ----
     function adminPassword() {
@@ -860,6 +889,7 @@
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
+        loadGitHubPat();
       }
     })();
 
@@ -874,6 +904,48 @@
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       } catch { return []; }
+    }
+
+    function getGitHubPat() {
+      try { return localStorage.getItem(GITHUB_PAT_KEY) || ''; } catch { return ''; }
+    }
+
+    function setGitHubPat(pat) {
+      try { localStorage.setItem(GITHUB_PAT_KEY, pat); } catch {}
+    }
+
+    async function githubApi(repo, path, method, body, token) {
+      const url = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g, '/')}`;
+      const headers = {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'younghadene-admin',
+      };
+      const init = { method, headers, body: JSON.stringify(body) };
+      const r = await fetch(url, init);
+      if (!r.ok) {
+        const err = await r.text();
+        throw new Error(`GitHub API ${method} ${path}: HTTP ${r.status} ${err}`);
+      }
+      return r.json();
+    }
+
+    async function githubGetFile(repo, branch, filePath, token) {
+      return githubApi(repo, filePath, 'GET', {}, token);
+    }
+
+    async function githubPutFile(repo, branch, filePath, content, message, token, sha) {
+      const b64 = btoa(content);
+      const existingSha = sha || (await githubGetFile(repo, branch, filePath, token)).sha;
+      return githubPutFileFn(repo, branch, filePath, b64, message, token, existingSha);
+    }
+
+    function githubPutFileFn(repo, branch, filePath, b64Content, message, token, sha) {
+      return githubApi(repo, filePath, 'PUT', {
+        message, content: b64Content, branch,
+        ...(sha ? { sha } : {}),
+      }, token);
     }
 
     function getAllPosts() {
@@ -1002,20 +1074,92 @@
       showSuccess();
       resetForm();
 
-      // Sync to server.
-      const postData = id ? posts.find(p => p.id === Number(id)) : posts[posts.length - 1];
-      if (postData) {
-        fetch('/api/posts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: adminPassword(), post: postData })
-        }).then(async r => {
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
-          showGenSuccess('Published live: /blog/' + d.slug + '.html');
-        }).catch(e => console.error('Server sync failed:', e));
+      // Commit to GitHub (triggers GitHub Actions workflow → auto-deploy).
+      const pat = getGitHubPat();
+      if (!pat) { alert('Enter your GitHub PAT in Admin Settings first.'); return; }
+      const repo = GITHUB_REPO;
+      const slug = postData.slug;
+      const branch = DEFAULT_BRANCH;
+
+      // 1. Generate article HTML and commit blog/<slug>.html
+      const title = postData.title;
+      const category = postData.category;
+      const content = postData.content || '';
+      const takeaways = postData.takeaways || '';
+      const faq = postData.faq || '';
+      const excerpt = postData.excerpt || '';
+      const tags = postData.tags || '';
+      const featured = postData.featured || false;
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      const articleHtml = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title} — Young Hadene</title>
+<meta name="description" content="${excerpt}">
+<link rel="canonical" href="https://younghadene.ca/blog/${slug}">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${excerpt}">
+<meta property="og:image" content="https://younghadene.ca/images/poster1.png">
+<meta property="og:url" content="https://younghadene.ca/blog/${slug}">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta span{color:var(--accent)}.article-wrap h2{font-size:1.6rem;margin-top:48px;margin-bottom:16px;font-family:var(--font-heading);letter-spacing:.04em}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem}.article-wrap li{margin-bottom:8px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic;color:var(--text-secondary)}.article-wrap .cta-box{text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:32px;margin:40px 0}.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px}</style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">← Back to Blog</a><div class="article-wrap"><div class="meta">${dateStr} &middot; <span>${category}</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1>${title}</h1><div>${content}</div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
+
+      async function commitPost() {
+        try {
+          // Commit article file
+          await githubPutFile(repo, branch, `blog/${slug}.html`, articleHtml,
+            `Publish post: ${slug} via admin`, pat);
+
+          // 2. Read and update blog/posts.json
+          let postsJson = [];
+          try {
+            const existing = await githubGetFile(repo, branch, 'blog/posts.json', pat);
+            if (existing && existing.text) {
+              postsJson = JSON.parse(atob(existing.content.replace(/\n/g, '')));
+            }
+          } catch (e) {
+            // posts.json doesn't exist yet, start fresh
+          }
+
+          // Add new post entry
+          const newEntry = {
+            id: postData.id,
+            title, slug,
+            category,
+            date: dateStr,
+            dateNum: postData.dateNum,
+            featured,
+            excerpt,
+            tags,
+            takeaways,
+            faq,
+            content
+          };
+
+          // Check if slug already exists, if so update it
+          const existingIdx = postsJson.findIndex(p => p && p.slug === slug);
+          if (existingIdx >= 0) {
+            postsJson[existingIdx] = { ...postsJson[existingIdx], ...newEntry };
+          } else {
+            postsJson.push(newEntry);
+          }
+
+          // Sort by dateNum descending
+          postsJson.sort((a, b) => b.dateNum - a.dateNum);
+
+          // Commit updated posts.json
+          await githubPutFile(repo, branch, 'blog/posts.json', JSON.stringify(postsJson, null, 2),
+            `Update posts: ${slug} via admin`, pat);
+
+          showGenSuccess('Published live: /blog/' + slug + '.html');
+        } catch (e) {
+          console.error('GitHub commit failed:', e);
+          alert('Failed to publish to GitHub: ' + e.message);
+        }
       }
-    }
+
+      commitPost();
 
     function editPost(id) {
       const posts = getAllPosts();
@@ -1280,6 +1424,43 @@
       } else {
         el.className = 'server-status offline';
         el.innerHTML = '<span class="dot"></span> Enter your Cloudflare API token above';
+      }
+    }
+
+    function getGitHubPat() {
+      try { return localStorage.getItem(GITHUB_PAT_KEY) || ''; } catch { return ''; }
+    }
+
+    function setGitHubPat(pat) {
+      try { localStorage.setItem(GITHUB_PAT_KEY, pat); } catch {}
+    }
+
+    function saveGitHubPat() {
+      const token = document.getElementById('ghToken').value.trim();
+      const repo = document.getElementById('ghRepo').value.trim();
+      if (!token) { alert('Enter your GitHub PAT.'); return; }
+      setGitHubPat(token);
+      checkGitHubPatStatus();
+      showGenSuccess('GitHub PAT saved');
+    }
+
+    function clearGitHubPat() {
+      setGitHubPat('');
+      const el = document.getElementById('githubApiStatus');
+      el.className = 'server-status offline';
+      el.innerHTML = '<span class="dot"></span> Not configured';
+      showGenSuccess('GitHub PAT cleared');
+    }
+
+    function checkGitHubPatStatus() {
+      const pat = getGitHubPat();
+      const el = document.getElementById('githubApiStatus');
+      if (pat) {
+        el.className = 'server-status online';
+        el.innerHTML = '<span class="dot"></span> GitHub PAT configured';
+      } else {
+        el.className = 'server-status offline';
+        el.innerHTML = '<span class="dot"></span> Enter your GitHub PAT above';
       }
     }
 
