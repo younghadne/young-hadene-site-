@@ -369,43 +369,75 @@ export async function onRequestDelete(context) {
       slug = slugify(parts[parts.length - 1] || '');
       if (slug === 'posts') slug = '';
     }
+    // Some proxies strip DELETE bodies — also accept ?password= as fallback.
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const auth = checkAuth(env, body.password);
+    const password = (body && body.password) || url.searchParams.get('password') || '';
+    const auth = checkAuth(env, password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const cfg = ghConfig(env);
     if (!cfg.ok) return json({ error: cfg.error }, 500);
     if (!slug) return json({ error: 'slug query param is required' }, 400);
 
-    const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
-    if (existing) {
-      await ghDeleteFile(cfg.repo, cfg.branch, `blog/${slug}.html`, `Delete post: ${slug} via admin`, cfg.token, existing.sha);
-    }
-    const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
-    if (blogPage) {
-      const patchedBlog = removeListingEntry(blogPage.text, slug);
-      if (patchedBlog !== blogPage.text) {
-        await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
-          `Remove listing for post: ${slug}`, cfg.token, blogPage.sha);
+    // Delete order mirrors publish (listing first = instant removal):
+    //   1. blog/posts.json FIRST — post vanishes from Blogs within seconds.
+    //   2. Article file — URL stops working within seconds.
+    //   3. blog.html baked listing + sitemap are best-effort cleanup.
+    const warnings = [];
+
+    // 1. Remove from blog/posts.json (live listing source) — critical
+    try {
+      const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
+      if (pj) {
+        const updatedPj = removePostsJsonEntry(pj.text, slug);
+        if (updatedPj !== pj.text) {
+          await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
+            `Remove post: ${slug} via admin`, cfg.token, pj.sha);
+        }
       }
+    } catch (e) {
+      return json({ error: 'Could not remove from listing: ' + e.message }, 500);
     }
-    const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
-    if (sm) {
-      const patchedSm = removeSitemapEntry(sm.text, slug);
-      if (patchedSm !== sm.text) {
-        await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
-          `Remove sitemap entry for post: ${slug}`, cfg.token, sm.sha);
+
+    // 2. Delete the article file — critical (404-tolerant)
+    try {
+      const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
+      if (existing) {
+        await ghDeleteFile(cfg.repo, cfg.branch, `blog/${slug}.html`, `Delete post: ${slug} via admin`, cfg.token, existing.sha);
       }
+    } catch (e) {
+      return json({ error: 'Delisted but file delete failed: ' + e.message, slug }, 500);
     }
-    const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
-    if (pj) {
-      const updatedPj = removePostsJsonEntry(pj.text, slug);
-      if (updatedPj !== pj.text) {
-        await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
-          `Remove post: ${slug} via admin`, cfg.token, pj.sha);
+
+    // 3. Remove baked listing in blog.html — best effort
+    try {
+      const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
+      if (blogPage) {
+        const patchedBlog = removeListingEntry(blogPage.text, slug);
+        if (patchedBlog !== blogPage.text) {
+          await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
+            `Remove listing for post: ${slug}`, cfg.token, blogPage.sha);
+        }
       }
+    } catch (e) {
+      warnings.push('baked listing: ' + e.message);
     }
-    return json({ ok: true, slug });
+
+    // 4. Remove sitemap entry — best effort
+    try {
+      const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
+      if (sm) {
+        const patchedSm = removeSitemapEntry(sm.text, slug);
+        if (patchedSm !== sm.text) {
+          await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
+            `Remove sitemap entry for post: ${slug}`, cfg.token, sm.sha);
+        }
+      }
+    } catch (e) {
+      warnings.push('sitemap: ' + e.message);
+    }
+
+    return json({ ok: true, slug, warnings });
   } catch (e) {
     return json({ error: e.message }, 500);
   }

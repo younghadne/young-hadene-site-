@@ -1185,7 +1185,7 @@
       loadPosts();
       if (target && target.slug) {
         publishStatus('Deleting…');
-        fetch('/api/posts/' + encodeURIComponent(target.slug), {
+        fetch('/api/posts/' + encodeURIComponent(target.slug) + '?password=' + encodeURIComponent(adminPassword()), {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password: adminPassword() })
