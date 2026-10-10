@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": 999001,
+    "title": "GH API Test Delete Me",
+    "slug": "gh-api-test-delete-me",
+    "section": "news",
+    "category": "Press",
+    "content": "## Test\n\nToronto, ON — test body.",
+    "takeaways": "",
+    "faq": "",
+    "excerpt": "test excerpt",
+    "tags": "test",
+    "date": "October 10, 2026",
+    "dateNum": 1791642451450,
+    "featured": false
+  }
+]
