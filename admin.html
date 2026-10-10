@@ -679,82 +679,10 @@
               <input type="text" id="postExcerpt" placeholder="Short summary..." maxlength="160">
               <div class="char-count"><span id="excerptCount">0</span>/160</div>
             </div>
-            <div class="form-group">
-              <label>URL Slug (auto from title — editable; duplicates get -2, -3…)</label>
-              <input type="text" id="postSlug" placeholder="auto-generated">
-            </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Status</label>
-              <div style="display:flex;gap:12px;align-items:center;padding:10px 0;font-size:0.85rem;">
-                <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="radio" name="postStatus" value="published" checked style="accent-color:var(--accent)"> Published</label>
-                <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="radio" name="postStatus" value="draft" style="accent-color:var(--accent)"> Draft</label>
-                <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="radio" name="postStatus" value="scheduled" style="accent-color:var(--accent)"> Scheduled</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Publish at (for Scheduled)</label>
-              <input type="datetime-local" id="postScheduledFor">
-            </div>
-          </div>
           <input type="hidden" id="baseUpdatedAt" value="">
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Author</label>
-              <input type="text" id="postAuthor" placeholder="Young Hadene" maxlength="100">
-            </div>
-            <div class="form-group">
-              <label>Publication date</label>
-              <input type="text" id="postPubDate" placeholder="October 10, 2026" maxlength="60">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Featured image URL</label>
-              <input type="text" id="postImage" placeholder="https://younghadene.ca/images/…" maxlength="500">
-            </div>
-            <div class="form-group">
-              <label>Image alt text</label>
-              <input type="text" id="postImageAlt" placeholder="Describe the image…" maxlength="200">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>SEO title (defaults to post title)</label>
-              <input type="text" id="postSeoTitle" placeholder="" maxlength="200">
-            </div>
-            <div class="form-group">
-              <label>Meta description (defaults to excerpt)</label>
-              <input type="text" id="postSeoDesc" placeholder="" maxlength="300">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>OG title (defaults to post title)</label>
-              <input type="text" id="postOgTitle" placeholder="" maxlength="200">
-            </div>
-            <div class="form-group">
-              <label>OG description (defaults to meta description)</label>
-              <input type="text" id="postOgDesc" placeholder="" maxlength="300">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>OG image (defaults to site image)</label>
-              <input type="text" id="postOgImage" placeholder="https://…" maxlength="500">
-            </div>
-            <div class="form-group">
-              <label>Canonical URL (defaults to article URL)</label>
-              <input type="text" id="postCanonical" placeholder="https://…" maxlength="500">
-            </div>
-          </div>
 
           <div class="form-group" id="editorBackupBanner" style="display:none;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:6px;padding:12px 16px;font-size:0.8rem;">
             Unsaved editor backup found. <button type="button" class="btn btn-outline" style="padding:4px 12px;font-size:0.7rem;margin-left:8px;" onclick="restoreEditorBackup()">Restore</button>
@@ -1212,24 +1140,12 @@
       const excerpt = document.getElementById('postExcerpt').value.trim();
       const tags = document.getElementById('postTags').value.trim();
       const featured = document.getElementById('postFeatured').checked;
-      const statusRadio = document.querySelector('input[name="postStatus"]:checked');
-      const status = statusRadio ? statusRadio.value : 'published';
-      const schedInput = document.getElementById('postScheduledFor').value;
-      let scheduledFor = 0;
-      if (status === 'scheduled') {
-        scheduledFor = new Date(schedInput).getTime();
-        if (!schedInput || isNaN(scheduledFor)) { alert('Pick a publish date/time for scheduled posts.'); return; }
-      }
-      const author = document.getElementById('postAuthor').value.trim() || 'Young Hadene';
-      const pubDateInput = document.getElementById('postPubDate').value.trim();
-      const image = document.getElementById('postImage').value.trim();
-      const imageAlt = document.getElementById('postImageAlt').value.trim();
-      const seoTitle = document.getElementById('postSeoTitle').value.trim();
-      const seoDesc = document.getElementById('postSeoDesc').value.trim();
-      const ogTitle = document.getElementById('postOgTitle').value.trim();
-      const ogDesc = document.getElementById('postOgDesc').value.trim();
-      const ogImage = document.getElementById('postOgImage').value.trim();
-      const canonical = document.getElementById('postCanonical').value.trim();
+      const status = window.__yhSaveStatus || 'published';
+      window.__yhSaveStatus = null;
+      const scheduledFor = 0;
+      const author = 'Young Hadene';
+      const image = '', imageAlt = '';
+      const seoTitle = '', seoDesc = '', ogTitle = '', ogDesc = '', ogImage = '', canonical = '';
       const baseUpdatedAt = Number(document.getElementById('baseUpdatedAt').value) || 0;
 
       if (!title) { alert('Enter a title.'); return; }
@@ -1238,9 +1154,8 @@
       window.__yhSaving = true;
 
       const now = new Date();
-      const dateStr = pubDateInput || now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-      const slugInput = document.getElementById('postSlug').value.trim();
-      const slug = slugInput || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const dateStr = editOriginalDate || now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
       // Editing: drop from both stores first (handles Blog <-> News moves).
       let blogPosts = getPosts().filter(p => String(p.id) !== String(id || '-'));
@@ -1319,6 +1234,10 @@
       }).finally(() => { window.__yhSaving = false; });
     }
 
+    // Original display date of the post being edited (no date field in the
+    // form — edits keep their date instead of resetting it to today).
+    let editOriginalDate = '';
+
     function editPost(id, section) {
       const posts = getEverything();
       const post = posts.find(p => p.id === id);
@@ -1335,21 +1254,8 @@
       document.getElementById('postExcerpt').value = post.excerpt || '';
       document.getElementById('postTags').value = post.tags || '';
       document.getElementById('postFeatured').checked = post.featured;
-      document.getElementById('postSlug').value = post.slug || '';
-      document.getElementById('postSlug').dataset.manual = '1';
-      setPostStatus(post.status || 'published');
-      document.getElementById('postScheduledFor').value = post.scheduledFor ? new Date(post.scheduledFor).toISOString().slice(0, 16) : '';
       document.getElementById('baseUpdatedAt').value = post.updatedAt || post.dateNum || 0;
-      document.getElementById('postAuthor').value = post.author || '';
-      document.getElementById('postPubDate').value = post.date || '';
-      document.getElementById('postImage').value = post.image || '';
-      document.getElementById('postImageAlt').value = post.imageAlt || '';
-      document.getElementById('postSeoTitle').value = post.seoTitle || '';
-      document.getElementById('postSeoDesc').value = post.seoDesc || '';
-      document.getElementById('postOgTitle').value = post.ogTitle || '';
-      document.getElementById('postOgDesc').value = post.ogDesc || '';
-      document.getElementById('postOgImage').value = post.ogImage || '';
-      document.getElementById('postCanonical').value = post.canonical || '';
+      editOriginalDate = post.date || '';
       refreshPreview();
       document.getElementById('cancelBtn').style.display = 'inline-flex';
       document.getElementById('dupBtn').style.display = 'inline-flex';
@@ -1358,14 +1264,8 @@
       document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function setPostStatus(s) {
-      const r = document.querySelector('input[name="postStatus"][value="' + s + '"]') ||
-                document.querySelector('input[name="postStatus"][value="published"]');
-      if (r) r.checked = true;
-    }
-
     function saveDraft() {
-      setPostStatus('draft');
+      window.__yhSaveStatus = 'draft';
       savePost();
     }
 
@@ -1378,10 +1278,8 @@
       document.getElementById('formTitle').textContent = 'New Post (Copy)';
       document.getElementById('postId').value = '';
       document.getElementById('postTitle').value = (post.title || '') + ' (Copy)';
-      document.getElementById('postSlug').value = '';
-      delete document.getElementById('postSlug').dataset.manual;
       document.getElementById('baseUpdatedAt').value = '0';
-      setPostStatus('draft');
+      editOriginalDate = '';
       document.getElementById('dupBtn').style.display = 'none';
       refreshPreview();
       updateCounts();
@@ -1428,7 +1326,7 @@
     // ---- Editor autosave backup (crash/navigation recovery) ----
     const BACKUP_KEY = 'yh_editorBackup';
     let autosaveTimer = null;
-    const EDITOR_FIELDS = ['postSection', 'postCategory', 'postTitle', 'postContent', 'postTakeaways', 'postFaq', 'postExcerpt', 'postSlug', 'postTags', 'postAuthor', 'postPubDate', 'postImage', 'postImageAlt', 'postSeoTitle', 'postSeoDesc', 'postOgTitle', 'postOgDesc', 'postOgImage', 'postCanonical', 'postScheduledFor'];
+    const EDITOR_FIELDS = ['postSection', 'postCategory', 'postTitle', 'postContent', 'postTakeaways', 'postFaq', 'postExcerpt', 'postTags'];
 
     function collectEditorSnap() {
       const snap = { t: Date.now(), id: document.getElementById('postId').value };
@@ -1437,8 +1335,6 @@
         snap[id] = el ? el.value : '';
       });
       snap.postFeatured = document.getElementById('postFeatured').checked;
-      const st = document.querySelector('input[name="postStatus"]:checked');
-      snap.postStatus = st ? st.value : 'published';
       return snap;
     }
 
@@ -1449,8 +1345,6 @@
         if (el && snap[id] != null) el.value = snap[id];
       });
       document.getElementById('postFeatured').checked = !!snap.postFeatured;
-      setPostStatus(snap.postStatus || 'published');
-      document.getElementById('postSlug').dataset.manual = '1';
       refreshPreview();
       updateCounts();
       queueSuggest();
@@ -1616,21 +1510,8 @@
       document.getElementById('postFaq').value = '';
       document.getElementById('postExcerpt').value = '';
       document.getElementById('postTags').value = '';
-      document.getElementById('postSlug').value = '';
-      delete document.getElementById('postSlug').dataset.manual;
-      setPostStatus('published');
-      document.getElementById('postScheduledFor').value = '';
       document.getElementById('baseUpdatedAt').value = '';
-      document.getElementById('postAuthor').value = '';
-      document.getElementById('postPubDate').value = '';
-      document.getElementById('postImage').value = '';
-      document.getElementById('postImageAlt').value = '';
-      document.getElementById('postSeoTitle').value = '';
-      document.getElementById('postSeoDesc').value = '';
-      document.getElementById('postOgTitle').value = '';
-      document.getElementById('postOgDesc').value = '';
-      document.getElementById('postOgImage').value = '';
-      document.getElementById('postCanonical').value = '';
+      editOriginalDate = '';
       try { localStorage.removeItem('yh_editorBackup'); } catch {}
       document.getElementById('editorBackupBanner').style.display = 'none';
       document.getElementById('previewPane').style.display = 'none';
@@ -1770,8 +1651,6 @@
       const words = (content.trim() ? content.trim().split(/\s+/).length : 0);
       document.getElementById('wordCount').textContent = words + ' words';
       document.getElementById('readTime').textContent = Math.max(1, Math.round(words / 200)) + ' min read';
-      const slugEl = document.getElementById('postSlug');
-      if (slugEl && !slugEl.dataset.manual) slugEl.value = slugify(title);
       const ex = document.getElementById('postExcerpt');
       if (ex) document.getElementById('excerptCount').textContent = ex.value.length;
     }
@@ -1789,9 +1668,6 @@
         refreshPreview();
         if (document.getElementById('previewPane').style.display !== 'none') refreshPreview();
       });
-    });
-    document.getElementById('postSlug').addEventListener('input', function() {
-      this.dataset.manual = '1';
     });
     // Autosave editor backup + internal-link suggestions (debounced).
     document.getElementById('blogForm').addEventListener('input', () => {
