@@ -936,12 +936,12 @@
       document.getElementById('loginError').classList.remove('show');
     }
 
-    // Check session on load
+    // Check session on load (posts load deferred until the full script has evaluated)
     (function() {
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
-        loadPosts();
+        setTimeout(loadPosts, 0);
       }
     })();
 
@@ -1809,8 +1809,8 @@
       // 5. Baked listing blocks.
       const listCur = await ghGetFile(listPath);
       if (listCur) {
-        const baked = '<script>var ' + varName + ' = ' + JSON.stringify(isNews ? newsStore : blogStore) + ';\n</script>';
-        const re = new RegExp('<script>var ' + varName + ' = .*?;\\s*\\n?</script>', 's');
+        const baked = '<script>var ' + varName + ' = ' + JSON.stringify(isNews ? newsStore : blogStore) + ';\n<\/script>';
+        const re = new RegExp('<script>var ' + varName + ' = .*?;\\s*\\n?<\/script>', 's');
         const updated = re.test(listCur.text) ? listCur.text.replace(re, baked) : listCur.text.replace('</head>', baked + '\n</head>');
         await ghPutFile(listPath, updated, 'Refresh ' + varName + ' index');
       }
@@ -1843,8 +1843,8 @@
       const newsStore = isNews ? store : (await (async () => { try { const c = await ghGetFile('yh_newsPosts.json'); return c ? JSON.parse(c.text) : []; } catch { return []; } })());
       const listCur = await ghGetFile(listPath);
       if (listCur) {
-        const baked = '<script>var ' + varName + ' = ' + JSON.stringify(isNews ? newsStore : blogStore) + ';\n</script>';
-        const re = new RegExp('<script>var ' + varName + ' = .*?;\\s*\\n?</script>', 's');
+        const baked = '<script>var ' + varName + ' = ' + JSON.stringify(isNews ? newsStore : blogStore) + ';\n<\/script>';
+        const re = new RegExp('<script>var ' + varName + ' = .*?;\\s*\\n?<\/script>', 's');
         await ghPutFile(listPath, re.test(listCur.text) ? listCur.text.replace(re, baked) : listCur.text.replace('</head>', baked + '\n</head>'), 'Refresh ' + varName + ' index');
       }
       await ghPutFile('sitemap.xml', ghBuildMainSitemap(blogStore, newsStore), 'Refresh sitemap.xml');
