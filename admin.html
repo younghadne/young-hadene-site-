@@ -690,11 +690,6 @@
           </div>
 
           <div class="form-group">
-            <label>Internal link suggestions (same tags — review manually)</label>
-            <div id="linkSuggest" class="mono-box" style="line-height:2;color:var(--text-muted);">Write a title + tags to see suggestions.</div>
-          </div>
-
-          <div class="form-group">
             <label>Tags (comma-separated — powers SEO + blog filtering)</label>
             <input type="text" id="postTags" placeholder="Toronto drill, new Toronto rappers, dark trap 2026" maxlength="300">
             <div class="char-count">e.g. Toronto drill, Toronto underground rap, new Toronto music</div>
@@ -1260,7 +1255,6 @@
       document.getElementById('cancelBtn').style.display = 'inline-flex';
       document.getElementById('dupBtn').style.display = 'inline-flex';
       updateCounts();
-      queueSuggest();
       document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -1347,7 +1341,6 @@
       document.getElementById('postFeatured').checked = !!snap.postFeatured;
       refreshPreview();
       updateCounts();
-      queueSuggest();
     }
 
     function queueAutosave() {
@@ -1386,40 +1379,6 @@
     function discardEditorBackup() {
       try { localStorage.removeItem(BACKUP_KEY); } catch {}
       document.getElementById('editorBackupBanner').style.display = 'none';
-    }
-
-    // ---- Internal-link suggestions (same tags/category, manual review) ----
-    let suggestTimer = null;
-    function queueSuggest() {
-      clearTimeout(suggestTimer);
-      suggestTimer = setTimeout(refreshSuggest, 800);
-    }
-
-    function refreshSuggest() {
-      const box = document.getElementById('linkSuggest');
-      if (!box) return;
-      try {
-        const tags = document.getElementById('postTags').value.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
-        const cat = document.getElementById('postCategory').value;
-        const curId = document.getElementById('postId').value;
-        if (!tags.length && !cat) { box.textContent = 'Write a title + tags to see suggestions.'; return; }
-        const scored = [];
-        for (const p of getEverything()) {
-          if (!p || !p.slug || String(p.id) === String(curId || '-')) continue;
-          let score = 0;
-          if (p.category === cat) score += 1;
-          const pt = String(p.tags || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
-          for (const t of tags) if (pt.includes(t)) score += 2;
-          if (score > 0) scored.push({ p, score });
-        }
-        scored.sort((a, b) => b.score - a.score);
-        const top = scored.slice(0, 5);
-        box.innerHTML = top.length
-          ? top.map(s => `<div>/${escapeHtml(sectionOf(s.p) === 'news' ? 'news' : 'blog')}/${escapeHtml(s.p.slug)}.html — ${escapeHtml(s.p.title)}</div>`).join('')
-          : 'No related posts yet.';
-      } catch {
-        box.textContent = 'Write a title + tags to see suggestions.';
-      }
     }
 
     function deletePost(id, section) {
@@ -1669,10 +1628,9 @@
         if (document.getElementById('previewPane').style.display !== 'none') refreshPreview();
       });
     });
-    // Autosave editor backup + internal-link suggestions (debounced).
+    // Autosave editor backup (debounced).
     document.getElementById('blogForm').addEventListener('input', () => {
       queueAutosave();
-      queueSuggest();
     });
     document.getElementById('postExcerpt').addEventListener('input', () => {
       document.getElementById('excerptCount').textContent = document.getElementById('postExcerpt').value.length;
