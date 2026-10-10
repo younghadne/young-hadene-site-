@@ -595,7 +595,7 @@
         <div class="dashboard-header">
           <div>
             <h1>Blog <span class="text-accent">Manager</span></h1>
-            <div class="user-badge">Logged in as <span>Young Hadene</span> &middot; <span id="serverStatus" title="Backend connection">● checking server…</span></div>
+            <div class="user-badge">Logged in as <span>Young Hadene</span></div>
           </div>
           <button class="btn btn-outline" onclick="handleLogout()">Logout</button>
         </div>
@@ -1112,17 +1112,6 @@
       renderManaged();
       // Then pull the live site indexes in the background and re-render merged.
       Promise.all([fetchSitePosts(), fetchSiteNews()]).then(() => renderManaged());
-      // Backend health pill — publishing needs the server API.
-      fetch('/api/posts-list', { cache: 'no-store' }).then(r => {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      }).then(() => {
-        const el = document.getElementById('serverStatus');
-        if (el) { el.textContent = '● server connected — publishing works'; el.style.color = '#4ade80'; }
-      }).catch(() => {
-        const el = document.getElementById('serverStatus');
-        if (el) { el.textContent = '● Server API unreachable — publishing needs the live site API'; el.style.color = '#eab308'; }
-      });
     }
 
     function renderPostsList(posts, fromSite) {
