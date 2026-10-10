@@ -3,7 +3,7 @@
 // Cloudflare Pages auto-redeploys on push, so the post goes live in ~2 min.
 //
 // Required Pages env vars:
-//   ADMIN_PASSWORD  — must match (falls back to built-in default when unset)
+//   ADMIN_PASSWORD  — must match; no fallback (never hardcode secrets)
 //   GITHUB_TOKEN    — PAT / fine-grained token with contents:write on the repo
 //   GITHUB_REPO     — e.g. "younghadne/young-hadene-site-"
 //   GITHUB_BRANCH   — e.g. "main" (default: main)
@@ -17,7 +17,6 @@ const GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
 const SPOTIFY_URL = 'https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA';
 const YOUTUBE_URL = 'https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg';
 const DEFAULT_BRANCH = 'main';
-const FALLBACK_PASSWORD = 'HadeneCalixte1998';
 
 function timingSafeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
@@ -212,28 +211,6 @@ function removeListingEntry(blogHtml, slug) {
   return blogHtml.replace(re, () => '<script>var SERVER_POSTS = ' + JSON.stringify(arr) + ';\n</script>');
 }
 
-function upsertPostsJsonEntry(postsJsonText, entry) {
-  let arr = [];
-  try {
-    const parsed = JSON.parse(postsJsonText || '[]');
-    if (Array.isArray(parsed)) arr = parsed;
-  } catch { arr = []; }
-  const idx = arr.findIndex((p) => p && p.slug === entry.slug);
-  if (idx >= 0) arr[idx] = { ...arr[idx], ...entry };
-  else arr.push(entry);
-  arr.sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
-  return JSON.stringify(arr, null, 2);
-}
-
-function removePostsJsonEntry(postsJsonText, slug) {
-  let arr = [];
-  try {
-    const parsed = JSON.parse(postsJsonText || '[]');
-    if (Array.isArray(parsed)) arr = parsed;
-  } catch { arr = []; }
-  return JSON.stringify(arr.filter((p) => p && p.slug !== slug), null, 2);
-}
-
 function upsertSitemapEntry(sitemap, slug, dateStr) {
   const url = `${SITE_URL}/blog/${slug}.html`;
   if (sitemap.includes(url)) return sitemap;
@@ -247,7 +224,8 @@ function removeSitemapEntry(sitemap, slug) {
 }
 
 function checkAuth(env, password) {
-  const expected = (env && env.ADMIN_PASSWORD) || FALLBACK_PASSWORD;
+  const expected = env && env.ADMIN_PASSWORD;
+  if (!expected) return { ok: false, status: 500, error: 'ADMIN_PASSWORD not configured on the server' };
   if (!password || !timingSafeEqual(String(password), String(expected))) {
     return { ok: false, status: 401, error: 'Incorrect password' };
   }
@@ -292,67 +270,31 @@ export async function onRequestPost(context) {
       featured: !!p.featured,
     };
 
-    // Commit order matters for instant publishing (no rebuild wait):
-    //   1. blog/posts.json FIRST — /api/posts-list reads this live from GitHub,
-    //      so the post appears in the blog listing within seconds.
-    //   2. Article file — functions/blog/[slug].js serves it straight from
-    //      GitHub, so the URL works within seconds.
-    //   3. blog.html baked listing + sitemap are best-effort (SEO/fallback);
-    //      their failure must never block a publish.
-    const warnings = [];
+    // 1. Upsert the article file
+    const html = buildArticleHtml(data, tagList);
+    const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
+    await ghPutFile(cfg.repo, cfg.branch, `blog/${slug}.html`, html,
+      `Publish post: ${slug} via admin`, cfg.token, existing ? existing.sha : undefined);
 
-    // 1. Maintain blog/posts.json (live listing source) — critical
+    // 2. Patch the baked listing in blog.html
+    const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
+    if (!blogPage) throw new Error('blog.html not found in repo');
     const entry = { id: data.id, title: data.title, slug: data.slug, category: data.category, content: data.content, date: data.date, dateNum: data.dateNum, featured: data.featured, excerpt: data.excerpt, tags: data.tags, takeaways: data.takeaways, faq: data.faq };
-    try {
-      const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
-      const updatedPj = upsertPostsJsonEntry(pj ? pj.text : '[]', entry);
-      if (!pj || updatedPj !== pj.text) {
-        await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
-          `Update posts: ${slug} via admin`, cfg.token, pj ? pj.sha : undefined);
+    const patchedBlog = upsertListingEntry(blogPage.text, entry);
+    await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
+      `Update listing for post: ${slug}`, cfg.token, blogPage.sha);
+
+    // 3. Patch sitemap.xml
+    const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
+    if (sm) {
+      const patchedSm = upsertSitemapEntry(sm.text, slug, now.toISOString().substring(0, 10));
+      if (patchedSm !== sm.text) {
+        await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
+          `Update sitemap for post: ${slug}`, cfg.token, sm.sha);
       }
-    } catch (e) {
-      return json({ error: 'Could not update listing: ' + e.message }, 500);
     }
 
-    // 2. Upsert the article file — critical
-    try {
-      const html = buildArticleHtml(data, tagList);
-      const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
-      await ghPutFile(cfg.repo, cfg.branch, `blog/${slug}.html`, html,
-        `Publish post: ${slug} via admin`, cfg.token, existing ? existing.sha : undefined);
-    } catch (e) {
-      return json({ error: 'Listed but article save failed: ' + e.message, slug }, 500);
-    }
-
-    // 3. Patch the baked listing in blog.html — best effort
-    try {
-      const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
-      if (blogPage) {
-        const patchedBlog = upsertListingEntry(blogPage.text, entry);
-        if (patchedBlog !== blogPage.text) {
-          await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
-            `Update listing for post: ${slug}`, cfg.token, blogPage.sha);
-        }
-      }
-    } catch (e) {
-      warnings.push('baked listing: ' + e.message);
-    }
-
-    // 4. Patch sitemap.xml — best effort
-    try {
-      const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
-      if (sm) {
-        const patchedSm = upsertSitemapEntry(sm.text, slug, now.toISOString().substring(0, 10));
-        if (patchedSm !== sm.text) {
-          await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
-            `Update sitemap for post: ${slug}`, cfg.token, sm.sha);
-        }
-      }
-    } catch (e) {
-      warnings.push('sitemap: ' + e.message);
-    }
-
-    return json({ ok: true, slug, url: `${SITE_URL}/blog/${slug}.html`, warnings });
+    return json({ ok: true, slug, url: `${SITE_URL}/blog/${slug}.html` });
   } catch (e) {
     return json({ error: e.message }, 500);
   }
@@ -362,82 +304,36 @@ export async function onRequestDelete(context) {
   const { request, env } = context;
   try {
     const url = new URL(request.url);
-    let slug = slugify(url.searchParams.get('slug') || '');
-    if (!slug) {
-      // Also accept /api/posts/<slug> style paths
-      const parts = url.pathname.split('/').filter(Boolean);
-      slug = slugify(parts[parts.length - 1] || '');
-      if (slug === 'posts') slug = '';
-    }
-    // Some proxies strip DELETE bodies — also accept ?password= as fallback.
+    const slug = slugify(url.searchParams.get('slug') || '');
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const password = (body && body.password) || url.searchParams.get('password') || '';
-    const auth = checkAuth(env, password);
+    const auth = checkAuth(env, body.password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const cfg = ghConfig(env);
     if (!cfg.ok) return json({ error: cfg.error }, 500);
     if (!slug) return json({ error: 'slug query param is required' }, 400);
 
-    // Delete order mirrors publish (listing first = instant removal):
-    //   1. blog/posts.json FIRST — post vanishes from Blogs within seconds.
-    //   2. Article file — URL stops working within seconds.
-    //   3. blog.html baked listing + sitemap are best-effort cleanup.
-    const warnings = [];
-
-    // 1. Remove from blog/posts.json (live listing source) — critical
-    try {
-      const pj = await ghGetFile(cfg.repo, cfg.branch, 'blog/posts.json', cfg.token);
-      if (pj) {
-        const updatedPj = removePostsJsonEntry(pj.text, slug);
-        if (updatedPj !== pj.text) {
-          await ghPutFile(cfg.repo, cfg.branch, 'blog/posts.json', updatedPj,
-            `Remove post: ${slug} via admin`, cfg.token, pj.sha);
-        }
-      }
-    } catch (e) {
-      return json({ error: 'Could not remove from listing: ' + e.message }, 500);
+    const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
+    if (existing) {
+      await ghDeleteFile(cfg.repo, cfg.branch, `blog/${slug}.html`, `Delete post: ${slug} via admin`, cfg.token, existing.sha);
     }
-
-    // 2. Delete the article file — critical (404-tolerant)
-    try {
-      const existing = await ghGetFile(cfg.repo, cfg.branch, `blog/${slug}.html`, cfg.token);
-      if (existing) {
-        await ghDeleteFile(cfg.repo, cfg.branch, `blog/${slug}.html`, `Delete post: ${slug} via admin`, cfg.token, existing.sha);
+    const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
+    if (blogPage) {
+      const patchedBlog = removeListingEntry(blogPage.text, slug);
+      if (patchedBlog !== blogPage.text) {
+        await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
+          `Remove listing for post: ${slug}`, cfg.token, blogPage.sha);
       }
-    } catch (e) {
-      return json({ error: 'Delisted but file delete failed: ' + e.message, slug }, 500);
     }
-
-    // 3. Remove baked listing in blog.html — best effort
-    try {
-      const blogPage = await ghGetFile(cfg.repo, cfg.branch, 'blog.html', cfg.token);
-      if (blogPage) {
-        const patchedBlog = removeListingEntry(blogPage.text, slug);
-        if (patchedBlog !== blogPage.text) {
-          await ghPutFile(cfg.repo, cfg.branch, 'blog.html', patchedBlog,
-            `Remove listing for post: ${slug}`, cfg.token, blogPage.sha);
-        }
+    const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
+    if (sm) {
+      const patchedSm = removeSitemapEntry(sm.text, slug);
+      if (patchedSm !== sm.text) {
+        await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
+          `Remove sitemap entry for post: ${slug}`, cfg.token, sm.sha);
       }
-    } catch (e) {
-      warnings.push('baked listing: ' + e.message);
     }
-
-    // 4. Remove sitemap entry — best effort
-    try {
-      const sm = await ghGetFile(cfg.repo, cfg.branch, 'sitemap.xml', cfg.token);
-      if (sm) {
-        const patchedSm = removeSitemapEntry(sm.text, slug);
-        if (patchedSm !== sm.text) {
-          await ghPutFile(cfg.repo, cfg.branch, 'sitemap.xml', patchedSm,
-            `Remove sitemap entry for post: ${slug}`, cfg.token, sm.sha);
-        }
-      }
-    } catch (e) {
-      warnings.push('sitemap: ' + e.message);
-    }
-
-    return json({ ok: true, slug, warnings });
+    return json({ ok: true, slug });
   } catch (e) {
     return json({ error: e.message }, 500);
   }

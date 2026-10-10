@@ -1362,11 +1362,6 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
-.pagination a.disabled {
-  opacity: 0.35;
-  pointer-events: none;
-}
-
 /* ========================================
    SERVICES PAGE
    ======================================== */
