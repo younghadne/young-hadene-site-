@@ -595,7 +595,7 @@
         <div class="dashboard-header">
           <div>
             <h1>Blog <span class="text-accent">Manager</span></h1>
-            <div class="user-badge">Logged in as <span>Young Hadene</span></div>
+            <div class="user-badge">Logged in as <span>Young Hadene</span> &middot; <span id="serverStatus" title="Backend connection">● checking server…</span></div>
           </div>
           <button class="btn btn-outline" onclick="handleLogout()">Logout</button>
         </div>
@@ -969,6 +969,17 @@
       renderPostsList(getEverything(), SITE_POSTS_LOADED || SITE_NEWS_LOADED);
       // Then pull the live site indexes in the background and re-render merged.
       Promise.all([fetchSitePosts(), fetchSiteNews()]).then(() => renderPostsList(getEverything(), true));
+      // Backend health pill — publishing needs the local server.
+      fetch('/api/status', { cache: 'no-store' }).then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(() => {
+        const el = document.getElementById('serverStatus');
+        if (el) { el.textContent = '● server connected — publishing works'; el.style.color = '#4ade80'; }
+      }).catch(() => {
+        const el = document.getElementById('serverStatus');
+        if (el) { el.textContent = '● NO server — posts save locally only! Use http://localhost:3456/admin.html'; el.style.color = 'var(--accent)'; }
+      });
     }
 
     function renderPostsList(posts, fromSite) {
@@ -1062,12 +1073,12 @@
         savePosts(blogPosts);
       }
       loadPosts();
-      showSuccess();
       resetForm();
 
-      // Sync to server.
+      // Sync to server (required — this is what writes the live HTML file).
       const endpoint = section === 'news' ? '/api/news' : '/api/posts';
       const livePath = section === 'news' ? '/news/' : '/blog/';
+      showGenSuccess('Saving to server…');
       fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1076,7 +1087,10 @@
         const d = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
         showGenSuccess('Published live: ' + livePath + d.slug + '.html');
-      }).catch(e => console.error('Server sync failed:', e));
+      }).catch(e => {
+        console.error('Server sync failed:', e);
+        showSyncError('⚠️ Saved locally ONLY — server not reached (' + e.message + '). Open this manager via the local server (http://localhost:3456/admin.html) with the server running, then re-save.');
+      });
     }
 
     function editPost(id, section) {
@@ -1524,11 +1538,27 @@
     function showGenSuccess(msg) {
       const el = document.getElementById('formSuccess');
       el.textContent = msg;
+      el.style.background = '';
+      el.style.borderColor = '';
       el.classList.add('show');
       setTimeout(() => {
         el.classList.remove('show');
         el.textContent = 'Post published successfully!';
       }, 4000);
+    }
+
+    function showSyncError(msg) {
+      const el = document.getElementById('formSuccess');
+      el.textContent = msg;
+      el.style.background = 'rgba(220,38,38,0.12)';
+      el.style.borderColor = 'var(--accent)';
+      el.classList.add('show');
+      setTimeout(() => {
+        el.classList.remove('show');
+        el.textContent = 'Post published successfully!';
+        el.style.background = '';
+        el.style.borderColor = '';
+      }, 8000);
     }
 
     // Cloudflare config — set these via the admin settings
