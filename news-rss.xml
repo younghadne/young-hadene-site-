@@ -5,16 +5,5 @@
 <link>https://younghadene.ca/news.html</link>
 <description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>
 <language>en-ca</language>
-  <item>
-    <title>GH API Test Delete Me</title>
-    <link>https://younghadene.ca/news/gh-api-test-delete-me.html</link>
-    <guid isPermaLink="true">https://younghadene.ca/news/gh-api-test-delete-me.html</guid>
-    <description>test excerpt</description>
-    <content:encoded><![CDATA[## Test
-
-Toronto, ON — test body.]]></content:encoded>
-    <pubDate>Sat, 10 Oct 2026 14:27:31 GMT</pubDate>
-    <category>Press</category>
-  </item>
 </channel>
 </rss>
