@@ -7,3 +7,5 @@ cert.pem
 key.pem
 analytics.json
 yh_blogPosts.json
+
+.wrangler/
