@@ -906,9 +906,9 @@
       loadPosts();
     }
 
-    async function handleLogin() {
+    function handleLogin() {
       const pw = document.getElementById('passwordInput').value;
-      const hash = await sha256Hex(pw);
+      const hash = sha256Hex(pw);
       if (hash === ADMIN_PW_HASH) {
         sessionStorage.setItem('yh_admin_pw', pw);
         unlockDashboard();
@@ -2041,3 +2041,5 @@
 <!-- rebuild 2026-10-10T14:55Z -->
 
 <!-- rebuild2 2026-10-10T15:30Z -->
+
+<!-- v3 2026-10-10T15:45Z -->
