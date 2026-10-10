@@ -4,3 +4,4 @@ Disallow: /admin.html
 Disallow: /api/
 
 Sitemap: https://younghadene.ca/sitemap.xml
+Sitemap: https://younghadene.ca/news-sitemap.xml
