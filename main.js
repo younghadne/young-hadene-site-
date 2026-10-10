@@ -71,25 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ---- Google Business Profile link injector (site-wide footer) ----
-  // Ensures every page links to the Google card for SEO / discovery,
-  // even on older blog posts without a hardcoded footer link.
-  try {
-    var GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
-    document.querySelectorAll('.footer-social').forEach(function (wrap) {
-      if (wrap.querySelector('a[href*="share.google"]')) return;
-      var a = document.createElement('a');
-      a.href = GOOGLE_URL;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.setAttribute('aria-label', 'Young Hadene on Google');
-      a.title = 'Find Young Hadene on Google';
-      a.textContent = 'G';
-      a.style.fontWeight = '800';
-      wrap.appendChild(a);
-    });
-  } catch (e) { /* no-op */ }
-
   // ---- Newsletter form ----
   const newsletterForm = document.querySelector('.newsletter-form');
   if (newsletterForm) {
