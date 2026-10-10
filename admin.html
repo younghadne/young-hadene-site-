@@ -906,14 +906,22 @@
       loadPosts();
     }
 
-    function handleLogin() {
+    async function handleLogin() {
       const pw = document.getElementById('passwordInput').value;
-      const hash = sha256Hex(pw);
+      const errEl = document.getElementById('loginError');
+      let hash;
+      try {
+        hash = await sha256Hex(pw);
+      } catch (e) {
+        errEl.textContent = 'Login unavailable here (browser crypto error). Use HTTPS + a modern browser.';
+        errEl.classList.add('show');
+        return;
+      }
       if (hash === ADMIN_PW_HASH) {
+        errEl.classList.remove('show');
         sessionStorage.setItem('yh_admin_pw', pw);
         unlockDashboard();
       } else {
-        const errEl = document.getElementById('loginError');
         errEl.textContent = 'Incorrect password. Try again.';
         errEl.classList.add('show');
       }
@@ -933,6 +941,7 @@
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
+        loadPosts();
       }
     })();
 
