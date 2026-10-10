@@ -699,6 +699,7 @@
         </div>
 
         <div class="form-success" id="formSuccess">Post published successfully!</div>
+        <div id="publishStatus" style="display:none;padding:12px 16px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:6px;color:#3b82f6;font-size:0.85rem;margin-bottom:16px;"></div>
 
         <!-- Create/Edit Form -->
         <div class="blog-form" id="blogForm">
@@ -874,30 +875,11 @@
             <button class="btn btn-outline" onclick="testApiConnection()">Test Connection</button>
           </div>
 
-          <!-- GitHub PAT Config -->
+          <!-- Publishing status: posts go live instantly, no tokens needed -->
           <div class="settings-section" style="margin-top:24px">
-            <h3>GitHub <span class="text-accent">PAT</span></h3>
-            <div class="settings-desc">Use a GitHub Personal Access Token to commit posts directly to your repo. Posts deploy automatically via GitHub Actions in ~1-2 min. <a href="https://github.com/settings/tokens/new?scopes=repo&description=younghadene-admin" target="_blank" style="color:var(--accent)">Generate a PAT here</a></div>
-
-            <div class="settings-grid" style="margin-bottom:16px">
-              <div class="settings-card full">
-                <label>GitHub PAT</label>
-                <input type="password" id="ghToken" placeholder="ghp_... your personal access token">
-                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Required. Generate at <code>github.com/settings/tokens</code> with <strong>repo: contents</strong> permission.</div>
-              </div>
-              <div class="settings-card">
-                <label>Repo</label>
-                <input type="text" id="ghRepo" value="younghadne/young-hadene-site-" placeholder="younghadne/young-hadene-site-">
-                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Your GitHub repo name (usually owner/repo-)</div>
-              </div>
-            </div>
-
-            <div class="form-actions" style="margin-top:16px">
-              <button class="btn btn-primary" onclick="saveGitHubPat()">Save PAT</button>
-              <button class="btn btn-outline" onclick="clearGitHubPat()">Clear</button>
-            </div>
-
-            <div id="githubApiStatus" class="server-status offline"><span class="dot"></span> Not configured</div>
+            <h3>Instant <span class="text-accent">Publishing</span></h3>
+            <div class="settings-desc">Posts publish straight from this panel and appear on the live site within seconds — no tokens, no waiting for rebuilds.</div>
+            <div id="publishApiStatus" class="server-status online"><span class="dot"></span> Publishing ready</div>
           </div>
 
           <!-- Generation -->
@@ -942,9 +924,6 @@
   <script>
     const STORAGE_KEY = 'yh_blogPosts';
     const SESSION_KEY = 'yh_admin';
-    const GITHUB_PAT_KEY = 'yh_github_pat';
-    const GITHUB_REPO = 'younghadne/young-hadene-site-';
-    const DEFAULT_BRANCH = 'main';
 
     // ---- Auth ----
     function adminPassword() {
@@ -955,7 +934,12 @@
       sessionStorage.setItem(SESSION_KEY, 'true');
       document.getElementById('loginBox').style.display = 'none';
       document.getElementById('dashboard').classList.add('show');
-      loadPosts();
+      restoreDashboard();
+    }
+
+    function restoreDashboard() {
+      try { loadApiConfig(); } catch (e) { console.error('loadApiConfig failed:', e); }
+      try { loadPosts(); } catch (e) { console.error('loadPosts failed:', e); }
     }
 
     async function handleLogin() {
@@ -995,14 +979,15 @@
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
-        loadGitHubPat();
+        restoreDashboard();
       }
     })();
 
     // ---- Blog CRUD ----
     // Local drafts/unpublished edits live in localStorage. Published posts
-    // live on the site itself (blog.html baked SERVER_POSTS). The manager
-    // merges both so the "All Posts" tab always shows the real catalog.
+    // come from the live /api/posts-list index (blog.html baked SERVER_POSTS
+    // is only a fallback). The manager merges both so the "All Posts" tab
+    // always shows the real catalog.
     let SITE_POSTS = [];
     let SITE_POSTS_LOADED = false;
 
@@ -1010,53 +995,6 @@
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       } catch { return []; }
-    }
-
-    function getGitHubPat() {
-      try { return localStorage.getItem(GITHUB_PAT_KEY) || ''; } catch { return ''; }
-    }
-
-    function setGitHubPat(pat) {
-      try { localStorage.setItem(GITHUB_PAT_KEY, pat); } catch {}
-    }
-
-    async function githubApi(repo, path, method, body, token) {
-      const url = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g, '/')}`;
-      const headers = {
-        'Authorization': 'Bearer ' + token,
-        'Accept': 'application/vnd.github+json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'younghadene-admin',
-      };
-      const init = { method, headers, body: JSON.stringify(body) };
-      const r = await fetch(url, init);
-      if (!r.ok) {
-        const err = await r.text();
-        throw new Error(`GitHub API ${method} ${path}: HTTP ${r.status} ${err}`);
-      }
-      return r.json();
-    }
-
-    async function githubGetFile(repo, branch, filePath, token) {
-      return githubApi(repo, filePath, 'GET', {}, token);
-    }
-
-    async function githubPutFile(repo, branch, filePath, content, message, token, sha) {
-      const b64 = btoa(content);
-      const existingSha = sha || (await githubGetFile(repo, branch, filePath, token)).sha;
-      return githubPutFileFn(repo, branch, filePath, b64, message, token, existingSha);
-    }
-
-    function githubPutFileFn(repo, branch, filePath, b64Content, message, token, sha) {
-      return githubApi(repo, filePath, 'PUT', {
-        message, content: b64Content, branch,
-        ...(sha ? { sha } : {}),
-      }, token);
-    }
-
-    async function githubDeleteFile(repo, branch, filePath, message, token, sha) {
-      const existingSha = sha || (await githubGetFile(repo, branch, filePath, token)).sha;
-      return githubApi(repo, filePath, 'DELETE', { sha, }, token);
     }
 
     function getAllPosts() {
@@ -1070,11 +1008,26 @@
     }
 
     async function fetchSitePosts() {
+      // Live index first (seconds-fresh, updates the moment posts.json commits).
+      try {
+        const r = await fetch('/api/posts-list', { cache: 'no-store' });
+        if (r.ok) {
+          const d = await r.json();
+          if (d && Array.isArray(d.posts) && d.posts.length) {
+            SITE_POSTS = d.posts;
+            SITE_POSTS_LOADED = true;
+            return;
+          }
+        }
+      } catch (e) {
+        console.error('Live index unavailable, falling back to baked listing:', e);
+      }
+      // Fallback: scrape the baked listing out of blog.html.
       try {
         const r = await fetch('/blog.html', { cache: 'no-store' });
         if (!r.ok) return;
         const html = await r.text();
-        const m = html.match(/var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s);
+        const m = html.match(/var SERVER_POSTS = (\[.*\]);\s*\n?<\/script>/s);
         if (!m) return;
         const arr = JSON.parse(m[1]);
         if (Array.isArray(arr) && arr.length) {
@@ -1185,107 +1138,36 @@
       showSuccess();
       resetForm();
 
-      // Commit to GitHub (triggers GitHub Actions workflow → auto-deploy).
-      const pat = getGitHubPat();
-      if (!pat) { alert('Enter your GitHub PAT in Admin Settings first.'); return; }
-
-      // Build post data from the just-saved localStorage entry
+      // Publish instantly via the server (no tokens needed — just your login).
+      // The server commits to GitHub and the post is readable live in seconds.
       const latestId = posts.length > 0 ? posts[posts.length - 1].id : null;
-      const postData = id ? posts.find(p => p.id === Number(id)) : posts.find(p => p.id === latestId) || {
-        title: title,
-        slug: slugify(title),
-        category: category,
-        content: content,
-        takeaways: takeaways,
-        faq: faq,
-        excerpt: excerpt,
-        tags: tags,
-        featured: featured
-      };
+      const postData = id ? posts.find(p => p.id === Number(id)) : posts.find(p => p.id === latestId);
+      if (!postData) return;
+      publishStatus('Publishing…');
+      fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPassword(), post: postData })
+      }).then(async r => {
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+        publishStatus('');
+        showGenSuccess('Live now: /blog/' + d.slug);
+        loadPosts();
+      }).catch(e => {
+        publishStatus('');
+        console.error('Publish failed:', e);
+        showError('Publish failed: ' + e.message);
+      });
+    }
 
-      const repo = GITHUB_REPO;
-      const slug = postData.slug || slugify(title);
-      const branch = DEFAULT_BRANCH;
-
-      // 1. Generate article HTML and commit blog/<slug>.html
-      const title = postData.title;
-      const category = postData.category;
-      const content = postData.content || '';
-      const takeaways = postData.takeaways || '';
-      const faq = postData.faq || '';
-      const excerpt = postData.excerpt || '';
-      const tags = postData.tags || '';
-      const featured = postData.featured || false;
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-      const articleHtml = `<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title} — Young Hadene</title>
-<meta name="description" content="${excerpt}">
-<link rel="canonical" href="https://younghadene.ca/blog/${slug}">
-<meta property="og:title" content="${title}">
-<meta property="og:description" content="${excerpt}">
-<meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-<meta property="og:url" content="https://younghadene.ca/blog/${slug}">
-<meta property="og:type" content="article">
-<link rel="stylesheet" href="/css/style.css">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta span{color:var(--accent)}.article-wrap h2{font-size:1.6rem;margin-top:48px;margin-bottom:16px;font-family:var(--font-heading);letter-spacing:.04em}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem}.article-wrap li{margin-bottom:8px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic;color:var(--text-secondary)}.article-wrap .cta-box{text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:32px;margin:40px 0}.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px}</style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">← Back to Blog</a><div class="article-wrap"><div class="meta">${dateStr} &middot; <span>${category}</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1>${title}</h1><div>${content}</div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"></script></body></html>`;
-
-      async function commitPost() {
-        try {
-          // Commit article file
-          await githubPutFile(repo, branch, `blog/${slug}.html`, articleHtml,
-            `Publish post: ${slug} via admin`, pat);
-
-          // 2. Read and update blog/posts.json
-          let postsJson = [];
-          try {
-            const existing = await githubGetFile(repo, branch, 'blog/posts.json', pat);
-            if (existing && existing.text) {
-              postsJson = JSON.parse(atob(existing.content.replace(/\n/g, '')));
-            }
-          } catch (e) {
-            // posts.json doesn't exist yet, start fresh
-          }
-
-          // Add new post entry
-          const newEntry = {
-            id: postData.id,
-            title, slug,
-            category,
-            date: dateStr,
-            dateNum: postData.dateNum,
-            featured,
-            excerpt,
-            tags,
-            takeaways,
-            faq,
-            content
-          };
-
-          // Check if slug already exists, if so update it
-          const existingIdx = postsJson.findIndex(p => p && p.slug === slug);
-          if (existingIdx >= 0) {
-            postsJson[existingIdx] = { ...postsJson[existingIdx], ...newEntry };
-          } else {
-            postsJson.push(newEntry);
-          }
-
-          // Sort by dateNum descending
-          postsJson.sort((a, b) => b.dateNum - a.dateNum);
-
-          // Commit updated posts.json
-          await githubPutFile(repo, branch, 'blog/posts.json', JSON.stringify(postsJson, null, 2),
-            `Update posts: ${slug} via admin`, pat);
-
-          showGenSuccess('Published live: /blog/' + slug + '.html');
-        } catch (e) {
-          console.error('GitHub commit failed:', e);
-          alert('Failed to publish to GitHub: ' + e.message);
-        }
+    function publishStatus(msg) {
+      const el = document.getElementById('publishStatus');
+      if (el) {
+        el.style.display = msg ? 'block' : 'none';
+        el.textContent = msg;
       }
-
-      commitPost();
+    }
 
     function editPost(id) {
       const posts = getAllPosts();
@@ -1317,35 +1199,24 @@
       // Remove from the cached site list too so it disappears immediately.
       SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
       loadPosts();
-      if (target && target.slug && pat) {
-        // Delete from GitHub
-        const repo = GITHUB_REPO;
-        const branch = DEFAULT_BRANCH;
-        // Delete the article file
-        githubDeleteFile(repo, branch, `blog/${target.slug}.html`, `Delete post: ${target.slug} via admin`, pat)
-          .then(() => {
-            // Read and update posts.json
-            githubGetFile(repo, branch, 'blog/posts.json', pat)
-              .then(existing => {
-                let postsJson = [];
-                if (existing && existing.text) {
-                  postsJson = JSON.parse(atob(existing.content.replace(/\n/g, '')));
-                }
-                // Remove entry with matching slug
-                postsJson = postsJson.filter(p => p && p.slug !== target.slug);
-                // Commit updated posts.json
-                return githubPutFile(repo, branch, 'blog/posts.json', JSON.stringify(postsJson, null, 2),
-                  `Remove post: ${target.slug} via admin`, pat);
-              })
-              .then(() => {
-                // Refresh the UI to reflect deletion
-                showGenSuccess('Post deleted');
-              })
-              .catch(e => console.error('GitHub delete failed:', e));
-          })
-          .catch(e => console.error('GitHub delete failed:', e));
-      } else if (!pat) {
-        alert('Enter your GitHub PAT first.');
+      if (target && target.slug) {
+        publishStatus('Deleting…');
+        // Query-style slug works on both local server.js and Cloudflare Pages
+        // Functions (path-style /api/posts/<slug> has no function route live).
+        fetch('/api/posts?slug=' + encodeURIComponent(target.slug) + '&password=' + encodeURIComponent(adminPassword()), {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword() })
+        }).then(async r => {
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+          publishStatus('');
+          showGenSuccess('Post deleted');
+        }).catch(e => {
+          publishStatus('');
+          console.error('Delete failed:', e);
+          showError('Delete failed: ' + e.message);
+        });
       }
     }
 
@@ -1366,11 +1237,21 @@
         }
         savePosts(posts);
         loadPosts();
+        publishStatus('Saving…');
         fetch('/api/posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password: adminPassword(), post: { ...post, featured: turningOn } })
-        }).catch(e => console.error('Server sync failed:', e));
+        }).then(async r => {
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+          publishStatus('');
+          showGenSuccess(turningOn ? 'Post featured — live now' : 'Post unfeatured');
+        }).catch(e => {
+          publishStatus('');
+          console.error('Featured sync failed:', e);
+          showError('Sync failed: ' + e.message);
+        });
       }
     }
 
@@ -1619,43 +1500,6 @@
       }
     }
 
-    function getGitHubPat() {
-      try { return localStorage.getItem(GITHUB_PAT_KEY) || ''; } catch { return ''; }
-    }
-
-    function setGitHubPat(pat) {
-      try { localStorage.setItem(GITHUB_PAT_KEY, pat); } catch {}
-    }
-
-    function saveGitHubPat() {
-      const token = document.getElementById('ghToken').value.trim();
-      const repo = document.getElementById('ghRepo').value.trim();
-      if (!token) { alert('Enter your GitHub PAT.'); return; }
-      setGitHubPat(token);
-      checkGitHubPatStatus();
-      showGenSuccess('GitHub PAT saved');
-    }
-
-    function clearGitHubPat() {
-      setGitHubPat('');
-      const el = document.getElementById('githubApiStatus');
-      el.className = 'server-status offline';
-      el.innerHTML = '<span class="dot"></span> Not configured';
-      showGenSuccess('GitHub PAT cleared');
-    }
-
-    function checkGitHubPatStatus() {
-      const pat = getGitHubPat();
-      const el = document.getElementById('githubApiStatus');
-      if (pat) {
-        el.className = 'server-status online';
-        el.innerHTML = '<span class="dot"></span> GitHub PAT configured';
-      } else {
-        el.className = 'server-status offline';
-        el.innerHTML = '<span class="dot"></span> Enter your GitHub PAT above';
-      }
-    }
-
     function testApiConnection() {
       saveApiConfig();
       saveCfConfig();
@@ -1825,8 +1669,9 @@
     }
 
     // Cloudflare config — set these via the admin settings
-    let CF_ACCOUNT = '';
-    let CF_PROJECT = '';
+    // (var, not let: read during early session restore before this line runs)
+    var CF_ACCOUNT = '';
+    var CF_PROJECT = '';
 
     function loadCfConfig() {
       try {

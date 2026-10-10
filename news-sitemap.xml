@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://younghadene.ca/news/exposed-vocals-feature-they-took-me-down.html</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Young Hadene</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-10T13:41:02.581Z</news:publication_date>
+      <news:title>Exposed Vocals Features Young Hadene's 11-Track Album 'They Took Me Down'</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://younghadene.ca/news/they-took-me-down-album-spotlight.html</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Young Hadene</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-10T13:41:02.581Z</news:publication_date>
+      <news:title>'They Took Me Down': Inside Young Hadene's 11-Track Statement</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://younghadene.ca/news/young-hadene-launches-official-newsroom.html</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Young Hadene</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-10T13:41:02.581Z</news:publication_date>
+      <news:title>Young Hadene Launches Official Newsroom for Toronto Drill &amp; Dark Trap Coverage</news:title>
+    </news:news>
+  </url>
+</urlset>
