@@ -600,6 +600,14 @@
           <button class="btn btn-outline" onclick="handleLogout()">Logout</button>
         </div>
 
+        <div class="settings-status" id="dashCards" style="margin-bottom:8px;">
+          <div class="stat-box"><div class="stat-num" id="dbPublished">–</div><div class="stat-label">Published</div></div>
+          <div class="stat-box"><div class="stat-num" id="dbDrafts">–</div><div class="stat-label">Drafts</div></div>
+          <div class="stat-box"><div class="stat-num" id="dbScheduled">–</div><div class="stat-label">Scheduled</div></div>
+          <div class="stat-box"><div class="stat-num" id="dbViews">–</div><div class="stat-label">Post Views</div></div>
+          <div class="stat-box"><div class="stat-num" id="dbLastPublish" style="font-size:1rem;">–</div><div class="stat-label">Last Publish</div></div>
+        </div>
+
         <div class="form-success" id="formSuccess">Post published successfully!</div>
 
         <!-- Create/Edit Form -->
@@ -672,9 +680,90 @@
               <div class="char-count"><span id="excerptCount">0</span>/160</div>
             </div>
             <div class="form-group">
-              <label>URL Slug (auto from title)</label>
-              <input type="text" id="postSlug" placeholder="auto-generated" readonly style="opacity:0.7">
+              <label>URL Slug (auto from title — editable; duplicates get -2, -3…)</label>
+              <input type="text" id="postSlug" placeholder="auto-generated">
             </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Status</label>
+              <div style="display:flex;gap:12px;align-items:center;padding:10px 0;font-size:0.85rem;">
+                <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="radio" name="postStatus" value="published" checked style="accent-color:var(--accent)"> Published</label>
+                <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="radio" name="postStatus" value="draft" style="accent-color:var(--accent)"> Draft</label>
+                <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="radio" name="postStatus" value="scheduled" style="accent-color:var(--accent)"> Scheduled</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Publish at (for Scheduled)</label>
+              <input type="datetime-local" id="postScheduledFor">
+            </div>
+          </div>
+          <input type="hidden" id="baseUpdatedAt" value="">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Author</label>
+              <input type="text" id="postAuthor" placeholder="Young Hadene" maxlength="100">
+            </div>
+            <div class="form-group">
+              <label>Publication date</label>
+              <input type="text" id="postPubDate" placeholder="October 10, 2026" maxlength="60">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Featured image URL</label>
+              <input type="text" id="postImage" placeholder="https://younghadene.ca/images/…" maxlength="500">
+            </div>
+            <div class="form-group">
+              <label>Image alt text</label>
+              <input type="text" id="postImageAlt" placeholder="Describe the image…" maxlength="200">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>SEO title (defaults to post title)</label>
+              <input type="text" id="postSeoTitle" placeholder="" maxlength="200">
+            </div>
+            <div class="form-group">
+              <label>Meta description (defaults to excerpt)</label>
+              <input type="text" id="postSeoDesc" placeholder="" maxlength="300">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>OG title (defaults to post title)</label>
+              <input type="text" id="postOgTitle" placeholder="" maxlength="200">
+            </div>
+            <div class="form-group">
+              <label>OG description (defaults to meta description)</label>
+              <input type="text" id="postOgDesc" placeholder="" maxlength="300">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>OG image (defaults to site image)</label>
+              <input type="text" id="postOgImage" placeholder="https://…" maxlength="500">
+            </div>
+            <div class="form-group">
+              <label>Canonical URL (defaults to article URL)</label>
+              <input type="text" id="postCanonical" placeholder="https://…" maxlength="500">
+            </div>
+          </div>
+
+          <div class="form-group" id="editorBackupBanner" style="display:none;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:6px;padding:12px 16px;font-size:0.8rem;">
+            Unsaved editor backup found. <button type="button" class="btn btn-outline" style="padding:4px 12px;font-size:0.7rem;margin-left:8px;" onclick="restoreEditorBackup()">Restore</button>
+            <button type="button" class="btn btn-ghost" style="padding:4px 12px;font-size:0.7rem;" onclick="discardEditorBackup()">Discard</button>
+          </div>
+
+          <div class="form-group">
+            <label>Internal link suggestions (same tags — review manually)</label>
+            <div id="linkSuggest" class="mono-box" style="line-height:2;color:var(--text-muted);">Write a title + tags to see suggestions.</div>
           </div>
 
           <div class="form-group">
@@ -695,8 +784,10 @@
 
           <div class="form-actions">
             <button class="btn btn-primary" onclick="savePost()">Publish Post</button>
+            <button class="btn btn-outline" onclick="saveDraft()">Save Draft</button>
             <button class="btn btn-outline" onclick="togglePreview()">Preview</button>
             <button class="btn btn-ghost" onclick="resetForm()" style="display:none" id="cancelBtn">Cancel</button>
+            <button class="btn btn-ghost" onclick="duplicatePost()" style="display:none" id="dupBtn">Duplicate</button>
           </div>
 
           <style>
@@ -714,6 +805,10 @@
           </style>
           <div id="previewPane" style="display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border-color);">
             <label style="display:block;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-secondary);margin-bottom:12px;">Live Preview — exactly how it publishes</label>
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+              <button type="button" class="btn btn-outline" style="padding:4px 12px;font-size:0.7rem;" onclick="previewDevice('desktop')">Desktop</button>
+              <button type="button" class="btn btn-outline" style="padding:4px 12px;font-size:0.7rem;" onclick="previewDevice('mobile')">Mobile</button>
+            </div>
             <div id="previewBody" class="article-wrap" style="background:var(--bg-primary);border:1px solid var(--border-color);border-radius:var(--radius);padding:32px;"></div>
           </div>
         </div>
@@ -721,7 +816,29 @@
         <!-- Posts List -->
         <div class="posts-list">
           <h3>All Posts <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">(Blog + News)</span></h3>
+          <div class="mgr-controls" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <input type="text" id="mgrSearch" placeholder="Search title, slug, category, tag…" oninput="renderManaged()" style="flex:2;min-width:180px;padding:10px 14px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:0.85rem;outline:none;">
+            <select id="mgrStatus" onchange="renderManaged()" style="padding:10px 12px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:0.8rem;cursor:pointer;">
+              <option value="all">All statuses</option>
+              <option value="published">Published</option>
+              <option value="draft">Drafts</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="featured">★ Featured</option>
+            </select>
+            <select id="mgrSection" onchange="renderManaged()" style="padding:10px 12px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:0.8rem;cursor:pointer;">
+              <option value="all">Blog + News</option>
+              <option value="blog">📝 Blog</option>
+              <option value="news">📰 News</option>
+            </select>
+            <select id="mgrSort" onchange="renderManaged()" style="padding:10px 12px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:0.8rem;cursor:pointer;">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title">Title A–Z</option>
+              <option value="views">Most viewed</option>
+            </select>
+          </div>
           <div id="postsContainer"></div>
+          <div id="mgrPager" style="display:flex;align-items:center;gap:12px;margin-top:12px;font-size:0.8rem;color:var(--text-muted);"></div>
         </div>
 
         <!-- Site Stats -->
@@ -753,134 +870,10 @@
           </div>
         </div>
 
-        <!-- AI Auto-Gen Settings -->
-        <div class="settings-section">
-          <h3>AI Auto-<span class="text-accent">Generation</span></h3>
-          <div class="settings-desc">Triggers a Cloudflare Pages build that generates SEO blog posts via AI. Posts deploy automatically.</div>
-
-          <div id="apiStatus" class="server-status offline"><span class="dot"></span> Not configured</div>
-
-          <!-- Cloudflare API Config -->
-          <div class="settings-grid" style="margin-bottom:16px">
-            <div class="settings-card full">
-              <label>Cloudflare API Token (for triggering deployments)</label>
-              <input type="password" id="cfToken" placeholder="cfut_... or CF API token">
-              <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Required. Get from <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" style="color:var(--accent)">Cloudflare Dashboard</a> with <strong>Pages:Write</strong> permission.</div>
-            </div>
-            <div class="settings-card">
-              <label>Cloudflare Account ID</label>
-              <input type="text" id="cfAccount" placeholder="Account ID">
-            </div>
-            <div class="settings-card">
-              <label>Cloudflare Project Name</label>
-              <input type="text" id="cfProject" placeholder="Project name">
-            </div>
-          </div>
-
-          <div class="form-actions" style="margin-bottom:16px">
-            <button class="btn btn-primary" onclick="saveApiConfig();saveCfConfig()">Save Config</button>
-            <button class="btn btn-outline" onclick="testApiConnection()">Test Connection</button>
-          </div>
-
-          <!-- Generation -->
-          <div class="settings-grid">
-            <div class="settings-card">
-              <label>Posts to Generate</label>
-              <input type="number" id="settingsQuantity" min="1" max="3" value="1">
-              <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">1-3 posts (free tier limit)</div>
-            </div>
-            <div class="settings-card">
-              <label>Category</label>
-              <select id="genCategory">
-                <option value="Music">Music</option>
-                <option value="Toronto">Toronto</option>
-                <option value="Studio Sessions">Studio Sessions</option>
-                <option value="Behind The Scenes">Behind The Scenes</option>
-                <option value="Lifestyle">Lifestyle</option>
-              </select>
-            </div>
-            <div class="settings-card">
-              <label>Status</label>
-              <div class="settings-status" style="margin:0">
-                <div class="stat-box" style="padding:8px">
-                  <div class="stat-num" id="statTotal" style="font-size:1.2rem">0</div>
-                  <div class="stat-label">Generated</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-actions" style="margin-top:16px">
-            <button class="btn btn-primary" id="generateNowBtn" onclick="generateNow()" style="min-width:180px">Generate Now</button>
-            <span id="genSpinner" style="display:none;color:var(--text-muted);font-size:0.8rem;align-self:center">Generating...</span>
-          </div>
-          <div id="genLog" style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);display:none"></div>
-        </div>
-
-        <!-- GitHub Publishing (publish + delete from the ONLINE site) -->
-        <div class="settings-section">
-          <h3>GitHub <span class="text-accent">Publishing</span></h3>
-          <div class="settings-desc">Publishes straight to the live site from this page — no local server needed. Creates/updates the article file, refreshes the listing + sitemaps, and deploys to younghadene.ca automatically.</div>
-
-          <div id="ghStatus" class="server-status offline"><span class="dot"></span> Not configured</div>
-
-          <div class="settings-grid" style="margin-bottom:16px">
-            <div class="settings-card full">
-              <label>GitHub Personal Access Token (classic, <strong>repo</strong> scope — or fine-grained with Contents read+write on young-hadene-site-)</label>
-              <input type="password" id="ghToken" placeholder="ghp_...">
-              <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">Create one at <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--accent)">github.com/settings/tokens</a>. It stays in this browser only — never sent anywhere except api.github.com.</div>
-            </div>
-          </div>
-
-          <div class="form-actions" style="margin-bottom:16px">
-            <button class="btn btn-primary" onclick="saveGhConfig()">Save Token</button>
-            <button class="btn btn-outline" onclick="testGhConnection()">Test Connection</button>
-          </div>
-        </div>
       </div>
 
     </div>
   </div>
-
-  <script type="text/plain" id="ghBlogCss">  <style>
-    .article-wrap { max-width: 720px; margin: 0 auto; padding: 40px 0; }
-    .article-wrap h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); margin-bottom: 16px; line-height: 1.05; }
-    .article-wrap .meta { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
-    .article-wrap .meta span { color: var(--accent); }
-    .article-wrap h2 { font-size: 1.6rem; margin-top: 48px; margin-bottom: 16px; font-family: var(--font-heading); letter-spacing: 0.04em; }
-    .article-wrap h3 { font-size: 1.15rem; margin-top: 28px; margin-bottom: 10px; font-family: var(--font-heading); letter-spacing: 0.03em; color: var(--accent); }
-    .article-wrap p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 18px; font-size: 0.95rem; }
-    .article-wrap p strong { color: var(--text-primary); }
-    .article-wrap ul, .article-wrap ol { color: var(--text-secondary); line-height: 1.8; margin-bottom: 18px; padding-left: 24px; font-size: 0.95rem; }
-    .article-wrap li { margin-bottom: 8px; }
-    .article-wrap .takeaways { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 32px; }
-    .article-wrap .takeaways h2 { margin-top: 0; font-size: 1.3rem; }
-    .article-wrap .takeaways li { list-style: none; padding-left: 24px; position: relative; }
-    .article-wrap .takeaways li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
-    .article-wrap .toc { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 32px; }
-    .article-wrap .toc h2 { margin-top: 0; font-size: 1.1rem; }
-    .article-wrap .toc a { color: var(--text-secondary); display: block; padding: 6px 0; font-size: 0.85rem; transition: color var(--transition); }
-    .article-wrap .toc a:hover { color: var(--accent); }
-    .article-wrap .toc ul { list-style: none; padding: 0; margin: 0; }
-    .article-wrap .toc ul ul { padding-left: 20px; }
-    .article-wrap blockquote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 24px 0; background: var(--bg-card); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; color: var(--text-secondary); font-style: italic; }
-    .article-wrap .highlight-box { background: rgba(220,38,38,0.05); border: 1px solid rgba(220,38,38,0.15); border-radius: var(--radius); padding: 24px; margin: 24px 0; }
-    .article-wrap .highlight-box p { margin-bottom: 0; }
-    .article-wrap .cta-box { text-align: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 32px; margin: 40px 0; }
-    .article-wrap .cta-box h3 { margin-top: 0; color: var(--text-primary); }
-    .article-wrap .cta-box p { margin-bottom: 20px; }
-    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 32px; transition: color var(--transition); }
-    .back-link:hover { color: var(--accent); }
-    .artist-card { display: flex; gap: 20px; align-items: flex-start; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 24px; margin: 20px 0; }
-    .artist-card .num { font-family: var(--font-heading); font-size: 2rem; color: var(--accent); line-height: 1; flex-shrink: 0; width: 40px; }
-    .artist-card .info { flex: 1; }
-    .artist-card .info h4 { font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 4px; }
-    .artist-card .info .tag { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: block; }
-    .artist-card .info p { font-size: 0.85rem; margin-bottom: 0; color: var(--text-secondary); }
-    .artist-card.featured { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.05); }
-    .artist-card.featured .num { color: #fff; }
-    @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
-  </style></script>
 
   <script>
     const STORAGE_KEY = 'yh_blogPosts';
@@ -947,9 +940,8 @@
 
     // ---- Blog CRUD ----
     // Local drafts/unpublished edits live in localStorage. Published posts
-    // live on the site itself (blog.html baked SERVER_POSTS). The manager
-    // merges both so the "All Posts" tab always shows the real catalog.
-    // News posts work the same way via yh_newsPosts + /api/news.
+    // live in server KV storage, read via /api/posts-list + /api/news-list.
+    // The manager merges both so the "All Posts" tab shows the real catalog.
     const NEWS_KEY = 'yh_newsPosts';
     let SITE_POSTS = [];
     let SITE_POSTS_LOADED = false;
@@ -994,7 +986,54 @@
       return [...getAllPosts().map(p => ({ ...p, section: sectionOf(p) })), ...getAllNews()];
     }
 
+    // Server-known posts live in KV now: drop matching local shelf copies
+    // (by slug or id) so stale local data can never shadow the live truth.
+    // Never-published drafts (unknown to the server) stay local.
+    function pruneLocalShelf(section, serverPosts) {
+      try {
+        const slugs = new Set((serverPosts || []).map(p => p && p.slug));
+        const ids = new Set((serverPosts || []).map(p => p && String(p.id)));
+        if (section === 'news') {
+          saveNewsLocal(getNewsLocal().filter(p => !slugs.has(p.slug) && !ids.has(String(p.id))));
+        } else {
+          savePosts(getPosts().filter(p => !slugs.has(p.slug) && !ids.has(String(p.id))));
+        }
+      } catch {}
+    }
+
     async function fetchSitePosts() {
+      // Live KV index first (instant truth, incl. drafts when logged in).
+      const pw = adminPassword();
+      if (pw) {
+        try {
+          const r = await fetch('/api/posts-list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw, includeDrafts: true, withViews: true })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            if (d && Array.isArray(d.posts)) {
+              SITE_POSTS = d.posts;
+              SITE_POSTS_LOADED = true;
+              pruneLocalShelf('blog', d.posts);
+              return;
+            }
+          }
+        } catch (e) { /* fall through to public/baked copies */ }
+      }
+      try {
+        const r = await fetch('/api/posts-list', { cache: 'no-store' });
+        if (r.ok) {
+          const d = await r.json();
+          if (d && Array.isArray(d.posts) && d.posts.length) {
+            SITE_POSTS = d.posts;
+            SITE_POSTS_LOADED = true;
+            pruneLocalShelf('blog', d.posts);
+            return;
+          }
+        }
+      } catch (e) { /* fall through to baked copy */ }
       try {
         const r = await fetch('/blog.html', { cache: 'no-store' });
         if (!r.ok) return;
@@ -1020,17 +1059,38 @@
     }
 
     async function fetchSiteNews() {
+      // Live KV index first (instant truth, incl. drafts when logged in).
+      const npw = adminPassword();
+      if (npw) {
+        try {
+          const r = await fetch('/api/news-list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: npw, includeDrafts: true, withViews: true })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            if (d && Array.isArray(d.posts)) {
+              SITE_NEWS = d.posts;
+              SITE_NEWS_LOADED = true;
+              pruneLocalShelf('news', d.posts);
+              return;
+            }
+          }
+        } catch (e) { /* fall through to public/baked copies */ }
+      }
       try {
-        const r = await fetch('/api/news', { cache: 'no-store' });
+        const r = await fetch('/api/news-list', { cache: 'no-store' });
         if (r.ok) {
-          const arr = await r.json();
-          if (Array.isArray(arr) && arr.length) {
-            SITE_NEWS = arr;
+          const d = await r.json();
+          if (d && Array.isArray(d.posts) && d.posts.length) {
+            SITE_NEWS = d.posts;
             SITE_NEWS_LOADED = true;
+            pruneLocalShelf('news', d.posts);
             return;
           }
         }
-      } catch (e) { /* no local server — try static fallback */ }
+      } catch (e) { /* fall through to baked copy */ }
       // Static fallback (works on the live site): parse baked NEWS_POSTS in news.html.
       try {
         const r2 = await fetch('/news.html', { cache: 'no-store' });
@@ -1049,11 +1109,11 @@
     }
 
     function loadPosts() {
-      renderPostsList(getEverything(), SITE_POSTS_LOADED || SITE_NEWS_LOADED);
+      renderManaged();
       // Then pull the live site indexes in the background and re-render merged.
-      Promise.all([fetchSitePosts(), fetchSiteNews()]).then(() => renderPostsList(getEverything(), true));
-      // Backend health pill — publishing needs the local server.
-      fetch('/api/status', { cache: 'no-store' }).then(r => {
+      Promise.all([fetchSitePosts(), fetchSiteNews()]).then(() => renderManaged());
+      // Backend health pill — publishing needs the server API.
+      fetch('/api/posts-list', { cache: 'no-store' }).then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       }).then(() => {
@@ -1061,7 +1121,7 @@
         if (el) { el.textContent = '● server connected — publishing works'; el.style.color = '#4ade80'; }
       }).catch(() => {
         const el = document.getElementById('serverStatus');
-        if (el) { el.textContent = '● No local server — online GitHub publishing applies (needs token below)'; el.style.color = '#eab308'; }
+        if (el) { el.textContent = '● Server API unreachable — publishing needs the live site API'; el.style.color = '#eab308'; }
       });
     }
 
@@ -1080,7 +1140,7 @@
 
       posts.sort((a, b) => b.dateNum - a.dateNum);
 
-      const hint = fromSite ? `<p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:12px;">Showing ${posts.length} posts from the live site + your local drafts.</p>` : '';
+      const hint = fromSite ? `<p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:12px;">Showing ${mgrLastList.length} posts from the live site + your local drafts.</p>` : '';
 
       container.innerHTML = hint + posts.map(post => {
         const sec = sectionOf(post);
@@ -1096,6 +1156,8 @@
               <span class="cat">${escapeHtml(post.category)}</span>
               &middot; ${post.date}
               ${post.featured ? '&middot; <span style="color:var(--accent)">★ Featured</span>' : ''}
+              ${(post.status && post.status !== 'published') ? `&middot; <span style="color:#eab308;text-transform:uppercase;">${escapeHtml(post.status)}</span>` : ''}
+              ${(Number(post.views) > 0) ? `&middot; <span style="color:var(--text-muted)">${Number(post.views).toLocaleString()} views</span>` : ''}
             </div>
           </div>
           <div class="post-item-actions">
@@ -1105,6 +1167,49 @@
           </div>
         </div>
       `; }).join('');
+    }
+
+    // ---- Manager filtering / sorting / pagination ----
+    const mgrState = { page: 1, perPage: 20 };
+    let mgrLastList = [];
+
+    function renderManaged() {
+      const q = (document.getElementById('mgrSearch').value || '').toLowerCase().trim();
+      const st = document.getElementById('mgrStatus').value;
+      const sec = document.getElementById('mgrSection').value;
+      const sort = document.getElementById('mgrSort').value;
+      let list = getEverything();
+      if (sec !== 'all') list = list.filter(p => sectionOf(p) === sec);
+      if (st === 'featured') list = list.filter(p => p.featured);
+      else if (st !== 'all') list = list.filter(p => (p.status || 'published') === st);
+      if (q) {
+        list = list.filter(p => ((p.title || '') + ' ' + (p.slug || '') + ' ' + (p.category || '') + ' ' + (p.tags || '')).toLowerCase().includes(q));
+      }
+      if (sort === 'oldest') list.sort((a, b) => (a.dateNum || 0) - (b.dateNum || 0));
+      else if (sort === 'title') list.sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
+      else if (sort === 'views') list.sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
+      else list.sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
+      mgrLastList = list;
+      const total = list.length;
+      const pages = Math.max(1, Math.ceil(total / mgrState.perPage));
+      if (mgrState.page > pages) mgrState.page = pages;
+      if (mgrState.page < 1) mgrState.page = 1;
+      const slice = list.slice((mgrState.page - 1) * mgrState.perPage, mgrState.page * mgrState.perPage);
+      renderPostsList(slice, true);
+      const pager = document.getElementById('mgrPager');
+      if (pager) {
+        pager.innerHTML = total > mgrState.perPage
+          ? `<button class="btn btn-outline" style="padding:6px 14px;font-size:0.75rem;${mgrState.page <= 1 ? 'opacity:0.4;' : ''}" onclick="mgrPage(-1)" ${mgrState.page <= 1 ? 'disabled' : ''}>← Prev</button>
+             <span>Page ${mgrState.page} of ${pages} · ${total} posts</span>
+             <button class="btn btn-outline" style="padding:6px 14px;font-size:0.75rem;${mgrState.page >= pages ? 'opacity:0.4;' : ''}" onclick="mgrPage(1)" ${mgrState.page >= pages ? 'disabled' : ''}>Next →</button>`
+          : `<span>${total} post${total === 1 ? '' : 's'}</span>`;
+      }
+    }
+
+    function mgrPage(d) {
+      mgrState.page += d;
+      renderManaged();
+      document.getElementById('postsContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function savePost() {
@@ -1118,13 +1223,35 @@
       const excerpt = document.getElementById('postExcerpt').value.trim();
       const tags = document.getElementById('postTags').value.trim();
       const featured = document.getElementById('postFeatured').checked;
+      const statusRadio = document.querySelector('input[name="postStatus"]:checked');
+      const status = statusRadio ? statusRadio.value : 'published';
+      const schedInput = document.getElementById('postScheduledFor').value;
+      let scheduledFor = 0;
+      if (status === 'scheduled') {
+        scheduledFor = new Date(schedInput).getTime();
+        if (!schedInput || isNaN(scheduledFor)) { alert('Pick a publish date/time for scheduled posts.'); return; }
+      }
+      const author = document.getElementById('postAuthor').value.trim() || 'Young Hadene';
+      const pubDateInput = document.getElementById('postPubDate').value.trim();
+      const image = document.getElementById('postImage').value.trim();
+      const imageAlt = document.getElementById('postImageAlt').value.trim();
+      const seoTitle = document.getElementById('postSeoTitle').value.trim();
+      const seoDesc = document.getElementById('postSeoDesc').value.trim();
+      const ogTitle = document.getElementById('postOgTitle').value.trim();
+      const ogDesc = document.getElementById('postOgDesc').value.trim();
+      const ogImage = document.getElementById('postOgImage').value.trim();
+      const canonical = document.getElementById('postCanonical').value.trim();
+      const baseUpdatedAt = Number(document.getElementById('baseUpdatedAt').value) || 0;
 
       if (!title) { alert('Enter a title.'); return; }
       if (!content) { alert('Enter some content.'); return; }
+      if (window.__yhSaving) return; // prevent double-submit duplicates
+      window.__yhSaving = true;
 
       const now = new Date();
-      const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const dateStr = pubDateInput || now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      const slugInput = document.getElementById('postSlug').value.trim();
+      const slug = slugInput || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
       // Editing: drop from both stores first (handles Blog <-> News moves).
       let blogPosts = getPosts().filter(p => String(p.id) !== String(id || '-'));
@@ -1135,16 +1262,22 @@
         const original = getEverything().find(p => String(p.id) === String(id));
         postData = {
           id: Number(id),
-          slug: (original && original.slug) || slug,
+          slug: slug || ((original && original.slug) || ''),
           section, title, category, content, takeaways, faq, excerpt, tags, featured,
-          date: dateStr, dateNum: Date.now()
+          date: dateStr, dateNum: (original && original.dateNum) || Date.now(),
+          status, scheduledFor, author, image, imageAlt,
+          seoTitle, seoDesc, ogTitle, ogDesc, ogImage, canonical,
+          baseUpdatedAt
         };
       } else {
         postData = {
           id: Date.now(),
           title, slug, section,
           category, content, takeaways, faq, excerpt, tags,
-          date: dateStr, dateNum: Date.now(), featured
+          date: dateStr, dateNum: Date.now(), featured,
+          status, scheduledFor, author, image, imageAlt,
+          seoTitle, seoDesc, ogTitle, ogDesc, ogImage, canonical,
+          baseUpdatedAt: 0
         };
       }
 
@@ -1158,38 +1291,43 @@
       loadPosts();
       resetForm();
 
-      // Sync to server (required — this is what writes the live HTML file).
+      // Publish straight to the server. Success is shown ONLY after the
+      // server confirms the post is saved and live.
       const endpoint = section === 'news' ? '/api/news' : '/api/posts';
       const livePath = section === 'news' ? '/news/' : '/blog/';
       showGenSuccess('Saving…');
-      const useGitHub = async () => {
-        if (!getGhConfig().token) {
-          throw new Error('no-github-token');
-        }
-        const slug = await ghPublishSite(postData);
-        showGenSuccess('Published live: ' + livePath + slug + '.html 🎉 (via GitHub — live in ~2 min)');
-      };
       fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: adminPassword(), post: postData })
       }).then(async r => {
         const d = await r.json().catch(() => ({}));
-        if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
-        showGenSuccess('Published live: ' + livePath + d.slug + '.html');
-      }).catch(async e => {
-        console.error('Server sync failed:', e);
-        // No local server (e.g. using the ONLINE manager)? Fall back to GitHub.
-        try {
-          await useGitHub();
-        } catch (e2) {
-          if (e2 && e2.message === 'no-github-token') {
-            showSyncError('⚠️ Saved locally ONLY — no server reached. To publish from this online page, add a GitHub token in GitHub Publishing settings below, then re-save. (Or open this manager via http://localhost:3456/admin.html with the server running.)');
-          } else {
-            showSyncError('⚠️ Publish failed: ' + (e2 && e2.message ? e2.message : e2));
-          }
+        if (r.status === 409) {
+          showSyncError('⚠️ ' + (d.error || 'Someone else changed this post — reload the manager and try again.'));
+          return;
         }
-      });
+        if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+        if (d.updatedAt) document.getElementById('baseUpdatedAt').value = d.updatedAt;
+        try { localStorage.removeItem('yh_editorBackup'); } catch {}
+        // Sync the local shelf copy with the server truth (slug may have
+        // been suffixed for uniqueness) so later edits don't go stale.
+        try {
+          const synced = { ...postData, slug: d.slug || postData.slug, updatedAt: d.updatedAt || Date.now() };
+          if (section === 'news') {
+            saveNewsLocal(getNewsLocal().map(p => String(p.id) === String(synced.id) ? synced : p));
+          } else {
+            savePosts(getPosts().map(p => String(p.id) === String(synced.id) ? synced : p));
+          }
+        } catch {}
+        if (d.slug && d.slug !== postData.slug) {
+          showGenSuccess('Published live (slug adjusted for uniqueness): ' + livePath + d.slug + '.html');
+        } else {
+          showGenSuccess('Published live: ' + livePath + d.slug + '.html');
+        }
+      }).catch(e => {
+        console.error('Publish failed:', e);
+        showSyncError('⚠️ Publish failed: ' + (e && e.message ? e.message : e));
+      }).finally(() => { window.__yhSaving = false; });
     }
 
     function editPost(id, section) {
@@ -1208,16 +1346,205 @@
       document.getElementById('postExcerpt').value = post.excerpt || '';
       document.getElementById('postTags').value = post.tags || '';
       document.getElementById('postFeatured').checked = post.featured;
+      document.getElementById('postSlug').value = post.slug || '';
+      document.getElementById('postSlug').dataset.manual = '1';
+      setPostStatus(post.status || 'published');
+      document.getElementById('postScheduledFor').value = post.scheduledFor ? new Date(post.scheduledFor).toISOString().slice(0, 16) : '';
+      document.getElementById('baseUpdatedAt').value = post.updatedAt || post.dateNum || 0;
+      document.getElementById('postAuthor').value = post.author || '';
+      document.getElementById('postPubDate').value = post.date || '';
+      document.getElementById('postImage').value = post.image || '';
+      document.getElementById('postImageAlt').value = post.imageAlt || '';
+      document.getElementById('postSeoTitle').value = post.seoTitle || '';
+      document.getElementById('postSeoDesc').value = post.seoDesc || '';
+      document.getElementById('postOgTitle').value = post.ogTitle || '';
+      document.getElementById('postOgDesc').value = post.ogDesc || '';
+      document.getElementById('postOgImage').value = post.ogImage || '';
+      document.getElementById('postCanonical').value = post.canonical || '';
       refreshPreview();
       document.getElementById('cancelBtn').style.display = 'inline-flex';
+      document.getElementById('dupBtn').style.display = 'inline-flex';
+      updateCounts();
+      queueSuggest();
+      document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function setPostStatus(s) {
+      const r = document.querySelector('input[name="postStatus"][value="' + s + '"]') ||
+                document.querySelector('input[name="postStatus"][value="published"]');
+      if (r) r.checked = true;
+    }
+
+    function saveDraft() {
+      setPostStatus('draft');
+      savePost();
+    }
+
+    function duplicatePost() {
+      const id = document.getElementById('postId').value;
+      if (!id) return;
+      const post = getEverything().find(p => String(p.id) === String(id));
+      if (!post) return;
+      editPost(post.id, sectionOf(post));
+      document.getElementById('formTitle').textContent = 'New Post (Copy)';
+      document.getElementById('postId').value = '';
+      document.getElementById('postTitle').value = (post.title || '') + ' (Copy)';
+      document.getElementById('postSlug').value = '';
+      delete document.getElementById('postSlug').dataset.manual;
+      document.getElementById('baseUpdatedAt').value = '0';
+      setPostStatus('draft');
+      document.getElementById('dupBtn').style.display = 'none';
+      refreshPreview();
       updateCounts();
       document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function previewDevice(mode) {
+      const body = document.getElementById('previewBody');
+      if (!body) return;
+      if (mode === 'mobile') {
+        body.style.maxWidth = '390px';
+        body.style.margin = '0 auto';
+      } else {
+        body.style.maxWidth = '100%';
+      }
+    }
+
+    // ---- Dashboard summary cards (server KV truth) ----
+    async function loadDashboard() {
+      const pw = adminPassword();
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      if (!pw) { ['dbPublished', 'dbDrafts', 'dbScheduled', 'dbViews'].forEach(id => set(id, '–')); set('dbLastPublish', '–'); return; }
+      try {
+        const [rb, rn] = await Promise.all([
+          fetch('/api/posts-list', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw, summary: true }) }),
+          fetch('/api/news-list', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw, summary: true }) }),
+        ]);
+        const db = rb.ok ? await rb.json() : null;
+        const dn = rn.ok ? await rn.json() : null;
+        const sb = db && db.summary ? db.summary : { published: 0, drafts: 0, scheduled: 0, totalViews: 0, lastPublish: 0 };
+        const sn = dn && dn.summary ? dn.summary : { published: 0, drafts: 0, scheduled: 0, totalViews: 0, lastPublish: 0 };
+        set('dbPublished', (sb.published + sn.published).toLocaleString());
+        set('dbDrafts', (sb.drafts + sn.drafts).toLocaleString());
+        set('dbScheduled', (sb.scheduled + sn.scheduled).toLocaleString());
+        set('dbViews', (sb.totalViews + sn.totalViews).toLocaleString());
+        const lp = Math.max(sb.lastPublish || 0, sn.lastPublish || 0);
+        set('dbLastPublish', lp ? new Date(lp).toLocaleString() : 'never');
+      } catch (e) {
+        ['dbPublished', 'dbDrafts', 'dbScheduled', 'dbViews'].forEach(id => set(id, '?'));
+        set('dbLastPublish', '?');
+      }
+    }
+
+    // ---- Editor autosave backup (crash/navigation recovery) ----
+    const BACKUP_KEY = 'yh_editorBackup';
+    let autosaveTimer = null;
+    const EDITOR_FIELDS = ['postSection', 'postCategory', 'postTitle', 'postContent', 'postTakeaways', 'postFaq', 'postExcerpt', 'postSlug', 'postTags', 'postAuthor', 'postPubDate', 'postImage', 'postImageAlt', 'postSeoTitle', 'postSeoDesc', 'postOgTitle', 'postOgDesc', 'postOgImage', 'postCanonical', 'postScheduledFor'];
+
+    function collectEditorSnap() {
+      const snap = { t: Date.now(), id: document.getElementById('postId').value };
+      EDITOR_FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        snap[id] = el ? el.value : '';
+      });
+      snap.postFeatured = document.getElementById('postFeatured').checked;
+      const st = document.querySelector('input[name="postStatus"]:checked');
+      snap.postStatus = st ? st.value : 'published';
+      return snap;
+    }
+
+    function applyEditorSnap(snap) {
+      if (!snap) return;
+      EDITOR_FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && snap[id] != null) el.value = snap[id];
+      });
+      document.getElementById('postFeatured').checked = !!snap.postFeatured;
+      setPostStatus(snap.postStatus || 'published');
+      document.getElementById('postSlug').dataset.manual = '1';
+      refreshPreview();
+      updateCounts();
+      queueSuggest();
+    }
+
+    function queueAutosave() {
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(() => {
+        try {
+          const snap = collectEditorSnap();
+          if ((snap.postTitle || '').trim() || (snap.postContent || '').trim()) {
+            localStorage.setItem(BACKUP_KEY, JSON.stringify(snap));
+          }
+        } catch {}
+      }, 2000);
+    }
+
+    function checkEditorBackup() {
+      try {
+        const raw = localStorage.getItem(BACKUP_KEY);
+        if (!raw) return;
+        const snap = JSON.parse(raw);
+        const curTitle = (document.getElementById('postTitle').value || '').trim();
+        const curBody = (document.getElementById('postContent').value || '').trim();
+        if (!curTitle && !curBody && ((snap.postTitle || '').trim() || (snap.postContent || '').trim())) {
+          document.getElementById('editorBackupBanner').style.display = 'block';
+        }
+      } catch {}
+    }
+
+    function restoreEditorBackup() {
+      try {
+        applyEditorSnap(JSON.parse(localStorage.getItem(BACKUP_KEY)));
+        document.getElementById('editorBackupBanner').style.display = 'none';
+        showGenSuccess('Editor backup restored.');
+      } catch {}
+    }
+
+    function discardEditorBackup() {
+      try { localStorage.removeItem(BACKUP_KEY); } catch {}
+      document.getElementById('editorBackupBanner').style.display = 'none';
+    }
+
+    // ---- Internal-link suggestions (same tags/category, manual review) ----
+    let suggestTimer = null;
+    function queueSuggest() {
+      clearTimeout(suggestTimer);
+      suggestTimer = setTimeout(refreshSuggest, 800);
+    }
+
+    function refreshSuggest() {
+      const box = document.getElementById('linkSuggest');
+      if (!box) return;
+      try {
+        const tags = document.getElementById('postTags').value.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+        const cat = document.getElementById('postCategory').value;
+        const curId = document.getElementById('postId').value;
+        if (!tags.length && !cat) { box.textContent = 'Write a title + tags to see suggestions.'; return; }
+        const scored = [];
+        for (const p of getEverything()) {
+          if (!p || !p.slug || String(p.id) === String(curId || '-')) continue;
+          let score = 0;
+          if (p.category === cat) score += 1;
+          const pt = String(p.tags || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+          for (const t of tags) if (pt.includes(t)) score += 2;
+          if (score > 0) scored.push({ p, score });
+        }
+        scored.sort((a, b) => b.score - a.score);
+        const top = scored.slice(0, 5);
+        box.innerHTML = top.length
+          ? top.map(s => `<div>/${escapeHtml(sectionOf(s.p) === 'news' ? 'news' : 'blog')}/${escapeHtml(s.p.slug)}.html — ${escapeHtml(s.p.title)}</div>`).join('')
+          : 'No related posts yet.';
+      } catch {
+        box.textContent = 'Write a title + tags to see suggestions.';
+      }
     }
 
     function deletePost(id, section) {
       const sec = section === 'news' ? 'news' : 'blog';
       if (!confirm('Delete this ' + sec + ' post?')) return;
       const target = getEverything().find(p => p.id === id);
+      if (window.__yhDeleting) return; // prevent double-submit
+      window.__yhDeleting = true;
       if (sec === 'news') {
         saveNewsLocal(getNewsLocal().filter(p => p.id !== id));
         SITE_NEWS = SITE_NEWS.filter(p => p.id !== id);
@@ -1228,26 +1555,23 @@
       }
       loadPosts();
       if (target && target.slug) {
-        const endpoint = sec === 'news' ? '/api/news/' : '/api/posts/';
-        fetch(endpoint + encodeURIComponent(target.slug), { method: 'DELETE' })
+        // Slug goes in the query string: /api/posts/<slug> does not route
+        // to the Function on Pages, but /api/posts?slug= does.
+        const endpoint = sec === 'news' ? '/api/news?slug=' : '/api/posts?slug=';
+        fetch(endpoint + encodeURIComponent(target.slug), {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword() })
+        })
           .then(async r => {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
             showGenSuccess('Deleted live ' + (sec === 'news' ? '/news/' : '/blog/') + target.slug + '.html');
           })
-          .catch(async () => {
-            // No local server? Delete via GitHub (needs token).
-            try {
-              if (!getGhConfig().token) throw new Error('no-github-token');
-              await ghDeleteSite({ ...target, section: sec });
-              showGenSuccess('Deleted live ' + (sec === 'news' ? '/news/' : '/blog/') + target.slug + '.html 🎉 (via GitHub — live in ~2 min)');
-            } catch (e2) {
-              if (e2 && e2.message === 'no-github-token') {
-                showSyncError('⚠️ Deleted locally ONLY — no server reached. Add a GitHub token in GitHub Publishing settings to delete from the live site from here.');
-              } else {
-                showSyncError('⚠️ Online delete failed: ' + (e2 && e2.message ? e2.message : e2));
-              }
-            }
-          });
+          .catch(e => {
+            console.error('Delete failed:', e);
+            showSyncError('⚠️ Delete failed: ' + (e && e.message ? e.message : e));
+          }).finally(() => { window.__yhDeleting = false; });
       }
     }
 
@@ -1304,11 +1628,28 @@
       document.getElementById('postExcerpt').value = '';
       document.getElementById('postTags').value = '';
       document.getElementById('postSlug').value = '';
+      delete document.getElementById('postSlug').dataset.manual;
+      setPostStatus('published');
+      document.getElementById('postScheduledFor').value = '';
+      document.getElementById('baseUpdatedAt').value = '';
+      document.getElementById('postAuthor').value = '';
+      document.getElementById('postPubDate').value = '';
+      document.getElementById('postImage').value = '';
+      document.getElementById('postImageAlt').value = '';
+      document.getElementById('postSeoTitle').value = '';
+      document.getElementById('postSeoDesc').value = '';
+      document.getElementById('postOgTitle').value = '';
+      document.getElementById('postOgDesc').value = '';
+      document.getElementById('postOgImage').value = '';
+      document.getElementById('postCanonical').value = '';
+      try { localStorage.removeItem('yh_editorBackup'); } catch {}
+      document.getElementById('editorBackupBanner').style.display = 'none';
       document.getElementById('previewPane').style.display = 'none';
       document.getElementById('wordCount').textContent = '0 words';
       document.getElementById('readTime').textContent = '0 min read';
       document.getElementById('postFeatured').checked = false;
       document.getElementById('cancelBtn').style.display = 'none';
+      document.getElementById('dupBtn').style.display = 'none';
       updateCounts();
     }
 
@@ -1440,7 +1781,8 @@
       const words = (content.trim() ? content.trim().split(/\s+/).length : 0);
       document.getElementById('wordCount').textContent = words + ' words';
       document.getElementById('readTime').textContent = Math.max(1, Math.round(words / 200)) + ' min read';
-      document.getElementById('postSlug').value = slugify(title);
+      const slugEl = document.getElementById('postSlug');
+      if (slugEl && !slugEl.dataset.manual) slugEl.value = slugify(title);
       const ex = document.getElementById('postExcerpt');
       if (ex) document.getElementById('excerptCount').textContent = ex.value.length;
     }
@@ -1459,507 +1801,17 @@
         if (document.getElementById('previewPane').style.display !== 'none') refreshPreview();
       });
     });
+    document.getElementById('postSlug').addEventListener('input', function() {
+      this.dataset.manual = '1';
+    });
+    // Autosave editor backup + internal-link suggestions (debounced).
+    document.getElementById('blogForm').addEventListener('input', () => {
+      queueAutosave();
+      queueSuggest();
+    });
     document.getElementById('postExcerpt').addEventListener('input', () => {
       document.getElementById('excerptCount').textContent = document.getElementById('postExcerpt').value.length;
     });
-
-    // ── AI Auto-Gen (Direct Browser API) ──
-    const API_STORAGE = 'yh_apiConfig';
-    const BLOG_STORAGE = 'yh_blogPosts';
-    const LOG_STORAGE = 'yh_genLog';
-
-    function getApiConfig() {
-      try {
-        const stored = JSON.parse(localStorage.getItem(API_STORAGE)) || {};
-        return {
-          cfToken: stored.cfToken || '',
-        };
-      } catch { return { cfToken: '' }; }
-    }
-
-    function saveApiConfig() {
-      const cfg = {
-        cfToken: document.getElementById('cfToken').value.trim(),
-      };
-      localStorage.setItem(API_STORAGE, JSON.stringify(cfg));
-      checkApiStatus();
-      showGenSuccess('Token saved');
-    }
-
-    function checkApiStatus() {
-      const el = document.getElementById('apiStatus');
-      const cfg = getApiConfig();
-      if (cfg.cfToken) {
-        el.className = 'server-status online';
-        el.innerHTML = '<span class="dot"></span> Cloudflare token configured';
-      } else {
-        el.className = 'server-status offline';
-        el.innerHTML = '<span class="dot"></span> Enter your Cloudflare API token above';
-      }
-    }
-
-    function testApiConnection() {
-      saveApiConfig();
-      saveCfConfig();
-      const cfg = getApiConfig();
-      if (!cfg.cfToken) { alert('Enter your Cloudflare API token first.'); return; }
-      if (!CF_ACCOUNT || !CF_PROJECT) { alert('Enter your Cloudflare Account ID and Project Name first.'); return; }
-
-      const el = document.getElementById('apiStatus');
-      el.className = 'server-status';
-      el.innerHTML = '<span class="dot" style="background:#eab308"></span> Testing Cloudflare token...';
-
-      fetch('/api/proxy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          _target: 'cf',
-          _cfToken: cfg.cfToken,
-          _cfPath: 'accounts/' + CF_ACCOUNT + '/pages/projects/' + CF_PROJECT,
-          _cfMethod: 'GET',
-          _cfBody: '',
-        }),
-      })
-        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(d => {
-          if (d.success) {
-            el.className = 'server-status online';
-            el.innerHTML = '<span class="dot"></span> Connected to CF Pages: ' + d.result.name;
-          } else {
-            throw new Error((d.errors || [{}])[0]?.message || 'API error');
-          }
-        })
-        .catch(e => {
-          el.className = 'server-status offline';
-          el.innerHTML = '<span class="dot"></span> ' + e.message;
-        });
-    }
-
-    function loadApiConfig() {
-      const cfg = getApiConfig();
-      if (cfg.cfToken) document.getElementById('cfToken').value = cfg.cfToken;
-      loadCfConfig();
-      if (CF_ACCOUNT) document.getElementById('cfAccount').value = CF_ACCOUNT;
-      if (CF_PROJECT) document.getElementById('cfProject').value = CF_PROJECT;
-      checkApiStatus();
-      loadGhConfig();
-    }
-
-    // ══════════════ GitHub Direct Publishing (online site, no server) ══════════════
-    const GH_STORAGE = 'yh_ghConfig';
-    const GH_OWNER = 'younghadne';
-    const GH_REPO = 'young-hadene-site-';
-    const GH_MAIN = 'main';
-    const GH_LIVE = 'gh-pages';
-    const GH_SITE = 'https://younghadene.ca';
-
-    function getGhConfig() {
-      try {
-        const stored = JSON.parse(localStorage.getItem(GH_STORAGE)) || {};
-        return { token: stored.token || '' };
-      } catch { return { token: '' }; }
-    }
-    function saveGhConfig() {
-      const token = document.getElementById('ghToken').value.trim();
-      localStorage.setItem(GH_STORAGE, JSON.stringify({ token }));
-      checkGhStatus();
-      showGenSuccess(token ? 'GitHub token saved' : 'GitHub token cleared');
-    }
-    function loadGhConfig() {
-      const cfg = getGhConfig();
-      if (cfg.token) document.getElementById('ghToken').value = cfg.token;
-      checkGhStatus();
-    }
-    function checkGhStatus() {
-      const el = document.getElementById('ghStatus');
-      if (!el) return;
-      if (getGhConfig().token) {
-        el.className = 'server-status online';
-        el.innerHTML = '<span class="dot"></span> GitHub token saved — online publishing ready';
-      } else {
-        el.className = 'server-status offline';
-        el.innerHTML = '<span class="dot"></span> Enter a GitHub token to publish from the online site';
-      }
-    }
-    async function testGhConnection() {
-      saveGhConfig();
-      const el = document.getElementById('ghStatus');
-      const { token } = getGhConfig();
-      if (!token) { alert('Enter your GitHub token first.'); return; }
-      el.className = 'server-status';
-      el.innerHTML = '<span class="dot" style="background:#eab308"></span> Testing…';
-      try {
-        const me = await ghFetch('/user');
-        const repo = await ghFetch('/repos/' + GH_OWNER + '/' + GH_REPO);
-        el.className = 'server-status online';
-        el.innerHTML = '<span class="dot"></span> Connected as ' + escapeHtml(me.login) + ' · can edit ' + escapeHtml(repo.full_name);
-      } catch (e) {
-        el.className = 'server-status offline';
-        el.innerHTML = '<span class="dot"></span> ' + escapeHtml(e.message);
-      }
-    }
-
-    function ghB64encode(s) { return btoa(unescape(encodeURIComponent(s))); }
-    function ghB64decode(s) { return decodeURIComponent(escape(atob(s.replace(/\s/g, '')))); }
-
-    async function ghFetch(path, method, body) {
-      const { token } = getGhConfig();
-      if (!token) throw new Error('No GitHub token — add one in GitHub Publishing settings.');
-      const r = await fetch('https://api.github.com' + path, {
-        method: method || 'GET',
-        headers: {
-          'Accept': 'application/vnd.github+json',
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-        body: body ? JSON.stringify(body) : undefined,
-      });
-      if (r.status === 401) throw new Error('Bad token (401) — check it has repo/Contents access.');
-      if (r.status === 403) throw new Error('Forbidden (403) — token needs Contents read+write on this repo, or rate-limited.');
-      if (r.status === 404 && (method || 'GET') === 'GET') return null;
-      if (!r.ok) {
-        let msg = 'HTTP ' + r.status;
-        try { const d = await r.json(); if (d.message) msg += ': ' + d.message; } catch {}
-        throw new Error(msg);
-      }
-      if (r.status === 204) return null;
-      return r.json();
-    }
-
-    async function ghGetFile(repoPath) {
-      const d = await ghFetch('/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + repoPath + '?ref=' + GH_MAIN);
-      if (!d || !d.content) return null;
-      return { sha: d.sha, text: ghB64decode(d.content) };
-    }
-    async function ghPutFile(repoPath, text, message) {
-      const cur = await ghGetFile(repoPath);
-      const res = await ghFetch('/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + repoPath, 'PUT', {
-        message, content: ghB64encode(text), branch: GH_MAIN, ...(cur ? { sha: cur.sha } : {}),
-      });
-      return res;
-    }
-    async function ghDelFile(repoPath, message) {
-      const cur = await ghGetFile(repoPath);
-      if (!cur) return;
-      await ghFetch('/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + repoPath, 'DELETE', {
-        message, sha: cur.sha, branch: GH_MAIN,
-      });
-    }
-    async function ghMergeLive() {
-      try {
-        await ghFetch('/repos/' + GH_OWNER + '/' + GH_REPO + '/merges', 'POST', {
-          base: GH_LIVE, head: GH_MAIN, commit_message: 'deploy: publish from Blog Manager',
-        });
-      } catch (e) {
-        if (String(e.message).includes('409') || /up to date|already/i.test(e.message)) return; // nothing to merge
-        throw new Error('Deploy merge failed: ' + e.message);
-      }
-    }
-
-    // Server-exact article body renderer (real embeds, not preview placeholders).
-    function ghYtEmbed(id) {
-      return '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:16px 0;"><iframe src="https://www.youtube.com/embed/' + id + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Embedded video"></iframe></div>';
-    }
-    function ghInline(s) {
-      s = escapeHtml(s);
-      const holders = [];
-      const hold = (h) => { holders.push(h); return ' ' + (holders.length - 1) + ' '; };
-      s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, alt, src) => hold('<img src="' + src + '" alt="' + alt + '" loading="lazy" style="max-width:100%;border-radius:8px;margin:12px 0;">'));
-      s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m, txt, url) => hold('<a href="' + url + '" target="_blank" rel="noopener">' + txt + '</a>'));
-      s = s.replace(/\*\*([^*]+)\*\*/g, (m, txt) => hold('<strong>' + txt + '</strong>'));
-      s = s.replace(/\*([^*]+)\*/g, (m, txt) => hold('<em>' + txt + '</em>'));
-      s = s.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
-        url = url.replace(/[.,;:!?)]+$/, '');
-        const id = ytId(url);
-        return hold(id ? ghYtEmbed(id) : '<a href="' + url + '" target="_blank" rel="noopener">' + url + '</a>');
-      });
-      holders.forEach((h, i) => { s = s.split(' ' + i + ' ').join(h); });
-      return s;
-    }
-    function ghRenderBody(d) {
-      const lines = (d.content || '').split('\n');
-      let html = '', toc = [], listOpen = false, para = [];
-      const flush = () => { if (para.length) { html += '<p>' + para.join('<br>') + '</p>'; para = []; } };
-      const closeList = () => { if (listOpen) { html += '</ul>'; listOpen = false; } };
-      lines.forEach(raw => {
-        const line = raw.trim();
-        if (line.startsWith('## ')) { flush(); closeList(); const h = line.substring(3).trim(); const id = 'sec-' + slugify(h); toc.push({ id, h }); html += '<h2 id="' + id + '">' + escapeHtml(h) + '</h2>'; }
-        else if (line.startsWith('> ')) { flush(); closeList(); html += '<blockquote>' + ghInline(line.substring(2).trim()) + '</blockquote>'; }
-        else if (line.startsWith('- ')) { flush(); if (!listOpen) { html += '<ul>'; listOpen = true; } html += '<li>' + ghInline(line.substring(2).trim()) + '</li>'; }
-        else if (line === '') { flush(); closeList(); }
-        else if (/^https?:\/\/\S+$/.test(line) && ytId(line)) { flush(); closeList(); html += ghYtEmbed(ytId(line)); }
-        else { closeList(); para.push(ghInline(raw.trim())); }
-      });
-      flush(); closeList();
-      let out = '';
-      const takes = (d.takeaways || '').split('\n').map(s => s.trim()).filter(Boolean);
-      if (takes.length) { out += '<div class="takeaways"><h2>Key Takeaways</h2><ul>' + takes.map(x => '<li>' + ghInline(x) + '</li>').join('') + '</ul></div>'; }
-      if (toc.length > 1) { out += '<div class="toc"><h2>Table of Contents</h2><ul>' + toc.map(x => '<li><a href="#' + x.id + '">' + escapeHtml(x.h) + '</a></li>').join('') + '</ul></div>'; }
-      out += html;
-      const faqs = (d.faq || '').split('\n').map(s => s.trim()).filter(Boolean);
-      if (faqs.length) {
-        out += '<h2>Frequently Asked Questions</h2>';
-        faqs.forEach(f => { const idx = f.indexOf('|'); const q = (idx >= 0 ? f.substring(0, idx) : f).trim(); const a = (idx >= 0 ? f.substring(idx + 1) : '').trim(); out += '<h3>' + escapeHtml(q) + '</h3><p>' + ghInline(a) + '</p>'; });
-      }
-      return out;
-    }
-
-    function ghBlogPage(d) {
-      const tagList = (d.tags || '').split(',').map(t => t.trim()).filter(Boolean);
-      const tagsMeta = tagList.map(t => '<meta property="article:tag" content="' + escapeHtml(t) + '">').join('');
-      const tagsBox = tagList.length ? '<div class="tags-box" style="margin:32px 0;display:flex;flex-wrap:wrap;gap:8px;">' + tagList.map(t => '<span style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:6px 14px;color:var(--text-secondary);">#' + escapeHtml(t) + '</span>').join('') + '</div>' : '';
-      const googleCta = '<div class="cta-box"><h3>Find Young Hadene on Google</h3><p>Follow, get updates & leave a review.</p><p><a href="https://share.google/HesREN5rtFGRek6bi" target="_blank" rel="noopener" class="btn btn-primary">★ View Google Profile</a></p></div>';
-      const desc = escapeHtml(((d.excerpt || d.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160)));
-      return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>' + escapeHtml(d.title) + ' — Young Hadene</title><meta name="description" content="' + desc + '"><link rel="canonical" href="' + GH_SITE + '/blog/' + escapeHtml(d.slug) + '"><meta property="og:title" content="' + escapeHtml(d.title) + '"><meta property="og:description" content="' + desc + '"><meta property="og:image" content="' + GH_SITE + '/images/poster1.png"><meta property="og:url" content="' + GH_SITE + '/blog/' + escapeHtml(d.slug) + '"><meta property="og:type" content="article">' + tagsMeta + '<meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><text y=\'28\' font-size=\'28\'>🎤</text></svg>"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"' + escapeHtml(d.title) + '","description":"' + desc + '","author":{"@type":"Person","name":"Young Hadene","jobTitle":"Recording Artist","url":"' + GH_SITE + '/about.html","sameAs":["https://www.instagram.com/YOUNGHADENE","https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg","https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA","https://share.google/HesREN5rtFGRek6bi"]},"datePublished":"' + (d.date || new Date().toISOString().split('T')[0]) + '","image":"' + GH_SITE + '/images/poster1.png"}<\/script>' + document.getElementById('ghBlogCss').textContent + '</head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">&#8592; Back to Blog</a><div class="article-wrap"><div class="meta">' + escapeHtml(d.date) + ' &middot; <span>' + escapeHtml(d.category || 'Music') + '</span> &middot; By <a href="/about.html" rel="author" style="color:var(--accent)">Young Hadene</a></div><h1>' + escapeHtml(d.title) + '</h1><div>' + ghRenderBody(d) + '</div>' + tagsBox + googleCta + '</div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ' + new Date().getFullYear() + ' Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer><script src="/js/main.js"><\/script></body></html>';
-    }
-
-    function ghNewsPage(d) {
-      const iso = new Date(d.dateNum || Date.now()).toISOString();
-      const desc = escapeHtml(((d.excerpt || d.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160) || d.title));
-      const canon = GH_SITE + '/news/' + d.slug + '.html';
-      const schema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'NewsArticle', headline: d.title || '', description: (d.excerpt || d.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160) || d.title, image: GH_SITE + '/images/poster1.png', datePublished: iso, dateModified: iso, author: { '@type': 'Person', name: 'Young Hadene', jobTitle: 'Editor', url: GH_SITE + '/about.html' }, publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: GH_SITE + '/images/poster1.png' } }, mainEntityOfPage: { '@type': 'WebPage', '@id': canon } });
-      return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>' + escapeHtml(d.title) + ' — Young Hadene News</title><meta name="description" content="' + desc + '"><link rel="canonical" href="' + canon + '"><meta property="og:title" content="' + escapeHtml(d.title) + '"><meta property="og:description" content="' + desc + '"><meta property="og:image" content="' + GH_SITE + '/images/poster1.png"><meta property="og:url" content="' + canon + '"><meta property="og:type" content="article"><meta property="article:published_time" content="' + iso.substring(0, 10) + '"><meta property="article:author" content="Young Hadene"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="' + escapeHtml(d.title) + '"><meta name="twitter:description" content="' + desc + '"><meta name="twitter:image" content="' + GH_SITE + '/images/poster1.png"><link rel="stylesheet" href="../css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><text y=\'28\' font-size=\'28\'>🎤</text></svg>"><script type="application/ld+json">' + schema + '<\/script><style>\n.article-wrap{max-width:720px;margin:0 auto;padding:40px 0;}\n.article-wrap h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:16px;line-height:1.08;}\n.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em;}\n.article-wrap .meta a{color:var(--accent);}\n.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem;}\n.article-wrap p strong{color:var(--text-primary);}\n.article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading);letter-spacing:.04em;}\n.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;font-family:var(--font-heading);color:var(--accent);}\n.article-wrap ul,.article-wrap ol{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;}\n.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic;color:var(--text-secondary);}\n.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px;}\n.back-link:hover{color:var(--accent);}\n.correction-note{margin-top:40px;padding:16px 20px;border:1px solid var(--border-color);border-radius:8px;font-size:.8rem;color:var(--text-muted);}\n</style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link">Blog</a></li><li><a href="/news.html" class="nav-link active">News</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/news.html" class="back-link">&#8592; Back to News</a><div class="article-wrap"><div class="meta">' + escapeHtml(d.date) + ' &middot; <span>' + escapeHtml(d.category || 'News') + '</span> &middot; By <a href="/about.html" rel="author">Young Hadene</a>, Editor</div><h1>' + escapeHtml(d.title) + '</h1><div>' + ghRenderBody(d) + '</div><div class="correction-note">Correction notice: none to date. Spotted an error? See our <a href="/corrections-policy.html">Corrections Policy</a> or email <a href="mailto:contact@younghadene.ca">contact@younghadene.ca</a>.</div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ' + new Date().getFullYear() + ' Young Hadene. All rights reserved. Toronto. 6ix.</p><div class="footer-bottom-links"><a href="/news.html">News</a><a href="/editorial-policy.html">Editorial Policy</a><a href="/privacy.html">Privacy</a></div></div></div></footer><script src="../js/main.js"><\/script></body></html>';
-    }
-
-    function ghXmlEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-    function ghLastmod(p) {
-      try { return new Date(p.dateNum || Date.now()).toISOString().substring(0, 10); } catch { return ''; }
-    }
-    function ghBuildMainSitemap(blogPosts, newsPosts) {
-      const statics = [
-        { loc: '/', priority: '1.0', changefreq: 'monthly' },
-        { loc: '/music.html', priority: '0.9', changefreq: 'monthly' },
-        { loc: '/blog.html', priority: '0.9', changefreq: 'weekly' },
-        { loc: '/news.html', priority: '0.9', changefreq: 'daily' },
-        { loc: '/about.html', priority: '0.8', changefreq: 'monthly' },
-        { loc: '/contact.html', priority: '0.7', changefreq: 'monthly' },
-        { loc: '/services.html', priority: '0.7', changefreq: 'monthly' },
-        { loc: '/editorial-policy.html', priority: '0.5', changefreq: 'yearly' },
-        { loc: '/corrections-policy.html', priority: '0.5', changefreq: 'yearly' },
-      ];
-      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-      statics.forEach(p => { xml += '  <url><loc>' + GH_SITE + p.loc + '</loc><changefreq>' + p.changefreq + '</changefreq><priority>' + p.priority + '</priority></url>\n'; });
-      // Blog URLs come from the live directory listing (avoids re-adding deleted slugs).
-      (ghBlogFiles || []).forEach(f => {
-        const hit = (blogPosts || []).find(p => p.slug === f.replace(/\.html$/, ''));
-        xml += '  <url><loc>' + GH_SITE + '/blog/' + f + '</loc>' + (hit && hit.dateNum ? '<lastmod>' + ghLastmod(hit) + '</lastmod>' : '') + '<changefreq>monthly</changefreq><priority>0.8</priority></url>\n';
-      });
-      // News URLs come from the live directory listing too.
-      (ghNewsFiles || []).forEach(f => {
-        const hit = (newsPosts || []).find(p => p.slug === f.replace(/\.html$/, ''));
-        xml += '  <url><loc>' + GH_SITE + '/news/' + f + '</loc>' + (hit && hit.dateNum ? '<lastmod>' + ghLastmod(hit) + '</lastmod>' : '') + '<changefreq>weekly</changefreq><priority>0.9</priority></url>\n';
-      });
-      return xml + '</urlset>\n';
-    }
-    function ghBuildNewsSitemap(newsPosts) {
-      const fresh = (newsPosts || []).filter(p => Date.now() - (p.dateNum || 0) < 2 * 24 * 60 * 60 * 1000);
-      let ns = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n';
-      fresh.forEach(p => {
-        const title = String(p.title || p.slug).split('—')[0].split('|')[0].trim();
-        ns += '  <url>\n    <loc>' + GH_SITE + '/news/' + p.slug + '.html</loc>\n    <news:news>\n      <news:publication>\n        <news:name>Young Hadene</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>' + new Date(p.dateNum || Date.now()).toISOString() + '</news:publication_date>\n      <news:title>' + ghXmlEsc(title) + '</news:title>\n    </news:news>\n  </url>\n';
-      });
-      return ns + '</urlset>\n';
-    }
-    function ghBuildNewsRSS(newsPosts) {
-      const items = [...(newsPosts || [])].sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0)).slice(0, 20);
-      let rss = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>' + GH_SITE + '/news.html</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n';
-      items.forEach(p => {
-        const desc = String(p.excerpt || p.content || p.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 300);
-        rss += '  <item>\n    <title>' + ghXmlEsc(p.title) + '</title>\n    <link>' + GH_SITE + '/news/' + p.slug + '.html</link>\n    <guid isPermaLink="true">' + GH_SITE + '/news/' + p.slug + '.html</guid>\n    <description>' + ghXmlEsc(desc) + '</description>\n    <content:encoded><![CDATA[' + (p.content || '') + ']]></content:encoded>\n    <pubDate>' + new Date(p.dateNum || Date.now()).toUTCString() + '</pubDate>\n    <category>' + ghXmlEsc(p.category || 'News') + '</category>\n  </item>\n';
-      });
-      return rss + '</channel>\n</rss>\n';
-    }
-
-    let ghBlogFiles = [];
-    let ghNewsFiles = [];
-    async function ghListDir(dir) {
-      const arr = await ghFetch('/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + dir + '?ref=' + GH_MAIN);
-      if (!Array.isArray(arr)) return [];
-      return arr.filter(e => e.type === 'file' && e.name.endsWith('.html')).map(e => e.name).sort();
-    }
-
-    // Full online publish: article + store + listing bake + feeds + deploy merge.
-    async function ghPublishSite(post) {
-      const isNews = post.section === 'news';
-      const dir = isNews ? 'news' : 'blog';
-      const storePath = isNews ? 'yh_newsPosts.json' : 'yh_blogPosts.json';
-      const listPath = isNews ? 'news.html' : 'blog.html';
-      const varName = isNews ? 'NEWS_POSTS' : 'SERVER_POSTS';
-      showGenSuccess('Connecting to GitHub…');
-      // 1. Store: read-modify-write.
-      let store = [];
-      try {
-        const cur = await ghGetFile(storePath);
-        if (cur) { const arr = JSON.parse(cur.text); if (Array.isArray(arr)) store = arr; }
-      } catch (e) { /* missing store starts empty */ }
-      const ix = store.findIndex(p => p.slug === post.slug);
-      if (ix >= 0) store[ix] = { ...store[ix], ...post };
-      else store.push(post);
-      showGenSuccess('Saving ' + dir + '/' + post.slug + '.html…');
-      // 2. Article file.
-      await ghPutFile(dir + '/' + post.slug + '.html', isNews ? ghNewsPage(post) : ghBlogPage(post), (ix >= 0 ? 'Update ' : 'Publish ') + (isNews ? 'news' : 'post') + ': ' + post.title);
-      // 3. Store file.
-      await ghPutFile(storePath, JSON.stringify(store, null, 2), 'Update ' + storePath + ' (' + post.slug + ')');
-      showGenSuccess('Refreshing listing + sitemaps…');
-      // 4. Directory listings (source of truth for sitemaps).
-      ghBlogFiles = await ghListDir('blog');
-      ghNewsFiles = await ghListDir('news');
-      const blogStore = isNews ? (await (async () => { try { const c = await ghGetFile('yh_blogPosts.json'); return c ? JSON.parse(c.text) : []; } catch { return []; } })()) : store;
-      const newsStore = isNews ? store : (await (async () => { try { const c = await ghGetFile('yh_newsPosts.json'); return c ? JSON.parse(c.text) : []; } catch { return []; } })());
-      // 5. Baked listing blocks.
-      const listCur = await ghGetFile(listPath);
-      if (listCur) {
-        const baked = '<script>var ' + varName + ' = ' + JSON.stringify(isNews ? newsStore : blogStore) + ';\n<\/script>';
-        const re = new RegExp('<script>var ' + varName + ' = .*?;\\s*\\n?<\/script>', 's');
-        const updated = re.test(listCur.text) ? listCur.text.replace(re, baked) : listCur.text.replace('</head>', baked + '\n</head>');
-        await ghPutFile(listPath, updated, 'Refresh ' + varName + ' index');
-      }
-      // 6. Feeds.
-      await ghPutFile('sitemap.xml', ghBuildMainSitemap(blogStore, newsStore), 'Refresh sitemap.xml');
-      await ghPutFile('news-sitemap.xml', ghBuildNewsSitemap(newsStore), 'Refresh news-sitemap.xml');
-      await ghPutFile('news-rss.xml', ghBuildNewsRSS(newsStore), 'Refresh news-rss.xml');
-      // 7. Deploy to live site.
-      showGenSuccess('Deploying to younghadene.ca…');
-      await ghMergeLive();
-      return post.slug;
-    }
-
-    // Full online delete: file + store + listing + feeds + deploy merge.
-    async function ghDeleteSite(post) {
-      const isNews = post.section === 'news';
-      const dir = isNews ? 'news' : 'blog';
-      const storePath = isNews ? 'yh_newsPosts.json' : 'yh_blogPosts.json';
-      const listPath = isNews ? 'news.html' : 'blog.html';
-      const varName = isNews ? 'NEWS_POSTS' : 'SERVER_POSTS';
-      showGenSuccess('Deleting from GitHub…');
-      await ghDelFile(dir + '/' + post.slug + '.html', 'Delete ' + dir + ' post: ' + post.slug);
-      let store = [];
-      try { const cur = await ghGetFile(storePath); if (cur) { const arr = JSON.parse(cur.text); if (Array.isArray(arr)) store = arr; } } catch {}
-      store = store.filter(p => p.slug !== post.slug);
-      await ghPutFile(storePath, JSON.stringify(store, null, 2), 'Update ' + storePath + ' (remove ' + post.slug + ')');
-      ghBlogFiles = await ghListDir('blog');
-      ghNewsFiles = await ghListDir('news');
-      const blogStore = isNews ? (await (async () => { try { const c = await ghGetFile('yh_blogPosts.json'); return c ? JSON.parse(c.text) : []; } catch { return []; } })()) : store;
-      const newsStore = isNews ? store : (await (async () => { try { const c = await ghGetFile('yh_newsPosts.json'); return c ? JSON.parse(c.text) : []; } catch { return []; } })());
-      const listCur = await ghGetFile(listPath);
-      if (listCur) {
-        const baked = '<script>var ' + varName + ' = ' + JSON.stringify(isNews ? newsStore : blogStore) + ';\n<\/script>';
-        const re = new RegExp('<script>var ' + varName + ' = .*?;\\s*\\n?<\/script>', 's');
-        await ghPutFile(listPath, re.test(listCur.text) ? listCur.text.replace(re, baked) : listCur.text.replace('</head>', baked + '\n</head>'), 'Refresh ' + varName + ' index');
-      }
-      await ghPutFile('sitemap.xml', ghBuildMainSitemap(blogStore, newsStore), 'Refresh sitemap.xml');
-      await ghPutFile('news-sitemap.xml', ghBuildNewsSitemap(newsStore), 'Refresh news-sitemap.xml');
-      await ghPutFile('news-rss.xml', ghBuildNewsRSS(newsStore), 'Refresh news-rss.xml');
-      showGenSuccess('Deploying removal…');
-      await ghMergeLive();
-    }
-
-    function getGenLog() {
-      try { return JSON.parse(localStorage.getItem(LOG_STORAGE)) || []; } catch { return []; }
-    }
-    function addGenLog(entry) {
-      const log = getGenLog();
-      log.unshift(entry);
-      if (log.length > 50) log.length = 50;
-      localStorage.setItem(LOG_STORAGE, JSON.stringify(log));
-    }
-
-    // ── AI GENERATION via Cloudflare Pages Build ──
-    async function generateNow() {
-      const cfg = getApiConfig();
-      if (!cfg.cfToken) { alert('Enter your Cloudflare API token first.'); return; }
-      if (!CF_ACCOUNT || !CF_PROJECT) { alert('Cloudflare account ID and project name must be configured.'); return; }
-
-      const btn = document.getElementById('generateNowBtn');
-      const spinner = document.getElementById('genSpinner');
-      const log = document.getElementById('genLog');
-      btn.style.display = 'none';
-      spinner.style.display = 'inline-flex';
-      log.style.display = 'block';
-      log.innerHTML = '<span class="info">Triggering Cloudflare Pages deployment...</span>\n';
-
-      try {
-        const cfFetch = async(path, method, body) => {
-          const r = await fetch('/api/proxy', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              _target: 'cf',
-              _cfToken: cfg.cfToken,
-              _cfPath: path,
-              _cfMethod: method,
-              _cfBody: body || '{}',
-            }),
-          });
-          return r;
-        };
-
-        const resp = await cfFetch('accounts/' + CF_ACCOUNT + '/pages/projects/' + CF_PROJECT + '/deployments', 'POST', '{}');
-        // Note: CF_ACCOUNT and CF_PROJECT must be set in the admin settings
-
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data.success) {
-            const dep = data.result;
-            const depId = dep.id;
-            log.innerHTML += `<span class="ok">✅ Deployment created!</span>\n`;
-            log.innerHTML += `<span class="info">⏳ Building... (typically 2-5 min)</span>\n`;
-            log.innerHTML += `<span class="info">🔗 <a href="https://dash.cloudflare.com/${CF_ACCOUNT}/pages/view/${CF_PROJECT}/${depId}" target="_blank">View in Cloudflare Dashboard</a></span>\n`;
-
-            addGenLog({ date: new Date().toISOString(), status: 'triggered', deployment: depId });
-            document.getElementById('statTotal').textContent = getGenLog().length;
-
-            // Poll for completion
-            log.innerHTML += `\n<span class="info">Polling for build completion...</span>\n`;
-            for (let attempt = 0; attempt < 60; attempt++) {
-              await new Promise(r => setTimeout(r, 10000));
-              try {
-                const r = await cfFetch('accounts/' + CF_ACCOUNT + '/pages/projects/' + CF_PROJECT + '/deployments?per_page=5', 'GET');
-                if (!r.ok) continue;
-                const deps = await r.json();
-                if (deps.success) {
-                  const current = deps.result.find(d => d.id === depId);
-                  if (current) {
-                    const stages = current.stages || [];
-                    const statuses = stages.map(s => s.name + ':' + s.status).join(', ');
-                    log.innerHTML += `<span class="info">  ${statuses}</span>\n`;
-                    log.scrollTop = log.scrollHeight;
-
-                    const buildStage = stages.find(s => s.name === 'build');
-                    const deployStage = stages.find(s => s.name === 'deploy');
-                    if (deployStage && deployStage.status === 'success') {
-                      log.innerHTML += `\n<span class="ok">✅ Deployment complete! New blog posts are live!</span>\n`;
-                      log.innerHTML += `<span class="info">📝 <a href="/blog" target="_blank">View blog</a></span>\n`;
-                      break;
-                    }
-                    if (buildStage && buildStage.status === 'failure') {
-                      log.innerHTML += `\n<span class="fail">❌ Build failed. Check Cloudflare dashboard for details.</span>\n`;
-                      log.innerHTML += `<span class="fail">🔗 <a href="https://dash.cloudflare.com/${CF_ACCOUNT}/pages/view/${CF_PROJECT}/${depId}" target="_blank">View logs</a></span>\n`;
-                      break;
-                    }
-                  }
-                }
-              } catch (e) {
-                log.innerHTML += `<span class="fail">  Poll error: ${e.message}</span>\n`;
-              }
-            }
-          } else {
-            log.innerHTML += `<span class="fail">❌ Cloudflare API error: ${(data.errors || [{}])[0]?.message || 'Unknown'}</span>\n`;
-          }
-        } else if (resp.status === 403) {
-          log.innerHTML += `<span class="fail">❌ Cloudflare token invalid or lacks Pages:Write permission.</span>\n`;
-        } else {
-          const errTxt = await resp.text();
-          log.innerHTML += `<span class="fail">❌ HTTP ${resp.status}: ${errTxt.substring(0, 200)}</span>\n`;
-        }
-      } catch (e) {
-        log.innerHTML += `<span class="fail">❌ Network error: ${e.message}</span>\n`;
-      }
-
-      spinner.style.display = 'none';
-      btn.style.display = 'inline-flex';
-      log.scrollTop = log.scrollHeight;
-    }
 
     function showGenSuccess(msg) {
       const el = document.getElementById('formSuccess');
@@ -1985,24 +1837,6 @@
         el.style.background = '';
         el.style.borderColor = '';
       }, 8000);
-    }
-
-    // Cloudflare config — set these via the admin settings
-    let CF_ACCOUNT = '';
-    let CF_PROJECT = '';
-
-    function loadCfConfig() {
-      try {
-        const stored = JSON.parse(localStorage.getItem('yh_cfConfig')) || {};
-        CF_ACCOUNT = stored.cfAccount || '';
-        CF_PROJECT = stored.cfProject || '';
-      } catch { CF_ACCOUNT = ''; CF_PROJECT = ''; }
-    }
-
-    function saveCfConfig() {
-      CF_ACCOUNT = document.getElementById('cfAccount').value.trim();
-      CF_PROJECT = document.getElementById('cfProject').value.trim();
-      localStorage.setItem('yh_cfConfig', JSON.stringify({ cfAccount: CF_ACCOUNT, cfProject: CF_PROJECT }));
     }
 
     // ---- Site Stats (reads the static analytics.json snapshot — no server) ----
@@ -2038,10 +1872,9 @@
     const origLoadPosts = loadPosts;
     loadPosts = function() {
       origLoadPosts();
-      loadApiConfig();
-      loadCfConfig();
       loadStats();
-      document.getElementById('statTotal').textContent = getGenLog().length;
+      loadDashboard();
+      checkEditorBackup();
     };
   </script>
 </body>

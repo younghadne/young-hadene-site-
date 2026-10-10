@@ -162,33 +162,59 @@
   <script>
   // Renders newly published news posts (baked var NEWS_POSTS, refreshed on
   // publish + at serve time) above the static cards. Static cards stay as fallback.
+  // After first paint, pulls the live index (/api/news-list) so news published
+  // seconds ago appears without a redeploy, and strips cards of deleted posts.
   (function () {
+    function renderNews(items) {
+      try {
+        if (!items.length) return;
+        var grid = document.querySelector('.news-grid');
+        if (!grid) return;
+        var existing = {};
+        grid.querySelectorAll('a.news-card').forEach(function (a) {
+          var h = a.getAttribute('href') || '';
+          var m = h.match(/\/news\/(.+)\.html/);
+          if (m) existing[m[1]] = true;
+        });
+        var fresh = items.filter(function (p) { return p && p.slug && !existing[p.slug]; });
+        if (!fresh.length) return;
+        fresh.sort(function (a, b) {
+          if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
+          return (b.dateNum || 0) - (a.dateNum || 0);
+        });
+        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        var html = fresh.map(function (p) {
+          var blurb = p.excerpt || String(p.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 140);
+          return '<a class="news-card" href="/news/' + esc(p.slug) + '.html">'
+            + '<div class="news-card-body"><span class="cat">' + esc(p.category || 'News') + '</span>'
+            + '<h2>' + esc(p.title) + '</h2><p>' + esc(blurb) + '</p>'
+            + '<span class="date">' + esc(p.date || '') + ' · By Young Hadene</span></div></a>';
+        }).join('');
+        grid.insertAdjacentHTML('afterbegin', html);
+      } catch (e) { console.error('news render failed:', e); }
+    }
+    function stripRemoved(slugs) {
+      try {
+        if (!slugs || !slugs.length) return;
+        var grid = document.querySelector('.news-grid');
+        if (!grid) return;
+        grid.querySelectorAll('a.news-card').forEach(function (a) {
+          var h = a.getAttribute('href') || '';
+          var m = h.match(/\/news\/(.+)\.html/);
+          if (m && slugs.indexOf(m[1]) !== -1) a.remove();
+        });
+      } catch (e) { console.error('news strip failed:', e); }
+    }
     try {
-      var items = (typeof NEWS_POSTS !== 'undefined' && Array.isArray(NEWS_POSTS)) ? NEWS_POSTS : [];
-      if (!items.length) return;
-      var grid = document.querySelector('.news-grid');
-      if (!grid) return;
-      var existing = {};
-      grid.querySelectorAll('a.news-card').forEach(function (a) {
-        var h = a.getAttribute('href') || '';
-        var m = h.match(/\/news\/(.+)\.html/);
-        if (m) existing[m[1]] = true;
-      });
-      var fresh = items.filter(function (p) { return p && p.slug && !existing[p.slug]; });
-      if (!fresh.length) return;
-      fresh.sort(function (a, b) {
-        if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
-        return (b.dateNum || 0) - (a.dateNum || 0);
-      });
-      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-      var html = fresh.map(function (p) {
-        var blurb = p.excerpt || String(p.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 140);
-        return '<a class="news-card" href="/news/' + esc(p.slug) + '.html">'
-          + '<div class="news-card-body"><span class="cat">' + esc(p.category || 'News') + '</span>'
-          + '<h2>' + esc(p.title) + '</h2><p>' + esc(blurb) + '</p>'
-          + '<span class="date">' + esc(p.date || '') + ' · By Young Hadene</span></div></a>';
-      }).join('');
-      grid.insertAdjacentHTML('afterbegin', html);
+      var baked = (typeof NEWS_POSTS !== 'undefined' && Array.isArray(NEWS_POSTS)) ? NEWS_POSTS : [];
+      renderNews(baked);
+      fetch('/api/news-list', { cache: 'no-store' }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (d) {
+        if (!d) return;
+        if (Array.isArray(d.removed) && d.removed.length) stripRemoved(d.removed);
+        if (Array.isArray(d.posts) && d.posts.length) renderNews(d.posts);
+      }).catch(function () { /* baked listing stays */ });
     } catch (e) { console.error('news render failed:', e); }
   })();
   </script>
