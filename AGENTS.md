@@ -50,6 +50,12 @@ No KV / D1 / Workers / external DB unless explicitly approved.
   `POST /api/migrate` once to seed KV from the deployed static files.
 - Admin login gate lives in `admin.html`; writes go through server-verified
   endpoints only. No AI auto-generation, no GitHub publishing in the manager.
+- **Navigation single source of truth: `NAV_ITEMS` in `js/main.js`.**
+  Never hardcode tab changes per page — the runtime rebuild unifies the nav
+  on every page load (active tab from URL). Static per-page `<nav>` markup
+  is fallback only and MUST stay in sync: `npm test` runs
+  `scripts/check-nav.js`, which fails if any page misses a canonical tab
+  (Home/Music/Blog/News/About/Contact/Admin). Keep it green.
 
 ## 3. Admin auth rules
 

@@ -1,5 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ---- Shared navigation (SINGLE SOURCE OF TRUTH) ----
+  // Every page used to hardcode its own <nav> copy, so tabs (News, About…)
+  // silently went missing on some pages. The canonical tab list lives HERE
+  // only: on load, the visible nav is rebuilt from it (active tab derived
+  // from the URL), so switching tabs can never remove navigation items.
+  // The static per-page markup remains as a no-JS fallback and is guarded
+  // by scripts/check-nav.js (npm test).
+  const NAV_ITEMS = [
+    { label: 'Home', href: '/' },
+    { label: 'Music', href: '/music' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'News', href: '/news' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Admin', href: '/admin', style: 'color:var(--text-muted);font-size:0.7rem;' },
+  ];
+
+  function navPath() {
+    try {
+      let p = location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+      if (p.length > 1) p = p.replace(/\/$/, '');
+      return p || '/';
+    } catch {
+      return '/';
+    }
+  }
+
+  function navActive(item, path) {
+    if (item.href === '/') return path === '/';
+    return path === item.href || path.indexOf(item.href + '/') === 0;
+  }
+
+  try {
+    const navList = document.querySelector('nav ul.nav-list');
+    if (navList) {
+      const path = navPath();
+      navList.innerHTML = NAV_ITEMS.map((item) => {
+        const active = navActive(item, path) ? ' active' : '';
+        const style = item.style ? ` style="${item.style}"` : '';
+        return `<li><a href="${item.href}" class="nav-link${active}"${style}>${item.label}</a></li>`;
+      }).join('');
+    }
+  } catch (e) { /* static fallback nav stays */ }
+
   // ---- Mobile Menu ----
   const hamburger = document.querySelector('.hamburger');
   const navList = document.querySelector('.nav-list');
