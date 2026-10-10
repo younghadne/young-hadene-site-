@@ -15,6 +15,8 @@
   <meta name="twitter:title" content="News — Young Hadene">
   <meta name="twitter:image" content="https://younghadene.ca/images/poster1.png">
   <link rel="alternate" type="application/rss+xml" title="Young Hadene — News" href="https://younghadene.ca/news-rss.xml">
+<script>var NEWS_POSTS = [];
+</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -157,5 +159,38 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+  // Renders newly published news posts (baked var NEWS_POSTS, refreshed on
+  // publish + at serve time) above the static cards. Static cards stay as fallback.
+  (function () {
+    try {
+      var items = (typeof NEWS_POSTS !== 'undefined' && Array.isArray(NEWS_POSTS)) ? NEWS_POSTS : [];
+      if (!items.length) return;
+      var grid = document.querySelector('.news-grid');
+      if (!grid) return;
+      var existing = {};
+      grid.querySelectorAll('a.news-card').forEach(function (a) {
+        var h = a.getAttribute('href') || '';
+        var m = h.match(/\/news\/(.+)\.html/);
+        if (m) existing[m[1]] = true;
+      });
+      var fresh = items.filter(function (p) { return p && p.slug && !existing[p.slug]; });
+      if (!fresh.length) return;
+      fresh.sort(function (a, b) {
+        if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
+        return (b.dateNum || 0) - (a.dateNum || 0);
+      });
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+      var html = fresh.map(function (p) {
+        var blurb = p.excerpt || String(p.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 140);
+        return '<a class="news-card" href="/news/' + esc(p.slug) + '.html">'
+          + '<div class="news-card-body"><span class="cat">' + esc(p.category || 'News') + '</span>'
+          + '<h2>' + esc(p.title) + '</h2><p>' + esc(blurb) + '</p>'
+          + '<span class="date">' + esc(p.date || '') + ' · By Young Hadene</span></div></a>';
+      }).join('');
+      grid.insertAdjacentHTML('afterbegin', html);
+    } catch (e) { console.error('news render failed:', e); }
+  })();
+  </script>
 </body>
 </html>

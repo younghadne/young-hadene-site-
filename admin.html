@@ -7,111 +7,13 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="Young Hadene admin panel for managing blog posts.">
   <style>
-    :root {
-      --bg-primary: #0a0a0a;
-      --bg-secondary: #111111;
-      --bg-card: #161616;
-      --bg-card-hover: #1d1d1d;
-      --bg-elevated: #1a1a1a;
-      --accent: #dc2626;
-      --accent-dark: #b91c1c;
-      --accent-glow: rgba(220, 38, 38, 0.3);
-      --accent-subtle: rgba(220, 38, 38, 0.1);
-      --text-primary: #ffffff;
-      --text-secondary: #a3a3a3;
-      --text-muted: #6b6b6b;
-      --border-color: #222222;
-      --border-accent: #dc2626;
-      --font-heading: 'Bebas Neue', 'Impact', sans-serif;
-      --font-subheading: 'Anton', 'Impact', sans-serif;
-      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
-      --shadow-glow: 0 0 30px rgba(220, 38, 38, 0.15);
-      --radius: 12px;
-      --radius-sm: 8px;
-    }
-
-    .mono-box { font-family: var(--font-body), monospace; font-size: 0.7rem; }
-    .gen-log { background: var(--bg-primary); padding: 12px 16px; border-radius: var(--radius); max-height: 400px; overflow-y: auto; font-family: var(--font-body); font-size: 0.75rem; line-height: 1.6; margin-top: 12px; white-space: pre-wrap; }
+    .mono-box { font-family: monospace; font-size: 0.7rem; }
+    .gen-log { background: var(--bg-primary); padding: 12px 16px; border-radius: 6px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 0.75rem; line-height: 1.6; margin-top: 12px; white-space: pre-wrap; }
     .gen-log .ok { color: #22c55e; }
     .gen-log .fail { color: #ef4444; }
     .gen-log .info { color: var(--text-muted); }
     .gen-log .warn { color: #eab308; }
-
-    /* Animations */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keymospheses { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } 70% { box-shadow: 0 0 20px 10px rgba(220,38,38,0.3); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
-
-    /* Badges */
-    .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
-    .badge-feature { background: var(--accent-subtle); color: var(--accent); }
-    .badge-post { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-    .badge-draft { background: rgba(100, 100, 100, 0.15); color: var(--text-muted); }
-
-    /* Cards */
-    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); transition: all 0.3s ease; }
-    .card:hover { border-color: var(--accent); box-shadow: var(--shadow-card); }
-    .card:focus-within { border-color: var(--accent); }
-    .card:focus { outline: none; }
-
-    /* Inputs */
-    input, select, textarea { 
-      background: var(--bg-primary); 
-      border: 1px solid var(--border-color); 
-      border-radius: var(--radius); 
-      color: var(--text-primary); 
-      font-family: var(--font-body); 
-      font-size: 0.9rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-subtle);
-    }
-    input::placeholder, textarea::placeholder { color: var(--text-muted); }
-
-    /* Buttons */
-    .btn { 
-      border-radius: var(--radius); 
-      font-family: var(--font-body); 
-      font-size: 0.85rem; 
-      font-weight: 500;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .btn-primary { background: var(--accent); color: #fff; border: none; }
-    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-ghost { background: transparent; color: var(--text-muted); border: none; padding: 8px 16px; }
-    .btn-ghost:hover { color: var(--accent); }
-
-    /* Status indicators */
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .status-online { background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2s ease infinite; }
-    .status-offline { background: var(--text-muted); }
-
-    /* Tables & Lists */
-    .table th { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
-    .table td { padding: 16px 0; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
-    .table tbody tr:hover td { background: var(--bg-card-hover); }
-
-    /* Empty states */
-    .empty-state { text-align: center; padding: 60px 20px; }
-    .empty-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
-    .empty-state h3 { color: var(--text-muted); margin-bottom: 8px; }
-    .empty-state p { color: var(--text-muted); font-size: 0.9rem; }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition: none !important; animation: none !important; }
-    }
-</style>
+  </style>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔐</text></svg>">
   <style>
@@ -699,7 +601,6 @@
         </div>
 
         <div class="form-success" id="formSuccess">Post published successfully!</div>
-        <div id="publishStatus" style="display:none;padding:12px 16px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:6px;color:#3b82f6;font-size:0.85rem;margin-bottom:16px;"></div>
 
         <!-- Create/Edit Form -->
         <div class="blog-form" id="blogForm">
@@ -708,9 +609,11 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label>Title</label>
-              <input type="text" id="postTitle" placeholder="Post title" maxlength="100">
-              <div class="char-count"><span id="titleCount">0</span>/100</div>
+              <label>Section</label>
+              <select id="postSection">
+                <option value="blog">📝 Blog</option>
+                <option value="news">📰 News (Google News newsroom)</option>
+              </select>
             </div>
             <div class="form-group">
               <label>Category</label>
@@ -720,7 +623,19 @@
                 <option value="Lifestyle">Lifestyle</option>
                 <option value="Behind The Scenes">Behind The Scenes</option>
                 <option value="Studio Sessions">Studio Sessions</option>
+                <option value="Press">Press (News)</option>
+                <option value="Announcement">Announcement (News)</option>
+                <option value="Interview">Interview (News)</option>
+                <option value="News">News</option>
               </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" id="postTitle" placeholder="Post title" maxlength="100">
+              <div class="char-count"><span id="titleCount">0</span>/100</div>
             </div>
           </div>
 
@@ -805,16 +720,8 @@
 
         <!-- Posts List -->
         <div class="posts-list">
-          <h3>All Posts <span class="badge badge-feature">★ Featured</span></h3>
-          <div style="margin-top:16px">
-            <button class="btn btn-outline" style="padding:6px 12px;font-size:0.75rem;" onclick="loadPosts()">Refresh</button>
-            <span style="margin-left:12px;font-size:0.7rem;color:var(--text-muted)">★ = Featured at top</span>
-          </div>
+          <h3>All Posts <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">(Blog + News)</span></h3>
           <div id="postsContainer"></div>
-          <div id="emptyState" style="display:none;padding:48px 24px;background:var(--bg-card);border:1px dashed var(--border-color);border-radius:var(--radius);color:var(--text-muted);text-align:center;margin-top:16px">
-            <div style="font-size:2.5rem;margin-bottom:12px">📝</div>
-            <p>No posts yet. Write your first blog post above.</p>
-          </div>
         </div>
 
         <!-- Site Stats -->
@@ -875,13 +782,6 @@
             <button class="btn btn-outline" onclick="testApiConnection()">Test Connection</button>
           </div>
 
-          <!-- Publishing status: posts go live instantly, no tokens needed -->
-          <div class="settings-section" style="margin-top:24px">
-            <h3>Instant <span class="text-accent">Publishing</span></h3>
-            <div class="settings-desc">Posts publish straight from this panel and appear on the live site within seconds — no tokens, no waiting for rebuilds.</div>
-            <div id="publishApiStatus" class="server-status online"><span class="dot"></span> Publishing ready</div>
-          </div>
-
           <!-- Generation -->
           <div class="settings-grid">
             <div class="settings-card">
@@ -934,12 +834,7 @@
       sessionStorage.setItem(SESSION_KEY, 'true');
       document.getElementById('loginBox').style.display = 'none';
       document.getElementById('dashboard').classList.add('show');
-      restoreDashboard();
-    }
-
-    function restoreDashboard() {
-      try { loadApiConfig(); } catch (e) { console.error('loadApiConfig failed:', e); }
-      try { loadPosts(); } catch (e) { console.error('loadPosts failed:', e); }
+      loadPosts();
     }
 
     async function handleLogin() {
@@ -979,21 +874,31 @@
       if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').classList.add('show');
-        restoreDashboard();
       }
     })();
 
     // ---- Blog CRUD ----
     // Local drafts/unpublished edits live in localStorage. Published posts
-    // come from the live /api/posts-list index (blog.html baked SERVER_POSTS
-    // is only a fallback). The manager merges both so the "All Posts" tab
-    // always shows the real catalog.
+    // live on the site itself (blog.html baked SERVER_POSTS). The manager
+    // merges both so the "All Posts" tab always shows the real catalog.
+    // News posts work the same way via yh_newsPosts + /api/news.
+    const NEWS_KEY = 'yh_newsPosts';
     let SITE_POSTS = [];
     let SITE_POSTS_LOADED = false;
+    let SITE_NEWS = [];
+    let SITE_NEWS_LOADED = false;
+
+    function sectionOf(p) { return (p && p.section) === 'news' ? 'news' : 'blog'; }
 
     function getPosts() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch { return []; }
+    }
+
+    function getNewsLocal() {
+      try {
+        return JSON.parse(localStorage.getItem(NEWS_KEY)) || [];
       } catch { return []; }
     }
 
@@ -1007,27 +912,26 @@
       return merged;
     }
 
-    async function fetchSitePosts() {
-      // Live index first (seconds-fresh, updates the moment posts.json commits).
-      try {
-        const r = await fetch('/api/posts-list', { cache: 'no-store' });
-        if (r.ok) {
-          const d = await r.json();
-          if (d && Array.isArray(d.posts) && d.posts.length) {
-            SITE_POSTS = d.posts;
-            SITE_POSTS_LOADED = true;
-            return;
-          }
-        }
-      } catch (e) {
-        console.error('Live index unavailable, falling back to baked listing:', e);
+    function getAllNews() {
+      const local = getNewsLocal();
+      const seen = new Set(local.map(p => p.slug));
+      const merged = [...local];
+      for (const p of SITE_NEWS) {
+        if (p && p.slug && !seen.has(p.slug)) merged.push({ ...p, section: 'news' });
       }
-      // Fallback: scrape the baked listing out of blog.html.
+      return merged.map(p => ({ ...p, section: 'news' }));
+    }
+
+    function getEverything() {
+      return [...getAllPosts().map(p => ({ ...p, section: sectionOf(p) })), ...getAllNews()];
+    }
+
+    async function fetchSitePosts() {
       try {
         const r = await fetch('/blog.html', { cache: 'no-store' });
         if (!r.ok) return;
         const html = await r.text();
-        const m = html.match(/var SERVER_POSTS = (\[.*\]);\s*\n?<\/script>/s);
+        const m = html.match(/var SERVER_POSTS = (\[.*?\]);?\s*\n?<\/script>/s);
         if (!m) return;
         const arr = JSON.parse(m[1]);
         if (Array.isArray(arr) && arr.length) {
@@ -1043,10 +947,28 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
     }
 
+    function saveNewsLocal(posts) {
+      localStorage.setItem(NEWS_KEY, JSON.stringify(posts));
+    }
+
+    async function fetchSiteNews() {
+      try {
+        const r = await fetch('/api/news', { cache: 'no-store' });
+        if (!r.ok) return;
+        const arr = await r.json();
+        if (Array.isArray(arr) && arr.length) {
+          SITE_NEWS = arr;
+          SITE_NEWS_LOADED = true;
+        }
+      } catch (e) {
+        console.error('Could not load site news:', e);
+      }
+    }
+
     function loadPosts() {
-      renderPostsList(getAllPosts(), SITE_POSTS_LOADED);
-      // Then pull the live site index in the background and re-render merged.
-      fetchSitePosts().then(() => renderPostsList(getAllPosts(), SITE_POSTS_LOADED));
+      renderPostsList(getEverything(), SITE_POSTS_LOADED || SITE_NEWS_LOADED);
+      // Then pull the live site indexes in the background and re-render merged.
+      Promise.all([fetchSitePosts(), fetchSiteNews()]).then(() => renderPostsList(getEverything(), true));
     }
 
     function renderPostsList(posts, fromSite) {
@@ -1056,7 +978,7 @@
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">📝</div>
-            <p>No posts yet. Write your first blog post above.</p>
+            <p>No posts yet. Write your first blog or news post above.</p>
           </div>
         `;
         return;
@@ -1066,27 +988,34 @@
 
       const hint = fromSite ? `<p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:12px;">Showing ${posts.length} posts from the live site + your local drafts.</p>` : '';
 
-      container.innerHTML = hint + posts.map(post => `
+      container.innerHTML = hint + posts.map(post => {
+        const sec = sectionOf(post);
+        const badge = sec === 'news'
+          ? '<span style="background:var(--accent);color:#fff;font-size:0.6rem;font-weight:700;border-radius:4px;padding:2px 8px;margin-right:6px;">📰 NEWS</span>'
+          : '<span style="background:var(--bg-card);border:1px solid var(--border-color);font-size:0.6rem;font-weight:700;border-radius:4px;padding:2px 8px;margin-right:6px;">📝 BLOG</span>';
+        return `
         <div class="post-item">
           <div class="post-item-info">
             <h4>${escapeHtml(post.title)}</h4>
             <div class="post-meta">
+              ${badge}
               <span class="cat">${escapeHtml(post.category)}</span>
               &middot; ${post.date}
               ${post.featured ? '&middot; <span style="color:var(--accent)">★ Featured</span>' : ''}
             </div>
           </div>
           <div class="post-item-actions">
-            <button class="featured-badge" onclick="toggleFeatured(${post.id})">${post.featured ? '★' : '☆'}</button>
-            <button class="edit-btn" onclick="editPost(${post.id})">Edit</button>
-            <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+            <button class="featured-badge" onclick="toggleFeatured(${post.id}, '${sec}')">${post.featured ? '★' : '☆'}</button>
+            <button class="edit-btn" onclick="editPost(${post.id}, '${sec}')">Edit</button>
+            <button class="delete-btn" onclick="deletePost(${post.id}, '${sec}')">Delete</button>
           </div>
         </div>
-      `).join('');
+      `; }).join('');
     }
 
     function savePost() {
       const id = document.getElementById('postId').value;
+      const section = document.getElementById('postSection').value === 'news' ? 'news' : 'blog';
       const title = document.getElementById('postTitle').value.trim();
       const category = document.getElementById('postCategory').value;
       const content = document.getElementById('postContent').value.trim();
@@ -1101,81 +1030,63 @@
 
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-      let posts = getPosts();
+      // Editing: drop from both stores first (handles Blog <-> News moves).
+      let blogPosts = getPosts().filter(p => String(p.id) !== String(id || '-'));
+      let newsPosts = getNewsLocal().filter(p => String(p.id) !== String(id || '-'));
+      let postData;
 
       if (id) {
-        // Edit existing (may be a live-site post not yet in local drafts)
-        const idx = posts.findIndex(p => p.id === Number(id));
-        const updated = { title, category, content, takeaways, faq, excerpt, tags, featured, date: dateStr, dateNum: Date.now() };
-        if (idx !== -1) {
-          posts[idx] = { ...posts[idx], ...updated };
-        } else {
-          const original = getAllPosts().find(p => p.id === Number(id));
-          posts.push({ id: Number(id), slug: (original && original.slug) || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), ...updated });
-        }
-      } else {
-        // New post
-        const newPost = {
-          id: Date.now(),
-          title,
-          slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-          category,
-          content,
-          takeaways,
-          faq,
-          excerpt,
-          tags,
-          date: dateStr,
-          dateNum: Date.now(),
-          featured
+        const original = getEverything().find(p => String(p.id) === String(id));
+        postData = {
+          id: Number(id),
+          slug: (original && original.slug) || slug,
+          section, title, category, content, takeaways, faq, excerpt, tags, featured,
+          date: dateStr, dateNum: Date.now()
         };
-        posts.push(newPost);
+      } else {
+        postData = {
+          id: Date.now(),
+          title, slug, section,
+          category, content, takeaways, faq, excerpt, tags,
+          date: dateStr, dateNum: Date.now(), featured
+        };
       }
 
-      savePosts(posts);
+      if (section === 'news') {
+        newsPosts.push(postData);
+        saveNewsLocal(newsPosts);
+      } else {
+        blogPosts.push(postData);
+        savePosts(blogPosts);
+      }
       loadPosts();
       showSuccess();
       resetForm();
 
-      // Publish instantly via the server (no tokens needed — just your login).
-      // The server commits to GitHub and the post is readable live in seconds.
-      const latestId = posts.length > 0 ? posts[posts.length - 1].id : null;
-      const postData = id ? posts.find(p => p.id === Number(id)) : posts.find(p => p.id === latestId);
-      if (!postData) return;
-      publishStatus('Publishing…');
-      fetch('/api/posts', {
+      // Sync to server.
+      const endpoint = section === 'news' ? '/api/news' : '/api/posts';
+      const livePath = section === 'news' ? '/news/' : '/blog/';
+      fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: adminPassword(), post: postData })
       }).then(async r => {
         const d = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
-        publishStatus('');
-        showGenSuccess('Live now: /blog/' + d.slug);
-        loadPosts();
-      }).catch(e => {
-        publishStatus('');
-        console.error('Publish failed:', e);
-        showError('Publish failed: ' + e.message);
-      });
+        showGenSuccess('Published live: ' + livePath + d.slug + '.html');
+      }).catch(e => console.error('Server sync failed:', e));
     }
 
-    function publishStatus(msg) {
-      const el = document.getElementById('publishStatus');
-      if (el) {
-        el.style.display = msg ? 'block' : 'none';
-        el.textContent = msg;
-      }
-    }
-
-    function editPost(id) {
-      const posts = getAllPosts();
+    function editPost(id, section) {
+      const posts = getEverything();
       const post = posts.find(p => p.id === id);
       if (!post) return;
 
       document.getElementById('formTitle').textContent = 'Edit Post';
       document.getElementById('postId').value = post.id;
+      document.getElementById('postSection').value = sectionOf(post);
       document.getElementById('postTitle').value = post.title;
       document.getElementById('postCategory').value = post.category;
       document.getElementById('postContent').value = post.content;
@@ -1190,74 +1101,71 @@
       document.getElementById('blogForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function deletePost(id) {
-      if (!confirm('Delete this post?')) return;
-      const target = getAllPosts().find(p => p.id === id);
-      let posts = getPosts();
-      posts = posts.filter(p => p.id !== id);
-      savePosts(posts);
-      // Remove from the cached site list too so it disappears immediately.
-      SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
+    function deletePost(id, section) {
+      const sec = section === 'news' ? 'news' : 'blog';
+      if (!confirm('Delete this ' + sec + ' post?')) return;
+      const target = getEverything().find(p => p.id === id);
+      if (sec === 'news') {
+        saveNewsLocal(getNewsLocal().filter(p => p.id !== id));
+        SITE_NEWS = SITE_NEWS.filter(p => p.id !== id);
+      } else {
+        savePosts(getPosts().filter(p => p.id !== id));
+        // Remove from the cached site list too so it disappears immediately.
+        SITE_POSTS = SITE_POSTS.filter(p => p.id !== id);
+      }
       loadPosts();
       if (target && target.slug) {
-        publishStatus('Deleting…');
-        // Query-style slug works on both local server.js and Cloudflare Pages
-        // Functions (path-style /api/posts/<slug> has no function route live).
-        fetch('/api/posts?slug=' + encodeURIComponent(target.slug) + '&password=' + encodeURIComponent(adminPassword()), {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: adminPassword() })
-        }).then(async r => {
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
-          publishStatus('');
-          showGenSuccess('Post deleted');
-        }).catch(e => {
-          publishStatus('');
-          console.error('Delete failed:', e);
-          showError('Delete failed: ' + e.message);
-        });
+        const endpoint = sec === 'news' ? '/api/news/' : '/api/posts/';
+        fetch(endpoint + encodeURIComponent(target.slug), { method: 'DELETE' })
+          .catch(e => console.error('Server delete failed:', e));
       }
     }
 
-    function toggleFeatured(id) {
-      const all = getAllPosts();
+    function toggleFeatured(id, section) {
+      const sec = section === 'news' ? 'news' : 'blog';
+      const all = sec === 'news' ? getAllNews() : getAllPosts();
       const post = all.find(p => p.id === id);
       if (post) {
         const turningOn = !post.featured;
-        // Persist locally (creates a local copy for live-site posts).
-        let posts = getPosts();
-        posts.forEach(p => p.featured = false);
-        SITE_POSTS.forEach(p => p.featured = false);
-        const idx = posts.findIndex(p => p.id === id);
-        if (idx !== -1) {
-          posts[idx].featured = turningOn;
+        const endpoint = sec === 'news' ? '/api/news' : '/api/posts';
+        if (sec === 'news') {
+          // Persist locally (creates a local copy for live-site posts).
+          let posts = getNewsLocal();
+          posts.forEach(p => p.featured = false);
+          SITE_NEWS.forEach(p => p.featured = false);
+          const idx = posts.findIndex(p => p.id === id);
+          if (idx !== -1) {
+            posts[idx].featured = turningOn;
+          } else {
+            posts.push({ ...post, featured: turningOn, section: 'news' });
+          }
+          saveNewsLocal(posts);
         } else {
-          posts.push({ ...post, featured: turningOn });
+          // Persist locally (creates a local copy for live-site posts).
+          let posts = getPosts();
+          posts.forEach(p => p.featured = false);
+          SITE_POSTS.forEach(p => p.featured = false);
+          const idx = posts.findIndex(p => p.id === id);
+          if (idx !== -1) {
+            posts[idx].featured = turningOn;
+          } else {
+            posts.push({ ...post, featured: turningOn });
+          }
+          savePosts(posts);
         }
-        savePosts(posts);
         loadPosts();
-        publishStatus('Saving…');
-        fetch('/api/posts', {
+        fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password: adminPassword(), post: { ...post, featured: turningOn } })
-        }).then(async r => {
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
-          publishStatus('');
-          showGenSuccess(turningOn ? 'Post featured — live now' : 'Post unfeatured');
-        }).catch(e => {
-          publishStatus('');
-          console.error('Featured sync failed:', e);
-          showError('Sync failed: ' + e.message);
-        });
+        }).catch(e => console.error('Server sync failed:', e));
       }
     }
 
     function resetForm() {
       document.getElementById('formTitle').textContent = 'New Post';
       document.getElementById('postId').value = '';
+      document.getElementById('postSection').value = 'blog';
       document.getElementById('postTitle').value = '';
       document.getElementById('postCategory').value = 'Music';
       document.getElementById('postContent').value = '';
@@ -1275,50 +1183,10 @@
     }
 
     function showSuccess() {
-      // Show toast notification
-      const toast = document.getElementById('formToast');
-      if (toast) {
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-      }
-      // Also keep the old success banner for backward compatibility
       const el = document.getElementById('formSuccess');
       el.classList.add('show');
       setTimeout(() => el.classList.remove('show'), 3000);
     }
-
-    function showError(message) {
-      // Show error toast
-      const toast = document.getElementById('formToast');
-      if (toast) {
-        toast.className = 'toast fail';
-        toast.querySelector('span').textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-      }
-    }
-
-    function showGenSuccess(message) {
-      const toast = document.getElementById('formToast');
-      if (toast) {
-        toast.className = 'toast ok';
-        toast.querySelector('span').textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-      }
-    }
-
-    // Create toast element if not exists
-    (function() {
-      let toast = document.getElementById('formToast');
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'formToast';
-        toast.className = 'toast ok';
-        toast.innerHTML = '<span></span>';
-        document.body.appendChild(toast);
-      }
-    })();
 
     // ---- Char counts ----
     document.getElementById('postTitle').addEventListener('input', updateCounts);
@@ -1538,11 +1406,6 @@
     }
 
     function loadApiConfig() {
-      // Load Cloudflare token from storage (takes priority over empty)
-      const storedToken = localStorage.getItem('yh_cfToken');
-      if (storedToken) {
-        localStorage.setItem('yh_apiConfig', JSON.stringify({ cfToken: storedToken }));
-      }
       const cfg = getApiConfig();
       if (cfg.cfToken) document.getElementById('cfToken').value = cfg.cfToken;
       loadCfConfig();
@@ -1669,9 +1532,8 @@
     }
 
     // Cloudflare config — set these via the admin settings
-    // (var, not let: read during early session restore before this line runs)
-    var CF_ACCOUNT = '';
-    var CF_PROJECT = '';
+    let CF_ACCOUNT = '';
+    let CF_PROJECT = '';
 
     function loadCfConfig() {
       try {
@@ -1685,12 +1547,6 @@
       CF_ACCOUNT = document.getElementById('cfAccount').value.trim();
       CF_PROJECT = document.getElementById('cfProject').value.trim();
       localStorage.setItem('yh_cfConfig', JSON.stringify({ cfAccount: CF_ACCOUNT, cfProject: CF_PROJECT }));
-      // Save Cloudflare API token for later use
-      const cfToken = document.getElementById('cfToken').value.trim();
-      if (cfToken) {
-        localStorage.setItem('yh_cfToken', cfToken);
-        checkApiStatus();
-      }
     }
 
     // ---- Site Stats ----

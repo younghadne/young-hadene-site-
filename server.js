@@ -341,17 +341,7 @@ const server = http.createServer((req, res) => {
         const existing = posts.findIndex(p => p.slug === data.slug);
         if (existing >= 0) { posts[existing] = { ...posts[existing], ...data }; }
         else { data.id = Date.now(); data.dateNum = Date.now(); posts.push(data); }
-    fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
-        // Keep blog/posts.json (live listing source) in sync instantly
-        try {
-          const pjPath = path.join(__dirname, 'blog', 'posts.json');
-          let pj = [];
-          try { pj = JSON.parse(fs.readFileSync(pjPath, 'utf8')) || []; } catch {}
-          const pi = pj.findIndex(p => p && p.slug === data.slug);
-          if (pi >= 0) pj[pi] = { ...pj[pi], ...data }; else pj.push({ ...data });
-          pj.sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
-          fs.writeFileSync(pjPath, JSON.stringify(pj, null, 2));
-        } catch (e) { log(`⚠️ posts.json sync failed: ${e.message}`); }
+        fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
         // Generate static HTML file
         const blogDir = path.join(__dirname, 'blog');
         if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
@@ -457,14 +447,6 @@ const server = http.createServer((req, res) => {
     return json({ ok: true, uptime: process.uptime(), pid: process.pid, postCount: getBlogPosts().length });
   }
 
-  // ── GET /api/posts-list — live blog index for local dev ──
-  // Matches functions/api/posts-list.js shape: { ok, posts[] sorted newest first }
-  if (url.pathname === '/api/posts-list' && req.method === 'GET') {
-    const posts = getBlogPosts().sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0));
-    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-    return res.end(JSON.stringify({ ok: true, posts }));
-  }
-
   // ── DELETE /api/posts/:slug or /api/posts?slug= — delete a blog post ──
   const deleteMatch = url.pathname.match(/^\/api\/posts\/(.+)$/);
   const deleteSlug = deleteMatch ? deleteMatch[1] : url.pathname === '/api/posts' ? url.searchParams.get('slug') : null;
@@ -473,16 +455,153 @@ const server = http.createServer((req, res) => {
     let posts = getBlogPosts();
     posts = posts.filter(p => p.slug !== slug);
     fs.writeFileSync(STORAGE_KEY_FILE, JSON.stringify(posts, null, 2));
-    try {
-      const pjPath = path.join(__dirname, 'blog', 'posts.json');
-      let pj = [];
-      try { pj = JSON.parse(fs.readFileSync(pjPath, 'utf8')) || []; } catch {}
-      pj = pj.filter(p => p && p.slug !== slug);
-      fs.writeFileSync(pjPath, JSON.stringify(pj, null, 2));
-    } catch (e) { log(`⚠️ posts.json sync failed: ${e.message}`); }
     const staticFile = path.join(__dirname, 'blog', slug + '.html');
     if (fs.existsSync(staticFile)) fs.unlinkSync(staticFile);
     log(`🗑️ Deleted post: ${slug}`);
+    return json({ ok: true });
+  }
+
+  // ══════════════ NEWS MANAGER (/api/news) ══════════════
+  const NEWS_STORAGE_FILE = path.join(__dirname, 'yh_newsPosts.json');
+  const NEWS_DIR = path.join(__dirname, 'news');
+  function getNewsPosts() {
+    try { return JSON.parse(fs.readFileSync(NEWS_STORAGE_FILE, 'utf8')) || []; } catch { return []; }
+  }
+  function saveNewsPosts(posts) {
+    fs.writeFileSync(NEWS_STORAGE_FILE, JSON.stringify(posts, null, 2));
+  }
+  function escAttr(s) { return escHtml(s).replace(/\n/g, ' '); }
+  function buildNewsPage(d) {
+    const dateISO = new Date(d.dateNum || Date.now()).toISOString();
+    const dateShort = (d.dateNum || Date.now());
+    const desc = escAttr((d.excerpt || d.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160) || d.title);
+    const canon = SITE_URL + '/news/' + d.slug + '.html';
+    const schema = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      headline: d.title || '',
+      description: desc,
+      image: SITE_URL + '/images/poster1.png',
+      datePublished: dateISO,
+      dateModified: dateISO,
+      author: { '@type': 'Person', name: 'Young Hadene', jobTitle: 'Editor', url: SITE_URL + '/about.html' },
+      publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
+    });
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${escHtml(d.title)} — Young Hadene News</title><meta name="description" content="${desc}"><link rel="canonical" href="${canon}"><meta property="og:title" content="${escAttr(d.title)}"><meta property="og:description" content="${desc}"><meta property="og:image" content="${SITE_URL}/images/poster1.png"><meta property="og:url" content="${canon}"><meta property="og:type" content="article"><meta property="article:published_time" content="${dateISO.substring(0, 10)}"><meta property="article:author" content="Young Hadene"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escAttr(d.title)}"><meta name="twitter:description" content="${desc}"><meta name="twitter:image" content="${SITE_URL}/images/poster1.png"><link rel="stylesheet" href="../css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">${schema}<\/script><style>
+.article-wrap{max-width:720px;margin:0 auto;padding:40px 0;}
+.article-wrap h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:16px;line-height:1.08;}
+.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em;}
+.article-wrap .meta a{color:var(--accent);}
+.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem;}
+.article-wrap p strong{color:var(--text-primary);}
+.article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading);letter-spacing:.04em;}
+.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;font-family:var(--font-heading);color:var(--accent);}
+.article-wrap ul,.article-wrap ol{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;}
+.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic;color:var(--text-secondary);}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px;}
+.back-link:hover{color:var(--accent);}
+.correction-note{margin-top:40px;padding:16px 20px;border:1px solid var(--border-color);border-radius:8px;font-size:.8rem;color:var(--text-muted);}
+</style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link">Blog</a></li><li><a href="/news.html" class="nav-link active">News</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/news.html" class="back-link">&#8592; Back to News</a><div class="article-wrap"><div class="meta">${escHtml(d.date)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about.html" rel="author">Young Hadene</a>, Editor</div><h1>${escHtml(d.title)}</h1><div>${renderArticleBody(d)}</div><div class="correction-note">Correction notice: none to date. Spotted an error? See our <a href="/corrections-policy.html">Corrections Policy</a> or email <a href="mailto:contact@younghadene.ca">contact@younghadene.ca</a>.</div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p><div class="footer-bottom-links"><a href="/news.html">News</a><a href="/editorial-policy.html">Editorial Policy</a><a href="/privacy.html">Privacy</a></div></div></div></footer><script src="../js/main.js"></script></body></html>`;
+  }
+  function refreshNewsFeeds() {
+    // Rebuild news-sitemap.xml (fresh 2-day window) + news-rss.xml from /news/*.html mtimes.
+    try {
+      const files = fs.existsSync(NEWS_DIR) ? fs.readdirSync(NEWS_DIR).filter(f => f.endsWith('.html')).sort() : [];
+      const nowMs = Date.now();
+      let ns = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n';
+      for (const f of files) {
+        const full = path.join(NEWS_DIR, f);
+        let mtime;
+        try { mtime = fs.statSync(full).mtime; } catch { continue; }
+        if (nowMs - mtime.getTime() > 2 * 24 * 60 * 60 * 1000) continue;
+        let title = f;
+        try {
+          const m = fs.readFileSync(full, 'utf8').match(/<title>([^<]*)<\/title>/i);
+          if (m) title = m[1].split('—')[0].split('|')[0].trim();
+        } catch {}
+        ns += `  <url>\n    <loc>${SITE_URL}/news/${f}</loc>\n    <news:news>\n      <news:publication>\n        <news:name>Young Hadene</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${mtime.toISOString()}</news:publication_date>\n      <news:title>${escHtml(title)}</news:title>\n    </news:news>\n  </url>\n`;
+      }
+      ns += '</urlset>\n';
+      fs.writeFileSync(path.join(__dirname, 'news-sitemap.xml'), ns);
+      const latest = files.map(f => ({ f, ms: fs.statSync(path.join(NEWS_DIR, f)).mtimeMs })).sort((a, b) => b.ms - a.ms).slice(0, 20);
+      let rss = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>${SITE_URL}/news.html</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n`;
+      for (const { f, ms } of latest) {
+        let title = f, desc = f;
+        try {
+          const html = fs.readFileSync(path.join(NEWS_DIR, f), 'utf8');
+          const tm = html.match(/<title>([^<]*)<\/title>/i); if (tm) title = tm[1].trim();
+          const dm = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i); if (dm) desc = dm[1];
+        } catch {}
+        rss += `  <item>\n    <title>${escHtml(title)}</title>\n    <link>${SITE_URL}/news/${f}</link>\n    <guid isPermaLink="true">${SITE_URL}/news/${f}</guid>\n    <pubDate>${new Date(ms).toUTCString()}</pubDate>\n    <description>${escHtml(desc)}</description>\n  </item>\n`;
+      }
+      rss += '</channel>\n</rss>\n';
+      fs.writeFileSync(path.join(__dirname, 'news-rss.xml'), rss);
+      // Bake NEWS_POSTS index into news.html so static deploys list new items.
+      try {
+        const store = getNewsPosts();
+        const baked = `<script>var NEWS_POSTS = ${JSON.stringify(store)};\n</script>`;
+        let nh = fs.readFileSync(path.join(__dirname, 'news.html'), 'utf8');
+        if (/<script>var NEWS_POSTS = .*?;\s*\n?<\/script>/s.test(nh)) {
+          nh = nh.replace(/<script>var NEWS_POSTS = .*?;\s*\n?<\/script>/s, baked);
+        } else {
+          nh = nh.replace('</head>', baked + '\n</head>');
+        }
+        fs.writeFileSync(path.join(__dirname, 'news.html'), nh);
+      } catch (e) { log('⚠️ news.html bake skipped: ' + e.message); }
+    } catch (e) { log('⚠️ refreshNewsFeeds failed: ' + e.message); }
+  }
+
+  // ── GET /api/news — list news posts (for Blog Manager) ──
+  if (url.pathname === '/api/news' && req.method === 'GET') {
+    return json(getNewsPosts().sort((a, b) => (b.dateNum || 0) - (a.dateNum || 0)));
+  }
+
+  // ── POST /api/news — save a news post + write static HTML + refresh feeds ──
+  if (url.pathname === '/api/news' && req.method === 'POST') {
+    let body = ''; req.on('data', c => { body += c; if (body.length > 1048576) { res.writeHead(413); res.end('Payload too large'); req.destroy(); } });
+    req.on('end', () => {
+      try {
+        const raw = JSON.parse(body);
+        const data = (raw && raw.post) ? raw.post : raw;
+        if (!data.title) return json({ error: 'title required' }, 400);
+        if (!data.slug) data.slug = slugify(data.title);
+        if (Array.isArray(data.tags)) data.tags = data.tags.join(', ');
+        data.tags = (data.tags || '').toString().trim();
+        data.takeaways = (data.takeaways || '').toString();
+        data.faq = (data.faq || '').toString();
+        data.excerpt = (data.excerpt || '').toString();
+        data.category = (data.category || 'News').toString();
+        data.section = 'news';
+        if (!data.dateNum) data.dateNum = Date.now();
+        if (!data.date) data.date = new Date(data.dateNum).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        let posts = getNewsPosts();
+        const existing = posts.findIndex(p => p.slug === data.slug);
+        if (existing >= 0) { posts[existing] = { ...posts[existing], ...data }; }
+        else { data.id = data.id || Date.now(); posts.push(data); }
+        saveNewsPosts(posts);
+        if (!fs.existsSync(NEWS_DIR)) fs.mkdirSync(NEWS_DIR, { recursive: true });
+        fs.writeFileSync(path.join(NEWS_DIR, data.slug + '.html'), buildNewsPage(data));
+        refreshNewsFeeds();
+        log(`📰 Saved news: "${data.title}" (${data.slug})`);
+        return json({ ok: true, slug: data.slug });
+      } catch (e) { return json({ error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // ── DELETE /api/news/:slug — delete a news post ──
+  const deleteNewsMatch = url.pathname.match(/^\/api\/news\/(.+)$/);
+  const deleteNewsSlug = deleteNewsMatch ? deleteNewsMatch[1] : url.pathname === '/api/news' ? url.searchParams.get('slug') : null;
+  if (deleteNewsSlug && req.method === 'DELETE') {
+    const slug = deleteNewsSlug;
+    let posts = getNewsPosts();
+    posts = posts.filter(p => p.slug !== slug);
+    saveNewsPosts(posts);
+    const staticFile = path.join(NEWS_DIR, slug + '.html');
+    if (fs.existsSync(staticFile)) fs.unlinkSync(staticFile);
+    refreshNewsFeeds();
+    log(`🗑️ Deleted news: ${slug}`);
     return json({ ok: true });
   }
 
@@ -611,7 +730,7 @@ const server = http.createServer((req, res) => {
   }
 
   // ── Clean URL support (like Cloudflare Pages auto-redirect) ──
-  const cleanPages = { '/blog': '/blog.html', '/blog/index.html': '/blog.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html', '/about': '/about.html', '/services': '/services.html', '/privacy': '/privacy.html', '/terms': '/terms.html' };
+  const cleanPages = { '/blog': '/blog.html', '/blog/index.html': '/blog.html', '/news': '/news.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html', '/about': '/about.html', '/services': '/services.html', '/privacy': '/privacy.html', '/terms': '/terms.html', '/editorial-policy': '/editorial-policy.html', '/corrections-policy': '/corrections-policy.html' };
   if (cleanPages[url.pathname]) {
     url.pathname = cleanPages[url.pathname];
   }
@@ -637,6 +756,18 @@ const server = http.createServer((req, res) => {
             html = html.replace(/<script>var SERVER_POSTS = .*?;\s*\n?<\/script>/s, '<script>var SERVER_POSTS = ' + postsJson + ';\n</script>');
           } else {
             html = html.replace('</head>', '<script>var SERVER_POSTS = ' + postsJson + ';\n</script>\n</head>');
+          }
+        }
+      }
+      // Inject news posts data into news listing page — ALWAYS refresh
+      if (url.pathname === '/news.html' || url.pathname === '/news/') {
+        const nposts = getNewsPosts();
+        if (nposts.length > 0) {
+          const npostsJson = JSON.stringify(nposts);
+          if (html.includes('var NEWS_POSTS')) {
+            html = html.replace(/<script>var NEWS_POSTS = .*?;\s*\n?<\/script>/s, '<script>var NEWS_POSTS = ' + npostsJson + ';\n</script>');
+          } else {
+            html = html.replace('</head>', '<script>var NEWS_POSTS = ' + npostsJson + ';\n</script>\n</head>');
           }
         }
       }
