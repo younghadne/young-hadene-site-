@@ -886,9 +886,17 @@
     const STORAGE_KEY = 'yh_blogPosts';
     const SESSION_KEY = 'yh_admin';
 
-    // ---- Auth ----
+    // ---- Auth (100% client-side, no server) ----
+    // SHA-256 of the admin password. Compared in-browser — no /api/auth call.
+    const ADMIN_PW_HASH = '28f9f6c9702f48da972fd6de8f33ae7739a765d5cf47ffe4261a4c470d3fca1b';
+
     function adminPassword() {
       return sessionStorage.getItem('yh_admin_pw') || '';
+    }
+
+    async function sha256Hex(text) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     function unlockDashboard() {
@@ -900,24 +908,14 @@
 
     async function handleLogin() {
       const pw = document.getElementById('passwordInput').value;
-      try {
-        const resp = await fetch('/api/auth', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: pw })
-        });
-        if (resp.ok) {
-          sessionStorage.setItem('yh_admin_pw', pw);
-          unlockDashboard();
-        } else {
-          let msg = 'Incorrect password. Try again.';
-          try { const d = await resp.json(); if (d && d.error) msg = d.error; } catch {}
-          const errEl = document.getElementById('loginError');
-          errEl.textContent = msg;
-          errEl.classList.add('show');
-        }
-      } catch (e) {
-        document.getElementById('loginError').classList.add('show');
+      const hash = await sha256Hex(pw);
+      if (hash === ADMIN_PW_HASH) {
+        sessionStorage.setItem('yh_admin_pw', pw);
+        unlockDashboard();
+      } else {
+        const errEl = document.getElementById('loginError');
+        errEl.textContent = 'Incorrect password. Try again.';
+        errEl.classList.add('show');
       }
     }
 
@@ -1998,10 +1996,10 @@
       localStorage.setItem('yh_cfConfig', JSON.stringify({ cfAccount: CF_ACCOUNT, cfProject: CF_PROJECT }));
     }
 
-    // ---- Site Stats ----
+    // ---- Site Stats (reads the static analytics.json snapshot — no server) ----
     async function loadStats() {
       try {
-        const r = await fetch('/api/analytics');
+        const r = await fetch('/analytics.json', { cache: 'no-store' });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const a = await r.json();
         document.getElementById('stViews').textContent = (a.totalViews || 0).toLocaleString();
@@ -2023,7 +2021,7 @@
           ? recent.map(h => `<div>${new Date(h.time).toLocaleString()} — ${escapeHtml(h.pageTitle || h.path)}</div>`).join('')
           : 'No visits yet.';
       } catch (e) {
-        document.getElementById('statsPages').textContent = 'Could not load stats (' + e.message + '). Is the server running?';
+        document.getElementById('statsPages').textContent = 'Stats snapshot unavailable (' + e.message + ').';
       }
     }
 
@@ -2041,3 +2039,5 @@
 </html>
 
 <!-- rebuild 2026-10-10T14:55Z -->
+
+<!-- rebuild2 2026-10-10T15:30Z -->
