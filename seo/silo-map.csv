@@ -1,0 +1,5 @@
+silo,hub_page,spoke_pages,cross_silo_links,notes
+A-toronto-drill,P01 /toronto-drill-music (proposed),P02 artists; P03 releases; P05 production; P04 videos (fold into hub until catalog justifies split),P16 cornerstone; /music; /press,"Hub answers what-is; spokes go deeper. Modifiers are H2s/FAQs, never sub-pages."
+B-toronto-rap-scene,P24 /toronto-music-scene (proposed; absorbs P08),P06 artists flagship; P07 rap music; P09 releases; P10 videos; P11 producers; P25 boroughs (one page),P16 cornerstone; P01; /music,"One scene hub (P08+P24 merged). P03+P09 may merge into one releases hub."
+C-canadian-indie-craft,P13 /canadian-hip-hop-music (proposed),"P12 artists; P14 independent; P15 emerging (consolidated); P23 industry; P22 promotion; P17 discovery",P06; P24; /music,"Craft cluster: ONE production hub (P05 absorbs P18; P19/P20/P26 decided with owner)."
+TRUST-spine,/about (Person @id); /press (11 verified); /music (verified catalog), cornerstone; flagship disclosure; editorial/corrections policies,all silos link trust spine for E-E-A-T,Every silo page links at least one trust-spine page with natural anchor.
