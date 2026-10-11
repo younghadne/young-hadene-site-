@@ -101,8 +101,23 @@ function relatedOf(doc, index) {
   }
 }
 
+function fmtStamp(ms) {
+  try {
+    const dt = new Date(Number(ms));
+    if (isNaN(dt.getTime())) return '';
+    const opts = { timeZone: 'America/Toronto' };
+    const date = new Intl.DateTimeFormat('en-US', Object.assign({ month: 'long', day: 'numeric', year: 'numeric' }, opts)).format(dt);
+    const time = new Intl.DateTimeFormat('en-US', Object.assign({ hour: 'numeric', minute: '2-digit', hour12: true }, opts)).format(dt);
+    return date + ' · ' + time + ' ET';
+  } catch { return ''; }
+}
+
 function buildNewsHtml(d, related) {
-  const iso = new Date(d.dateNum || Date.now()).toISOString();
+  const pubMs = Number(d.dateNum || 0) || null;
+  const iso = new Date(pubMs || Date.now()).toISOString();
+  const modMs = Number(d.updatedAt || 0);
+  const modIso = (modMs && pubMs && modMs > pubMs) ? new Date(modMs).toISOString() : iso;
+  const stamp = (pubMs ? fmtStamp(pubMs) : '') || String(d.date || '');
   const desc = escHtml(String(d.seoDesc || d.excerpt || d.content || d.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160) || d.title);
   const pageTitle = d.seoTitle || d.title;
   const ogTitle = d.ogTitle || d.title;
@@ -113,7 +128,7 @@ function buildNewsHtml(d, related) {
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: d.title || '', description: desc, image: d.image || (SITE_URL + '/images/poster1.png'),
-    datePublished: iso, dateModified: iso,
+    datePublished: iso, dateModified: modIso,
     author: { '@type': 'Person', '@id': SITE_URL + '/about.html#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about.html' },
     publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
@@ -147,7 +162,7 @@ function buildNewsHtml(d, related) {
     `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link">Blog</a></li><li><a href="/news.html" class="nav-link active">News</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>` +
     `<section class="section" style="padding-top:120px;"><div class="container"><a href="/news.html" class="back-link">&#8592; Back to News</a><div class="article-wrap">` +
     crumbs +
-    `<div class="meta">${escHtml(d.date || '')} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
+    `<div class="meta">${escHtml(stamp)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${relBox}` +
     `</div></div></section>` +
     `<footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>` +
