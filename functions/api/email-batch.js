@@ -69,8 +69,10 @@ export async function onRequestPost(context) {
     let stopReason = 'window-complete';
     const perSend = [];
     const errors = [];
+    const pilotCap = c.pilotLimit && !c.pilotDone ? c.pilotLimit : Infinity;
 
     while (sent + failed < maxSends) {
+      if (sent >= pilotCap) { stopReason = 'pilot-complete'; break; }
       const chunkIdx = Math.floor(cursor / 1000);
       const chunk = JSON.parse((await store.get('email:camp:' + campaignId + ':r:' + chunkIdx)) || 'null');
       if (!chunk) break; // no more recipients
@@ -135,6 +137,13 @@ export async function onRequestPost(context) {
 
     c.cursor = cursor;
     c.updatedAt = Date.now();
+    // Pilot phase: stop at the pilot cap for human review before full rollout.
+    if (stopReason === 'pilot-complete' && c.status === 'sending') {
+      c.status = 'pilot-review';
+      await audit(store, 'batch.pilot-complete', campaignId + ' pilot-sent=' + c.stats.sent + ' review-required');
+      await store.put('email:camp:' + campaignId, JSON.stringify(c));
+      return json({ ok: true, dryRun, sent, failed, skipped, stopReason: 'pilot-complete', done: false, pilotReview: true, status: c.status });
+    }
     // Reputation auto-pause (conservative defaults, configurable).
     const st = c.stats;
     const bouncePct = st.sent ? (100 * (st.bounced || 0)) / st.sent : 0;

@@ -147,6 +147,7 @@
               '<p class="em-note">Subject: ' + esc(c.subject) + ' | Eligible: ' + (st.eligible || 0) + ' | Sent: ' + (st.sent || 0) + ' | Failed: ' + (st.failed || 0) + ' | Skipped: ' + (st.skipped || 0) + ' | Bounced: ' + (st.bounced || 0) + ' | Complained: ' + (st.complained || 0) + '</p>' +
               '<div class="em-row">' +
               '<button class="btn btn-outline" data-act="check" data-id="' + c.id + '">Compliance check</button>' +
+              '<button class="btn btn-outline" data-act="preflight" data-id="' + c.id + '">Preflight report</button>' +
               '<button class="btn btn-outline" data-act="test" data-id="' + c.id + '">Test send</button>' +
               '<button class="btn btn-primary" data-act="launch" data-id="' + c.id + '">Launch</button>' +
               '<button class="btn btn-outline" data-act="batch" data-id="' + c.id + '">Send next batch</button>' +
@@ -169,6 +170,7 @@
         var out = $('out-' + id);
         function show(d) { out.textContent = JSON.stringify(d).substring(0, 600); loadCampaignsSoon(); }
         if (act === 'check') return api('/api/email-campaigns', { action: 'checklist', id: id }).then(show);
+        if (act === 'preflight') return api('/api/email-campaigns', { action: 'preflight', id: id }).then(show);
         if (act === 'progress' || act === 'report') return api('/api/email-campaigns', { action: act, id: id }).then(show);
         if (act === 'test') {
           var to = prompt('Test recipient address:');
@@ -179,7 +181,8 @@
           return api('/api/email-campaigns', { action: 'checklist', id: id }).then(function (d) {
             var msg = d.ok ? ('Launch with ' + d.snapshot.eligible + ' eligible recipients? Suppressed/excluded: ' + (d.snapshot.suppressed + d.snapshot.noConsent + d.snapshot.pending)) : ('BLOCKED: ' + (d.problems || []).join('; '));
             if (!d.ok || !confirm(msg)) { out.textContent = msg; return; }
-            api('/api/email-campaigns', { action: 'launch', id: id }).then(show);
+            var pilot = prompt('Pilot size (0 = full rollout after preflight review):', '100');
+            api('/api/email-campaigns', { action: 'launch', id: id, pilotSize: Number(pilot) || 0 }).then(show);
           });
         }
         if (act === 'batch') return api('/api/email-batch', { campaignId: id, maxSends: 100 }).then(show);
@@ -200,7 +203,28 @@
             '<div class="em-row"><button class="btn btn-outline" id="val-go">Validate deliverability (MX check, quarantines failures)</button> <span class="em-note" id="val-out"></span></div>' +
             '<div class="em-card"><h3>Lookup</h3><div class="em-row"><input id="lk-q" placeholder="email contains…"><button class="btn btn-outline" id="lk-go">Search</button></div><div id="lk-out"></div></div>';
           $('imp-go').onclick = function () {
-            api('/api/email-contacts', { action: 'import', csv: $('imp-csv').value, source: $('imp-src').value, purpose: $('imp-purpose').value || 'marketing' }).then(function (r) { $('imp-out').textContent = JSON.stringify(r); loadContacts(); });
+            api('/api/email-contacts', { action: 'import', csv: $('imp-csv').value, source: $('imp-src').value, purpose: $('imp-purpose').value || 'marketing' }).then(function (r) {
+              $('imp-out').textContent = JSON.stringify(r);
+              if (r.importId) {
+                var a = document.createElement('a');
+                a.href = '#';
+                a.textContent = ' Download validation CSV';
+                a.onclick = function (e) {
+                  e.preventDefault();
+                  var pw = prompt('Confirm admin password to download the report:');
+                  if (!pw) return;
+                  fetch('/api/email-contacts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw, action: 'import-report', importId: r.importId, format: 'csv' }) }).then(function (resp) { return resp.text(); }).then(function (txt) {
+                    var blob = new Blob([txt], { type: 'text/csv' });
+                    var u = URL.createObjectURL(blob);
+                    var l = document.createElement('a');
+                    l.href = u; l.download = 'validation-' + r.importId + '.csv'; l.click();
+                    setTimeout(function () { URL.revokeObjectURL(u); }, 5000);
+                  });
+                };
+                $('imp-out').appendChild(a);
+              }
+              loadContacts();
+            });
           };
           $('val-go').onclick = function () {
             api('/api/email-contacts', { action: 'validate-list', limit: 500 }).then(function (r) { $('val-out').textContent = JSON.stringify(r); });

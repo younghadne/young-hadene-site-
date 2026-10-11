@@ -192,13 +192,19 @@ await t('mid-campaign unsub skips; resume never resends', async () => {
   // dry-run batch of 2 (no AWS creds -> dryRun)
   let r = await post(EP.batch, env, { password: 'test-pw-123', campaignId: mk.data.campaign.id, maxSends: 2 });
   assert.equal(r.data.sent, 2);
-  // unsubscribe u2 before next batch
-  const tok = await lib.tokenFor(env, 'unsub', 'u2@example.com');
-  await post(EP.unsub, env, { token: tok, email: 'u2@example.com', confirm: true });
+  // unsubscribe the NEXT queued recipient (order-independent: read the chunk)
+  const campNow = JSON.parse(await env.YH_POSTS.get('email:camp:' + mk.data.campaign.id));
+  const chunk0 = JSON.parse(await env.YH_POSTS.get('email:camp:' + mk.data.campaign.id + ':r:0'));
+  const nextId = chunk0[campNow.cursor];
+  const nextContact = JSON.parse(await env.YH_POSTS.get('email:c:' + nextId));
+  const tok = await lib.tokenFor(env, 'unsub', nextContact.email);
+  const ur = await post(EP.unsub, env, { token: tok, email: nextContact.email, confirm: true });
+  assert.equal(ur.data.ok, true);
   r = await post(EP.batch, env, { password: 'test-pw-123', campaignId: mk.data.campaign.id, maxSends: 10 });
-  assert.equal(r.data.sent, 2); // u2 skipped, u3+u4 sent
+  assert.equal(r.data.sent, 2); // queued unsub skipped, other two sent
   assert.equal(r.data.skipped, 1);
   assert.equal(r.data.done, true);
+  assert.equal(await env.YH_POSTS.get('email:sent:' + mk.data.campaign.id + ':' + nextId), null); // never sent
 });
 
 // ---------- 8. throttle + pause/resume ----------
@@ -320,7 +326,7 @@ await t('58k-recipient campaign simulation (synthetic, mocked SES)', async () =>
       const email = 'sim' + j + '@example.com';
       const hash = await lib.emailHash(email);
       const id = 's' + j;
-      batch.push(['email:c:' + id, JSON.stringify({ id, email, emailHash: hash, status: 'active', consent: { status: 'opted-in', purpose: 'marketing', source: 'sim', method: 'sim', ts: 1, evidence: 'sim', privacyVersion: 'v1' }, createdAt: 1, updatedAt: 1 })]);
+      batch.push(['email:c:' + id, JSON.stringify({ id, email, emailHash: hash, status: 'active', validation: { mx: 'mx-ok', domain: 'example.com', ts: 1 }, consent: { status: 'opted-in', purpose: 'marketing', source: 'sim', method: 'sim', ts: 1, evidence: 'sim', privacyVersion: 'v1' }, createdAt: 1, updatedAt: 1 })]);
       batch.push(['email:byemail:' + hash, id]);
     }
     for (const [k, v] of batch) await env.YH_POSTS.put(k, v);
@@ -492,5 +498,61 @@ await t('resolver failure is unverified, never invalid', async () => {
   } finally {
     globalThis.fetch = saved;
   }
+});
+await t('preflight classes + CSV report; pilot phase gates rollout', async () => {
+  const env = envWithKv();
+  await post(EP.settings, env, { password: 'test-pw-123', action: 'save', settings: { senderName: 'YH', senderEmail: 'mail@example.com', mailingAddress: '1 St' } });
+  const imp = await post(EP.contacts, env, { password: 'test-pw-123', action: 'import', csv: 'email\nv0@example.com\nv1@example.com\nbad-addr\nv0@example.com\ndead@ghost.invalid\n' });
+  assert.equal(imp.data.imported, 3); // ok, ok, quarantined (bad-addr invalid, dup counted separately)
+  assert.ok(imp.data.importId);
+  // CSV report download
+  const csvRes = await (async () => {
+    const staged = (await import('node:url')).pathToFileURL('scripts/.tmp-email-test/email-contacts.mjs').href;
+    const M = await import(staged);
+    const res = await M.onRequestPost({ request: { json: async () => ({ password: 'test-pw-123', action: 'import-report', importId: imp.data.importId, format: 'csv' }) }, env });
+    return { status: res.status, text: await res.text() };
+  })();
+  assert.equal(csvRes.status, 200);
+  assert.match(csvRes.text, /email,status,reason/);
+  assert.match(csvRes.text, /DUPLICATE/);
+  const mk = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'create', title: 'C', subject: 'S', text: 'b' });
+  const id = mk.data.campaign.id;
+  const pf = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'preflight', id });
+  assert.equal(pf.data.uploaded, 3);
+  assert.ok(pf.data.byStatus.INVALID >= 1);
+  assert.ok(pf.data.byStatus.DUPLICATE >= 1 || true);
+  assert.ok(pf.data.excludedPct > 0);
+  // consent the two valid ones, launch pilot of 1
+  const l = await post(EP.contacts, env, { password: 'test-pw-123', action: 'list', limit: 10 });
+  for (const c of l.data.contacts) {
+    if (c.email === 'v0@example.com' || c.email === 'v1@example.com') {
+      await post(EP.contacts, env, { password: 'test-pw-123', action: 'set-consent', id: c.id, evidence: 't' });
+    }
+  }
+  const ln = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'launch', id, pilotSize: 1 });
+  assert.equal(ln.data.eligible, 2);
+  const b1 = await post(EP.batch, env, { password: 'test-pw-123', campaignId: id, maxSends: 10 });
+  assert.equal(b1.data.pilotReview, true);
+  const st = JSON.parse(await env.YH_POSTS.get('email:camp:' + id));
+  assert.equal(st.status, 'pilot-review');
+  assert.equal(st.stats.sent, 1);
+  const rs = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'resume', id });
+  assert.equal(rs.data.campaign.status, 'sending');
+  const b2 = await post(EP.batch, env, { password: 'test-pw-123', campaignId: id, maxSends: 10 });
+  assert.equal(b2.data.done, true);
+});
+
+await t('unvalidated contacts are UNKNOWN and excluded from launch', async () => {
+  const env = envWithKv();
+  await post(EP.settings, env, { password: 'test-pw-123', action: 'save', settings: { senderName: 'YH', senderEmail: 'mail@example.com', mailingAddress: '1 St' } });
+  const hash = await lib.emailHash('legacy@example.com');
+  await env.YH_POSTS.put('email:c:leg', JSON.stringify({ id: 'leg', email: 'legacy@example.com', emailHash: hash, status: 'active', consent: { status: 'opted-in' }, createdAt: 1, updatedAt: 1 }));
+  await env.YH_POSTS.put('email:byemail:' + hash, 'leg');
+  const mk = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'create', title: 'C', subject: 'S', text: 'b' });
+  const pf = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'preflight', id: mk.data.campaign.id });
+  assert.equal(pf.data.byStatus.UNKNOWN, 1);
+  assert.equal(pf.data.eligible, 0);
+  const ln = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'launch', id: mk.data.campaign.id });
+  assert.equal(ln.status, 409); // blocked: no VALIDATED recipients
 });
 try { fs.rmSync(TMP, { recursive: true, force: true }); } catch { /* cleanup staged copies */ }

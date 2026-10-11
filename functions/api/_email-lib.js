@@ -103,6 +103,30 @@ export async function checkDomainMx(domain, fetchFn, cache) {
   }
 }
 
+// ---- Recipient validation statuses ----
+// VALIDATED: syntax + domain checks passed, no suppression/eligibility issue found.
+// INVALID: malformed address or confirmed invalid domain.
+// SUPPRESSED: bounce, complaint, unsubscribe, or other suppression applies.
+// INELIGIBLE: required consent or legal eligibility cannot be established.
+// UNKNOWN: DNS failure, temporary error, or insufficient evidence.
+// DUPLICATE: already present in the same campaign.
+// VALIDATED never guarantees mailbox existence or delivery.
+export function validationStatus(contact, suppression) {
+  if (!contact) return { status: 'INVALID', reason: 'missing-record' };
+  const h = contact.emailHash;
+  if (h && suppression && suppression[h]) return { status: 'SUPPRESSED', reason: String(suppression[h].reason || 'suppressed') };
+  if (contact.status === 'unsubscribed' || ((contact.bounce || {}).hard) || contact.complaint) {
+    return { status: 'SUPPRESSED', reason: contact.status === 'unsubscribed' ? 'unsubscribed' : (contact.complaint ? 'complaint' : 'hard-bounce') };
+  }
+  if (contact.status === 'invalid') return { status: 'INVALID', reason: (contact.validation && contact.validation.mx) || 'invalid-address' };
+  const v = contact.validation || {};
+  if (!v.mx) return { status: 'UNKNOWN', reason: 'not-validated' };
+  if (v.mx !== 'mx-ok') return { status: 'UNKNOWN', reason: v.mx };
+  const c = contact.consent || {};
+  if (c.status !== 'opted-in') return { status: 'INELIGIBLE', reason: contact.status === 'pending' ? 'unconfirmed' : 'no-consent' };
+  return { status: 'VALIDATED', reason: 'ok' };
+}
+
 export async function validateDeliverability(email, fetchFn, cache) {
   const e = normEmail(email);
   if (!validEmail(e)) return { valid: false, reason: 'bad-syntax' };
@@ -166,7 +190,10 @@ export function recipientEligible(contact, suppression, campaignExclusions) {
   const h = contact && contact.emailHash;
   if (h && suppression && suppression[h]) return { ok: false, reason: 'suppressed:' + suppression[h].reason };
   if (campaignExclusions && campaignExclusions[h]) return { ok: false, reason: 'excluded' };
-  return consentEligible(contact);
+  // Final gate: only VALIDATED recipients proceed (.unknown/invalid/ineligible excluded).
+  const vs = validationStatus(contact, suppression);
+  if (vs.status !== 'VALIDATED') return { ok: false, reason: vs.status.toLowerCase() + ':' + vs.reason };
+  return { ok: true };
 }
 
 // ---- MIME builder (multipart/alternative + List-Unsubscribe) ----

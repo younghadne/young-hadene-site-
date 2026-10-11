@@ -96,18 +96,25 @@ export async function onRequestPost(context) {
       let imported = 0, duplicates = 0, invalid = 0, skippedSuppressed = 0, quarantined = 0;
       const mxCache = new Map();
       const suppression = JSON.parse((await store.get('email:suppression')) || '{}');
+      const reportRows = [];
+      const seenInUpload = new Set();
       for (let i = start; i < rows.length; i++) {
-        const email = normEmail(rows[i][0]);
-        if (!validEmail(email)) { invalid++; continue; }
+        const raw = String(rows[i][0] || '');
+        const email = normEmail(raw);
+        const tag = (st, rs) => reportRows.push({ e: raw.substring(0, 160), s: st, r: rs });
+        if (!validEmail(email)) { invalid++; tag('INVALID', 'bad-syntax'); continue; }
         const hash = await emailHash(email);
-        if (suppression[hash]) { skippedSuppressed++; continue; } // suppression survives re-import
+        if (seenInUpload.has(hash)) { duplicates++; tag('DUPLICATE', 'duplicate-in-upload'); continue; }
+        seenInUpload.add(hash);
+        if (suppression[hash]) { skippedSuppressed++; tag('SUPPRESSED', String(suppression[hash].reason || 'suppressed')); continue; } // suppression survives re-import
         const byKey = 'email:byemail:' + hash;
         const existingId = await store.get(byKey);
         if (existingId) {
           const ex = JSON.parse((await store.get('email:c:' + existingId)) || 'null');
           if (ex) {
-            if (ex.status === 'unsubscribed' || ((ex.bounce || {}).hard) || ex.complaint) { skippedSuppressed++; continue; }
+            if (ex.status === 'unsubscribed' || ((ex.bounce || {}).hard) || ex.complaint) { skippedSuppressed++; tag('SUPPRESSED', 'existing-record'); continue; }
             duplicates++;
+            tag('DUPLICATE', 'already-imported');
             continue; // never overwrite consent on re-import
           }
         }
@@ -123,14 +130,23 @@ export async function onRequestPost(context) {
           if (!v.valid) {
             rec.status = 'invalid'; // quarantined: never mailable, never counted eligible
             quarantined++;
+            tag('INVALID', v.reason);
+          } else if (v.reason === 'mx-unverified') {
+            tag('UNKNOWN', 'mx-unverified');
+          } else {
+            tag('INELIGIBLE', 'no-consent-yet');
           }
+        } else {
+          tag('UNKNOWN', 'validation-skipped');
         }
         await store.put('email:c:' + rec.id, JSON.stringify(rec));
         await store.put(byKey, rec.id);
         imported++;
       }
-      await audit(store, 'contacts.import', 'imported=' + imported + ' dup=' + duplicates + ' invalid=' + invalid + ' quarantined=' + quarantined + ' suppressed-skip=' + skippedSuppressed + ' src=' + source);
-      return json({ ok: true, imported, duplicates, invalid, quarantined, skippedSuppressed, note: 'Imported contacts carry NO consent until confirmed/opted in. MX failures are quarantined, never mailed. Suppressed addresses were not reactivated.' });
+      const importId = 'imp-' + Date.now().toString(36);
+      await store.put('email:import:' + importId, JSON.stringify({ id: importId, ts: Date.now(), source, purpose, privacyVersion, totals: { uploaded: rows.length - start, imported, duplicates, invalid, quarantined, skippedSuppressed }, rows: reportRows.slice(0, 60000) }));
+      await audit(store, 'contacts.import', importId + ' imported=' + imported + ' dup=' + duplicates + ' invalid=' + invalid + ' quarantined=' + quarantined + ' suppressed-skip=' + skippedSuppressed + ' src=' + source);
+      return json({ ok: true, importId, imported, duplicates, invalid, quarantined, skippedSuppressed, note: 'Imported contacts carry NO consent until confirmed/opted in. MX failures are quarantined, never mailed. Suppressed addresses were not reactivated.' });
     }
 
     if (action === 'validate-list') {
@@ -167,6 +183,19 @@ export async function onRequestPost(context) {
       return json({ ok: true, checked, ok: okCount, quarantined, unverified, note: 'Resolver failures are never counted as invalid. Quarantined addresses are excluded from all sends.' });
     }
 
+    if (action === 'import-report') {
+      // Downloadable per-address validation report (admin-only; no sensitive data).
+      const imp = JSON.parse((await store.get('email:import:' + String(body.importId || ''))) || 'null');
+      if (!imp) return json({ error: 'Import report not found.' }, 404);
+      const fmt = String(body.format || 'json');
+      if (fmt === 'csv') {
+        const esc = (x) => '"' + String(x == null ? '' : x).replace(/"/g, '""') + '"';
+        const csv = 'email,status,reason\n' + (imp.rows || []).map((r) => esc(r.e) + ',' + esc(r.s) + ',' + esc(r.r)).join('\n');
+        return new Response(csv, { status: 200, headers: { 'Content-Type': 'text/csv', 'Access-Control-Allow-Origin': '*' } });
+      }
+      return json({ ok: true, report: imp });
+    }
+
     if (action === 'set-consent') {
       // Explicit opt-in recorded by admin (e.g. verified signup list). Requires evidence.
       const id = String(body.id || '');
@@ -176,6 +205,12 @@ export async function onRequestPost(context) {
       if (!c) return json({ error: 'Contact not found.' }, 404);
       const suppression = JSON.parse((await store.get('email:suppression')) || '{}');
       if (suppression[c.emailHash]) return json({ error: 'Address is suppressed; reactivation requires new explicit consent via double opt-in.' }, 409);
+      // Admin-verified consent also records deliverability evidence (audited override).
+      const v = await validateDeliverability(c.email, fetch, new Map());
+      c.validation = { mx: v.reason, domain: v.domain || '', ts: Date.now() };
+      if (!v.valid && v.reason !== 'mx-unverified') {
+        return json({ error: 'Address failed deliverability validation (' + v.reason + '); not consenting a quarantined address without corrected evidence.', mx: v.reason }, 409);
+      }
       c.consent = { status: 'opted-in', purpose: (c.consent || {}).purpose || 'marketing', source: (c.consent || {}).source || 'admin-verified', method: 'admin-verified-opt-in', ts: Date.now(), evidence, privacyVersion: (c.consent || {}).privacyVersion || 'v1' };
       c.status = 'active';
       c.confirmTs = Date.now();

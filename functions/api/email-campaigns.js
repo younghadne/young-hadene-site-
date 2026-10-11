@@ -1,6 +1,6 @@
 // Campaigns: CRUD, compliance-gated launch, pause/resume/cancel, progress, reports, test send.
 // POST /api/email-campaigns  { password, action, ... }
-import { json, checkAuth, kv, normEmail, validEmail, emailHash, recipientEligible, settingsChecklist, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, tokenFor, sesSendRaw, sesGetAccount } from './_email-lib.js';
+import { json, checkAuth, kv, normEmail, validEmail, emailHash, recipientEligible, validationStatus, settingsChecklist, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, tokenFor, sesSendRaw, sesGetAccount } from './_email-lib.js';
 
 function newId(p) {
   return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -119,8 +119,41 @@ export async function onRequestPost(context) {
       return json({ ok: true, campaign: summarize(c) });
     }
 
-    if (action === 'checklist') {
-      // Compliance gate preview: eligibility + missing settings. Launch requires this to pass.
+    if (action === 'preflight') {
+      // Campaign preflight report: per-class validation breakdown over the
+      // would-be recipient set. VALIDATED-only may proceed; everything else
+      // is excluded with reasons. No sends happen here.
+      const id = String(body.id || '');
+      const c = JSON.parse((await store.get('email:camp:' + id)) || 'null');
+      if (!c) return json({ error: 'Campaign not found.' }, 404);
+      const suppression = JSON.parse((await store.get('email:suppression')) || '{}');
+      const byStatus = { VALIDATED: 0, INVALID: 0, SUPPRESSED: 0, INELIGIBLE: 0, UNKNOWN: 0, DUPLICATE: 0 };
+      const reasons = {};
+      let uploaded = 0;
+      let cursor;
+      const seen = new Set();
+      do {
+        const res = await store.list({ prefix: 'email:c:', limit: 1000, cursor });
+        for (const k of res.keys) {
+          const ct = JSON.parse((await store.get(k.name)) || 'null');
+          if (!ct) continue;
+          if (c.categories && c.categories.length && !(ct.categories || []).some((x) => c.categories.includes(x))) continue;
+          uploaded++;
+          let cls;
+          if (seen.has(ct.emailHash)) { cls = { status: 'DUPLICATE', reason: 'duplicate-in-scope' }; }
+          else { seen.add(ct.emailHash); cls = validationStatus(ct, suppression); }
+          byStatus[cls.status] = (byStatus[cls.status] || 0) + 1;
+          const rk = cls.status + ':' + cls.reason;
+          reasons[rk] = (reasons[rk] || 0) + 1;
+        }
+        cursor = res.list_complete ? undefined : res.cursor;
+      } while (cursor);
+      const eligible = byStatus.VALIDATED || 0;
+      const excluded = uploaded - eligible;
+      return json({ ok: true, campaign: summarize(c), uploaded, byStatus, reasons, eligible, excluded, excludedPct: uploaded ? Math.round((1000 * excluded) / uploaded) / 10 : 0, note: 'VALIDATED does not guarantee mailbox existence or delivery.' });
+    }
+
+    if (action === 'checklist') {      // Compliance gate preview: eligibility + missing settings. Launch requires this to pass.
       const id = String(body.id || '');
       const c = JSON.parse((await store.get('email:camp:' + id)) || 'null');
       if (!c) return json({ error: 'Campaign not found.' }, 404);
@@ -175,6 +208,8 @@ export async function onRequestPost(context) {
       c.chunks = chunks.length;
       c.cursor = 0;
       c.status = 'sending';
+      c.pilotLimit = Math.min(eligible, Math.max(0, Number(body.pilotSize) || 0));
+      c.pilotDone = !c.pilotLimit;
       c.launchedAt = Date.now();
       c.launchedBy = 'admin';
       c.stats = { eligible, sent: 0, failed: 0, skipped: 0, bounced: 0, complained: 0 };
@@ -193,6 +228,9 @@ export async function onRequestPost(context) {
         const settings = await getSettings(store);
         const gate = await sesEnforcementGate(env, settings, store, id, 'resume');
         if (gate) return json(gate, 409);
+        // Resuming after a pilot review clears the pilot cap (human reviewed).
+        c.pilotLimit = 0;
+        c.pilotDone = true;
       }
       c.status = action === 'pause' ? 'paused' : action === 'resume' ? 'sending' : 'cancelled';
       c.updatedAt = Date.now();
