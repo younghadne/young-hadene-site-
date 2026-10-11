@@ -1,6 +1,6 @@
 // Campaigns: CRUD, compliance-gated launch, pause/resume/cancel, progress, reports, test send.
 // POST /api/email-campaigns  { password, action, ... }
-import { json, checkAuth, kv, normEmail, validEmail, emailHash, recipientEligible, settingsChecklist, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, tokenFor, sesSendRaw } from './_email-lib.js';
+import { json, checkAuth, kv, normEmail, validEmail, emailHash, recipientEligible, settingsChecklist, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, tokenFor, sesSendRaw, sesGetAccount } from './_email-lib.js';
 
 function newId(p) {
   return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -121,6 +121,24 @@ export async function onRequestPost(context) {
       const settings = await getSettings(store);
       const chk = settingsChecklist(settings);
       if (chk.missing.length) return json({ error: 'Blocked: missing sender configuration: ' + chk.missing.join(', '), blocked: true }, 409);
+      // Sending gate: when runtime AWS credentials exist, verify live SES
+      // enforcement before allowing launch. SHUTDOWN / disabled sending blocks.
+      // Without credentials nothing can actually send (dry-run only), so no check.
+      const gateKeys = env && env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY;
+      if (gateKeys) {
+        try {
+          const acct = await sesGetAccount({ region: (env && env.AWS_REGION) || settings.sesRegion || 'us-east-1', accessKey: env.AWS_ACCESS_KEY_ID, secretKey: env.AWS_SECRET_ACCESS_KEY, testClient: env.YH_SES_TEST_CLIENT });
+          const body = (acct && acct.body) || {};
+          const enforcement = body.EnforcementStatus;
+          const sendingEnabled = body.SendingEnabled;
+          if (!acct.ok || sendingEnabled === false || (enforcement && enforcement !== 'HEALTHY')) {
+            await audit(store, 'campaign.launch-blocked', id + ' ses-enforcement=' + (enforcement || 'unknown'));
+            return json({ error: 'Blocked: SES account cannot send (enforcement=' + (enforcement || 'unknown') + ', sending=' + sendingEnabled + '). Resolve with AWS Support first.', blocked: true, enforcement: enforcement || null }, 409);
+          }
+        } catch (e) {
+          return json({ error: 'Blocked: SES status check failed: ' + e.message, blocked: true }, 409);
+        }
+      }
       if (!c.subject.trim() || (!c.html.trim() && !c.text.trim())) return json({ error: 'Blocked: subject and body required.', blocked: true }, 409);
       // Materialize recipient id list in chunks (durable across restarts).
       const suppression = JSON.parse((await store.get('email:suppression')) || '{}');

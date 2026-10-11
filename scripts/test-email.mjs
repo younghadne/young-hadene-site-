@@ -384,6 +384,27 @@ await t('SDK SendEmail hits SESv2 API; batch records MessageIds', async () => {
   assert.equal(marker.mid, 'test-mid-1');
 });
 
+await t('launch gate blocks on SES SHUTDOWN, passes when HEALTHY', async () => {
+  const env = envWithKv();
+  env.AWS_ACCESS_KEY_ID = 'x';
+  env.AWS_SECRET_ACCESS_KEY = 'y';
+  await post(EP.settings, env, { password: 'test-pw-123', action: 'save', settings: { senderName: 'YH', senderEmail: 'mail@example.com', mailingAddress: '1 St' } });
+  await post(EP.contacts, env, { password: 'test-pw-123', action: 'import', csv: 'g0@example.com\n' });
+  const l = await post(EP.contacts, env, { password: 'test-pw-123', action: 'list', q: 'g0@example.com' });
+  await post(EP.contacts, env, { password: 'test-pw-123', action: 'set-consent', id: l.data.contacts[0].id, evidence: 't' });
+  const mk = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'create', title: 'C', subject: 'S', text: 'b' });
+  const id = mk.data.campaign.id;
+  // SHUTDOWN -> blocked
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, EnforcementStatus: 'SHUTDOWN', SendingEnabled: true, ProductionAccessEnabled: true });
+  let r = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'launch', id });
+  assert.equal(r.status, 409);
+  assert.ok(r.data.blocked);
+  assert.equal(r.data.enforcement, 'SHUTDOWN');
+  // HEALTHY -> passes
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, EnforcementStatus: 'HEALTHY', SendingEnabled: true, ProductionAccessEnabled: true });
+  r = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'launch', id });
+  assert.equal(r.data.ok, true);
+});
 await t('SDK GetAccount parses production/quota shape', async () => {
   const client = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, ProductionAccessEnabled: true, SendQuota: { Max24HourSend: 50000, MaxSendRate: 14, SentLast24Hours: 10 } });
   const r = await lib.sesGetAccount({ region: 'us-east-1', accessKey: 'AKIAEXAMPLE', secretKey: 'secret', testClient: client });
