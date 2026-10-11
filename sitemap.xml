@@ -5,6 +5,8 @@
   <url><loc>https://younghadene.ca/blog.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://younghadene.ca/news.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://younghadene.ca/about.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://younghadene.ca/press.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://younghadene.ca/haitian-canadian-drill.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://younghadene.ca/contact.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://younghadene.ca/services.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://younghadene.ca/editorial-policy.html</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>

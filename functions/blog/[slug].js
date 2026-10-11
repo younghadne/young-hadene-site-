@@ -129,7 +129,7 @@ function buildArticleHtml(d, related) {
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Article',
     headline: d.title || '', description: desc,
-    author: { '@type': 'Person', name: author, jobTitle: 'Recording Artist', url: SITE_URL + '/about.html', sameAs: ['https://www.instagram.com/YOUNGHADENE', YOUTUBE_URL, SPOTIFY_URL, GOOGLE_URL] },
+    author: { '@type': 'Person', '@id': SITE_URL + '/about.html#person', name: author, jobTitle: 'Recording Artist', url: SITE_URL + '/about.html', sameAs: ['https://www.instagram.com/YOUNGHADENE', YOUTUBE_URL, SPOTIFY_URL, GOOGLE_URL] },
     datePublished: d.date || '', image: d.image || (SITE_URL + '/images/poster1.png'),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
@@ -154,7 +154,7 @@ function buildArticleHtml(d, related) {
     `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>` +
     `<section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">&#8592; Back to Blog</a><div class="article-wrap">` +
     crumbs +
-    `<div class="meta">${escHtml(d.date || '')} &middot; <span>${escHtml(d.category || 'Music')}</span> &middot; By ${escHtml(author)}</div>` +
+    `<div class="meta">${escHtml(d.date || '')} &middot; <span>${escHtml(d.category || 'Music')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${tagsBox}${relBox}` +
     `<div class="cta-box"><h3>Find Young Hadene on Google</h3><p>Follow, get updates & leave a review.</p><p><a href="${GOOGLE_URL}" target="_blank" rel="noopener" class="btn btn-primary">★ View Google Profile</a></p></div>` +
     `</div></div></section>` +
