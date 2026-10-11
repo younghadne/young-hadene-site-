@@ -18,6 +18,28 @@ async function audit(store, action, detail) {
   } catch { /* */ }
 }
 
+// SES enforcement gate shared by launch, resume, and test-send. No alternate
+// campaign endpoint may transition to sending (or send) while SES reports
+// SHUTDOWN/disabled. Without runtime credentials nothing can send (dry-run),
+// so the check applies only when keys exist.
+async function sesEnforcementGate(env, settings, store, id, what) {
+  const gateKeys = env && env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY;
+  if (!gateKeys) return null;
+  try {
+    const acct = await sesGetAccount({ region: (env && env.AWS_REGION) || settings.sesRegion || 'us-east-1', accessKey: env.AWS_ACCESS_KEY_ID, secretKey: env.AWS_SECRET_ACCESS_KEY, testClient: env.YH_SES_TEST_CLIENT });
+    const body = (acct && acct.body) || {};
+    const enforcement = body.EnforcementStatus;
+    const sendingEnabled = body.SendingEnabled;
+    if (!acct.ok || sendingEnabled === false || (enforcement && enforcement !== 'HEALTHY')) {
+      await audit(store, 'campaign.' + what + '-blocked', id + ' ses-enforcement=' + (enforcement || 'unknown'));
+      return { error: 'Blocked: SES account cannot send (enforcement=' + (enforcement || 'unknown') + ', sending=' + sendingEnabled + '). Resolve with AWS Support first.', blocked: true, enforcement: enforcement || null };
+    }
+  } catch (e) {
+    return { error: 'Blocked: SES status check failed: ' + e.message, blocked: true };
+  }
+  return null;
+}
+
 async function eligibilitySnapshot(store, categories) {
   // Counts eligible vs suppressed across all contacts. For very large lists,
   // launch snapshots stream in chunks; counts are exact.
@@ -121,24 +143,9 @@ export async function onRequestPost(context) {
       const settings = await getSettings(store);
       const chk = settingsChecklist(settings);
       if (chk.missing.length) return json({ error: 'Blocked: missing sender configuration: ' + chk.missing.join(', '), blocked: true }, 409);
-      // Sending gate: when runtime AWS credentials exist, verify live SES
-      // enforcement before allowing launch. SHUTDOWN / disabled sending blocks.
-      // Without credentials nothing can actually send (dry-run only), so no check.
-      const gateKeys = env && env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY;
-      if (gateKeys) {
-        try {
-          const acct = await sesGetAccount({ region: (env && env.AWS_REGION) || settings.sesRegion || 'us-east-1', accessKey: env.AWS_ACCESS_KEY_ID, secretKey: env.AWS_SECRET_ACCESS_KEY, testClient: env.YH_SES_TEST_CLIENT });
-          const body = (acct && acct.body) || {};
-          const enforcement = body.EnforcementStatus;
-          const sendingEnabled = body.SendingEnabled;
-          if (!acct.ok || sendingEnabled === false || (enforcement && enforcement !== 'HEALTHY')) {
-            await audit(store, 'campaign.launch-blocked', id + ' ses-enforcement=' + (enforcement || 'unknown'));
-            return json({ error: 'Blocked: SES account cannot send (enforcement=' + (enforcement || 'unknown') + ', sending=' + sendingEnabled + '). Resolve with AWS Support first.', blocked: true, enforcement: enforcement || null }, 409);
-          }
-        } catch (e) {
-          return json({ error: 'Blocked: SES status check failed: ' + e.message, blocked: true }, 409);
-        }
-      }
+      // Sending gate: live SES enforcement check (see sesEnforcementGate).
+      const gate = await sesEnforcementGate(env, settings, store, id, 'launch');
+      if (gate) return json(gate, 409);
       if (!c.subject.trim() || (!c.html.trim() && !c.text.trim())) return json({ error: 'Blocked: subject and body required.', blocked: true }, 409);
       // Materialize recipient id list in chunks (durable across restarts).
       const suppression = JSON.parse((await store.get('email:suppression')) || '{}');
@@ -181,6 +188,12 @@ export async function onRequestPost(context) {
       const id = String(body.id || '');
       const c = JSON.parse((await store.get('email:camp:' + id)) || 'null');
       if (!c) return json({ error: 'Campaign not found.' }, 404);
+      if (action === 'resume') {
+        // Resume must pass the same SES enforcement gate as launch (no bypass).
+        const settings = await getSettings(store);
+        const gate = await sesEnforcementGate(env, settings, store, id, 'resume');
+        if (gate) return json(gate, 409);
+      }
       c.status = action === 'pause' ? 'paused' : action === 'resume' ? 'sending' : 'cancelled';
       c.updatedAt = Date.now();
       await store.put('email:camp:' + id, JSON.stringify(c));
@@ -217,6 +230,10 @@ export async function onRequestPost(context) {
       const settings = await getSettings(store);
       const chk = settingsChecklist(settings);
       if (chk.missing.length) return json({ error: 'Missing sender configuration: ' + chk.missing.join(', ') }, 409);
+      // Test sends also respect SES enforcement (single-recipient diagnostics
+      // go through the owner-approved CLI path instead).
+      const gate = await sesEnforcementGate(env, settings, store, id, 'test-send');
+      if (gate) return json(gate, 409);
       const token = await tokenFor(env, 'unsub', to).catch(() => 'unconfigured');
       const unsubUrl = 'https://younghadene.ca/unsubscribe?token=' + token + '&email=' + encodeURIComponent(to);
       const text = (c.text || '[no plain-text version]') + buildComplianceFooterText(settings, unsubUrl);

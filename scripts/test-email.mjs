@@ -412,4 +412,39 @@ await t('SDK GetAccount parses production/quota shape', async () => {
   assert.equal(r.body.ProductionAccessEnabled, true);
   assert.equal(r.body.SendQuota.Max24HourSend, 50000);
 });
+await t('resume, test-send, and batch all respect SES enforcement', async () => {
+  async function setup() {
+    const env = envWithKv();
+    env.AWS_ACCESS_KEY_ID = 'x';
+    env.AWS_SECRET_ACCESS_KEY = 'y';
+    await post(EP.settings, env, { password: 'test-pw-123', action: 'save', settings: { senderName: 'YH', senderEmail: 'mail@example.com', mailingAddress: '1 St' } });
+    await post(EP.contacts, env, { password: 'test-pw-123', action: 'import', csv: 'h0@example.com\n' });
+    const l = await post(EP.contacts, env, { password: 'test-pw-123', action: 'list', q: 'h0@example.com' });
+    await post(EP.contacts, env, { password: 'test-pw-123', action: 'set-consent', id: l.data.contacts[0].id, evidence: 't' });
+    return env;
+  }
+  // resume blocked on SHUTDOWN even for a previously-launched campaign
+  let env = await setup();
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, EnforcementStatus: 'HEALTHY', SendingEnabled: true });
+  const mk = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'create', title: 'C', subject: 'S', text: 'b' });
+  await post(EP.campaigns, env, { password: 'test-pw-123', action: 'launch', id: mk.data.campaign.id });
+  await post(EP.campaigns, env, { password: 'test-pw-123', action: 'pause', id: mk.data.campaign.id });
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, EnforcementStatus: 'SHUTDOWN', SendingEnabled: true });
+  let r = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'resume', id: mk.data.campaign.id });
+  assert.equal(r.status, 409);
+  assert.ok(r.data.blocked);
+  // test-send blocked on SHUTDOWN
+  r = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'test-send', id: mk.data.campaign.id, to: 'me@example.com' });
+  assert.equal(r.status, 409);
+  assert.ok(r.data.blocked);
+  // batch halts a sending campaign when enforcement appears mid-flight
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, EnforcementStatus: 'HEALTHY', SendingEnabled: true });
+  await post(EP.campaigns, env, { password: 'test-pw-123', action: 'resume', id: mk.data.campaign.id });
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, EnforcementStatus: 'SHUTDOWN', SendingEnabled: true });
+  r = await post(EP.batch, env, { password: 'test-pw-123', campaignId: mk.data.campaign.id, maxSends: 5 });
+  assert.equal(r.status, 409);
+  assert.equal(r.data.sent || 0, 0);
+  const c = JSON.parse(await env.YH_POSTS.get('email:camp:' + mk.data.campaign.id));
+  assert.equal(c.status, 'paused');
+});
 try { fs.rmSync(TMP, { recursive: true, force: true }); } catch { /* cleanup staged copies */ }

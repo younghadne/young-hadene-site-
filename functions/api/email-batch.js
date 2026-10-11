@@ -3,7 +3,7 @@
 // Each invocation sends a bounded window, advances a durable cursor, and
 // returns progress. An external scheduler (cron) calls it repeatedly.
 // Suppression is re-checked per recipient immediately before sending.
-import { json, checkAuth, kv, normEmail, recipientEligible, settingsChecklist, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, tokenFor, sesSendRaw } from './_email-lib.js';
+import { json, checkAuth, kv, normEmail, recipientEligible, settingsChecklist, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, tokenFor, sesSendRaw, sesGetAccount } from './_email-lib.js';
 
 async function audit(store, action, detail) {
   try {
@@ -36,6 +36,23 @@ export async function onRequestPost(context) {
       await store.put('email:camp:' + campaignId, JSON.stringify(c));
       await audit(store, 'batch.autopause', campaignId + ' missing-settings');
       return json({ error: 'Paused: sender configuration missing: ' + chk.missing.join(', ') }, 409);
+    }
+    // Per-invocation enforcement re-check: a campaign launched before a
+    // shutdown must halt on the next batch window, not drain the queue.
+    if (env && env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY) {
+      try {
+        const acct = await sesGetAccount({ region: (env && env.AWS_REGION) || settings.sesRegion || 'us-east-1', accessKey: env.AWS_ACCESS_KEY_ID, secretKey: env.AWS_SECRET_ACCESS_KEY, testClient: env.YH_SES_TEST_CLIENT });
+        const eb = (acct && acct.body) || {};
+        if (!acct.ok || eb.SendingEnabled === false || (eb.EnforcementStatus && eb.EnforcementStatus !== 'HEALTHY')) {
+          c.status = 'paused';
+          c.updatedAt = Date.now();
+          await store.put('email:camp:' + campaignId, JSON.stringify(c));
+          await audit(store, 'batch.autopause', campaignId + ' ses-enforcement=' + (eb.EnforcementStatus || 'unknown'));
+          return json({ error: 'Paused: SES account cannot send (enforcement=' + (eb.EnforcementStatus || 'unknown') + ').', blocked: true }, 409);
+        }
+      } catch (e) {
+        return json({ error: 'Paused: SES status check failed: ' + e.message, blocked: true }, 409);
+      }
     }
 
     const accessKey = env && env.AWS_ACCESS_KEY_ID;
