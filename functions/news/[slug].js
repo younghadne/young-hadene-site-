@@ -164,6 +164,7 @@ function buildNewsHtml(d, related) {
     crumbs +
     `<div class="meta">${escHtml(stamp)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${relBox}` +
+    `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:32px 0 0;">Young Hadene News is the artist's official newsroom. Read our <a href="/editorial-policy.html" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy.html" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
     `</div></div></section>` +
     `<footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>` +
     `<script src="../js/main.js"></script></body></html>`;

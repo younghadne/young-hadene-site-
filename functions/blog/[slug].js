@@ -157,6 +157,7 @@ function buildArticleHtml(d, related) {
     `<div class="meta">${escHtml(d.date || '')} &middot; <span>${escHtml(d.category || 'Music')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${tagsBox}${relBox}` +
     `<div class="cta-box"><h3>Find Young Hadene on Google</h3><p>Follow, get updates & leave a review.</p><p><a href="${GOOGLE_URL}" target="_blank" rel="noopener" class="btn btn-primary">★ View Google Profile</a></p></div>` +
+    `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:0 0 40px;">About this coverage: read our <a href="/editorial-policy.html" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy.html" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
     `</div></div></section>` +
     `<footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>` +
     `<script src="/js/main.js"></script></body></html>`;
