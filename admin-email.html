@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Email Marketing — Admin — Young Hadene</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>📧</text></svg>">
+  <style>
+    .em-wrap { max-width: 1080px; margin: 0 auto; padding: 40px 0 80px; }
+    .em-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+    .em-tabs button { padding: 10px 18px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; }
+    .em-tabs button.active { border-color: var(--accent); color: var(--accent); }
+    .em-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .em-card h3 { margin-bottom: 12px; font-size: 1rem; }
+    .em-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+    .em-row input, .em-row select, .em-row textarea { flex: 1 1 200px; padding: 10px 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; }
+    .em-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .em-table th, .em-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); }
+    .em-note { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+    .em-alert { background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.4); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; font-size: 0.85rem; }
+    .em-ok { background: rgba(46,160,67,0.12); border: 1px solid rgba(46,160,67,0.4); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; font-size: 0.85rem; }
+    #loginBox { max-width: 420px; margin: 60px auto; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a>
+      <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/music" class="nav-link">Music</a></li>
+          <li><a href="/blog" class="nav-link">Blog</a></li>
+          <li><a href="/news" class="nav-link">News</a></li>
+          <li><a href="/about" class="nav-link">About</a></li>
+          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/admin" class="nav-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section" style="padding-top:110px;">
+    <div class="container">
+      <div id="loginBox">
+        <span class="section-label">Admin</span>
+        <h1 class="section-title">Email <span class="text-accent">Marketing</span></h1>
+        <p class="em-note">Enter the admin password. It is sent per request and never stored.</p>
+        <div class="em-row" style="margin-top:16px;">
+          <input type="password" id="pw" placeholder="Admin password" autocomplete="off">
+        </div>
+        <button class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;">Unlock</button>
+        <p class="em-note" id="loginErr" style="color:var(--accent);display:none;">Incorrect password.</p>
+      </div>
+
+      <div id="app" class="em-wrap" style="display:none;">
+        <h1 class="section-title">Email <span class="text-accent">Marketing</span></h1>
+        <div id="cfgWarn"></div>
+        <div class="em-tabs">
+          <button data-tab="campaigns" class="active">Campaigns</button>
+          <button data-tab="contacts">Contacts</button>
+          <button data-tab="settings">Settings &amp; Compliance</button>
+          <button data-tab="health">SES Health</button>
+          <button data-tab="audit">Audit Log</button>
+        </div>
+        <div id="tab-campaigns"></div>
+        <div id="tab-contacts" style="display:none;"></div>
+        <div id="tab-settings" style="display:none;"></div>
+        <div id="tab-health" style="display:none;"></div>
+        <div id="tab-audit" style="display:none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      var pw = '';
+      var $ = function (id) { return document.getElementById(id); };
+      function api(path, payload) {
+        payload = payload || {};
+        payload.password = pw;
+        return fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(function (r) { return r.json(); });
+      }
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+      $('loginBtn').onclick = function () {
+        pw = $('pw').value;
+        api('/api/email-settings', { action: 'get' }).then(function (d) {
+          if (d.error) { $('loginErr').style.display = 'block'; pw = ''; return; }
+          $('loginBox').style.display = 'none';
+          $('app').style.display = 'block';
+          renderSettings(d.settings, d.checklist);
+          loadCampaigns();
+        }).catch(function () { $('loginErr').style.display = 'block'; });
+      };
+
+      document.querySelectorAll('.em-tabs button').forEach(function (b) {
+        b.onclick = function () {
+          document.querySelectorAll('.em-tabs button').forEach(function (x) { x.classList.remove('active'); });
+          b.classList.add('active');
+          ['campaigns', 'contacts', 'settings', 'health', 'audit'].forEach(function (t) { $('tab-' + t).style.display = t === b.dataset.tab ? 'block' : 'none'; });
+          if (b.dataset.tab === 'contacts') loadContacts();
+          if (b.dataset.tab === 'health') loadHealth();
+          if (b.dataset.tab === 'audit') loadAudit();
+        };
+      });
+
+      /* ---- settings ---- */
+      function renderSettings(s, chk) {
+        var warn = '';
+        if (chk && chk.missing && chk.missing.length) warn = '<div class="em-alert">Campaign launches are BLOCKED until configured: ' + esc(chk.missing.join(', ')) + '</div>';
+        $('cfgWarn').innerHTML = warn;
+        $('tab-settings').innerHTML =
+          '<div class="em-card"><h3>Sender identity (required — shown in every email)</h3>' +
+          '<div class="em-row"><input id="s-name" placeholder="Sender name" value="' + esc(s.senderName) + '"><input id="s-email" placeholder="Sender email" value="' + esc(s.senderEmail) + '"></div>' +
+          '<div class="em-row"><input id="s-addr" placeholder="Mailing address (required by CASL)" value="' + esc(s.mailingAddress) + '"><input id="s-contact" placeholder="Contact method (email/phone)" value="' + esc(s.contactMethod) + '"></div></div>' +
+          '<div class="em-card"><h3>Consent &amp; sending</h3>' +
+          '<div class="em-row"><label class="em-note"><input type="checkbox" id="s-doi" ' + (s.doubleOptIn ? 'checked' : '') + '> Double opt-in for new signups</label>' +
+          '<input id="s-region" placeholder="SES region" value="' + esc(s.sesRegion || 'us-east-1') + '">' +
+          '<input id="s-cs" placeholder="SES config set (optional)" value="' + esc(s.sesConfigSet || '') + '">' +
+          '<input id="s-rate" type="number" min="1" max="100" placeholder="Sends/sec" value="' + esc(s.ratePerSec || 12) + '"></div>' +
+          '<div class="em-row"><input id="s-bt" type="number" step="0.1" placeholder="Bounce pause %" value="' + esc(s.bouncePausePct || 5) + '">' +
+          '<input id="s-ct" type="number" step="0.1" placeholder="Complaint pause %" value="' + esc(s.complaintPausePct || 0.4) + '">' +
+          '<input id="s-pv" placeholder="Privacy notice version" value="' + esc(s.privacyVersion || 'v1') + '"></div>' +
+          '<button class="btn btn-primary" id="s-save">Save settings</button></div>' +
+          '<p class="em-note">AWS keys live only in Cloudflare Pages env secrets (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, EMAIL_SECRET, EMAIL_WEBHOOK_KEY) — never here or in code.</p>';
+        $('s-save').onclick = function () {
+          api('/api/email-settings', { action: 'save', settings: { senderName: $('s-name').value, senderEmail: $('s-email').value, mailingAddress: $('s-addr').value, contactMethod: $('s-contact').value, doubleOptIn: $('s-doi').checked, sesRegion: $('s-region').value, sesConfigSet: $('s-cs').value, ratePerSec: Number($('s-rate').value) || 12, bouncePausePct: Number($('s-bt').value) || 5, complaintPausePct: Number($('s-ct').value) || 0.4, privacyVersion: $('s-pv').value } })
+            .then(function (d) { renderSettings(d.settings, d.checklist); });
+        };
+      }
+
+      /* ---- campaigns ---- */
+      function loadCampaigns() {
+        api('/api/email-campaigns', { action: 'list' }).then(function (d) {
+          var h = '<div class="em-card"><h3>New campaign</h3><div class="em-row"><input id="c-title" placeholder="Internal title"><input id="c-subject" placeholder="Subject line (must be truthful)"></div>' +
+            '<div class="em-row"><textarea id="c-html" rows="4" placeholder="HTML body"></textarea><textarea id="c-text" rows="4" placeholder="Plain-text body (required)"></textarea></div>' +
+            '<div class="em-row"><input id="c-cats" placeholder="Categories (comma-separated, optional)"><button class="btn btn-primary" id="c-create">Create draft</button></div></div>';
+          (d.campaigns || []).forEach(function (c) {
+            var st = c.stats || {};
+            h += '<div class="em-card"><h3>' + esc(c.title) + ' <span class="em-note">[' + esc(c.status) + ']</span></h3>' +
+              '<p class="em-note">Subject: ' + esc(c.subject) + ' | Eligible: ' + (st.eligible || 0) + ' | Sent: ' + (st.sent || 0) + ' | Failed: ' + (st.failed || 0) + ' | Skipped: ' + (st.skipped || 0) + ' | Bounced: ' + (st.bounced || 0) + ' | Complained: ' + (st.complained || 0) + '</p>' +
+              '<div class="em-row">' +
+              '<button class="btn btn-outline" data-act="check" data-id="' + c.id + '">Compliance check</button>' +
+              '<button class="btn btn-outline" data-act="test" data-id="' + c.id + '">Test send</button>' +
+              '<button class="btn btn-primary" data-act="launch" data-id="' + c.id + '">Launch</button>' +
+              '<button class="btn btn-outline" data-act="batch" data-id="' + c.id + '">Send next batch</button>' +
+              '<button class="btn btn-outline" data-act="pause" data-id="' + c.id + '">Pause</button>' +
+              '<button class="btn btn-outline" data-act="resume" data-id="' + c.id + '">Resume</button>' +
+              '<button class="btn btn-outline" data-act="progress" data-id="' + c.id + '">Progress</button>' +
+              '<button class="btn btn-outline" data-act="report" data-id="' + c.id + '">Report</button>' +
+              '</div><div class="em-note" id="out-' + c.id + '"></div></div>';
+          });
+          $('tab-campaigns').innerHTML = h;
+          $('c-create').onclick = function () {
+            api('/api/email-campaigns', { action: 'create', title: $('c-title').value, subject: $('c-subject').value, html: $('c-html').value, text: $('c-text').value, categories: $('c-cats').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean) }).then(function () { loadCampaigns(); });
+          };
+          document.querySelectorAll('#tab-campaigns [data-act]').forEach(function (b) {
+            b.onclick = function () { return campAct(b.dataset.act, b.dataset.id); };
+          });
+        });
+      }
+      function campAct(act, id) {
+        var out = $('out-' + id);
+        function show(d) { out.textContent = JSON.stringify(d).substring(0, 600); loadCampaignsSoon(); }
+        if (act === 'check') return api('/api/email-campaigns', { action: 'checklist', id: id }).then(show);
+        if (act === 'progress' || act === 'report') return api('/api/email-campaigns', { action: act, id: id }).then(show);
+        if (act === 'test') {
+          var to = prompt('Test recipient address:');
+          if (!to) return;
+          return api('/api/email-campaigns', { action: 'test-send', id: id, to: to }).then(show);
+        }
+        if (act === 'launch') {
+          return api('/api/email-campaigns', { action: 'checklist', id: id }).then(function (d) {
+            var msg = d.ok ? ('Launch with ' + d.snapshot.eligible + ' eligible recipients? Suppressed/excluded: ' + (d.snapshot.suppressed + d.snapshot.noConsent + d.snapshot.pending)) : ('BLOCKED: ' + (d.problems || []).join('; '));
+            if (!d.ok || !confirm(msg)) { out.textContent = msg; return; }
+            api('/api/email-campaigns', { action: 'launch', id: id }).then(show);
+          });
+        }
+        if (act === 'batch') return api('/api/email-batch', { campaignId: id, maxSends: 100 }).then(show);
+        return api('/api/email-campaigns', { action: act, id: id }).then(show);
+      }
+      function loadCampaignsSoon() { setTimeout(loadCampaigns, 1200); }
+
+      /* ---- contacts ---- */
+      function loadContacts() {
+        api('/api/email-contacts', { action: 'stats' }).then(function (d) {
+          var s = d.stats || {};
+          $('tab-contacts').innerHTML =
+            '<div class="em-card"><h3>Totals</h3><p class="em-note">Total: ' + s.total + ' | Active consented: ' + s.activeConsented + ' | Pending: ' + s.pending + ' | Unsubscribed: ' + s.unsubscribed + ' | Suppressed: ' + s.suppressedContacts + ' (list entries: ' + s.suppressionEntries + ')</p></div>' +
+            '<div class="em-card"><h3>CSV import (never grants consent; never reactivates suppression)</h3>' +
+            '<div class="em-row"><input id="imp-src" placeholder="Source (e.g. signup-form-v1)"><input id="imp-purpose" placeholder="Purpose (marketing)"></div>' +
+            '<div class="em-row"><textarea id="imp-csv" rows="5" placeholder="email per line (header row with email is ok)"></textarea></div>' +
+            '<button class="btn btn-primary" id="imp-go">Import</button> <span class="em-note" id="imp-out"></span></div>' +
+            '<div class="em-card"><h3>Lookup</h3><div class="em-row"><input id="lk-q" placeholder="email contains…"><button class="btn btn-outline" id="lk-go">Search</button></div><div id="lk-out"></div></div>';
+          $('imp-go').onclick = function () {
+            api('/api/email-contacts', { action: 'import', csv: $('imp-csv').value, source: $('imp-src').value, purpose: $('imp-purpose').value || 'marketing' }).then(function (r) { $('imp-out').textContent = JSON.stringify(r); loadContacts(); });
+          };
+          $('lk-go').onclick = function () {
+            api('/api/email-contacts', { action: 'list', q: $('lk-q').value, limit: 30 }).then(function (r) {
+              $('lk-out').innerHTML = '<table class="em-table"><tr><th>Email</th><th>Status</th><th>Consent</th><th>Action</th></tr>' + (r.contacts || []).map(function (c) {
+                return '<tr><td>' + esc(c.email) + '</td><td>' + esc(c.status) + '</td><td>' + esc((c.consent || {}).status) + '</td><td><button class="btn btn-outline" data-cid="' + c.id + '">Confirm request</button></td></tr>';
+              }).join('') + '</table>';
+              document.querySelectorAll('#lk-out [data-cid]').forEach(function (b) {
+                b.onclick = function () { api('/api/email-contacts', { action: 'confirm-request', id: b.dataset.cid }).then(function (d) { alert(JSON.stringify(d).substring(0, 300)); }); };
+              });
+            });
+          };
+        });
+      }
+
+      /* ---- health + audit ---- */
+      function loadHealth() {
+        api('/api/email-settings', { action: 'health' }).then(function (d) {
+          $('tab-health').innerHTML = '<div class="em-card"><h3>SES account</h3><pre class="em-note">' + esc(JSON.stringify(d, null, 2)).substring(0, 2000) + '</pre>' +
+            '<p class="em-note">If credentials are missing, configure AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION as Cloudflare Pages secrets, plus EMAIL_SECRET and EMAIL_WEBHOOK_KEY. SNS bounce/complaint topic must target POST /api/email-events?key=EMAIL_WEBHOOK_KEY.</p></div>';
+        });
+      }
+      function loadAudit() {
+        api('/api/email-settings', { action: 'audit' }).then(function (d) {
+          $('tab-audit').innerHTML = '<div class="em-card"><h3>Audit log (latest first, no passwords or tokens)</h3><table class="em-table"><tr><th>Time</th><th>Actor</th><th>Action</th><th>Detail</th></tr>' + (d.entries || []).map(function (e) {
+            return '<tr><td>' + esc(new Date(e.ts).toISOString()) + '</td><td>' + esc(e.actor) + '</td><td>' + esc(e.action) + '</td><td>' + esc(e.detail) + '</td></tr>';
+          }).join('') + '</table></div>';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

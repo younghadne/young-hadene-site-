@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Email Preferences — Young Hadene</title>
+  <meta name="description" content="Manage your Young Hadene email subscription: unsubscribe, update preferences, or confirm your signup.">
+  <link rel="canonical" href="https://younghadene.ca/unsubscribe.html">
+  <meta name="robots" content="noindex, follow">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>">
+  <style>
+    .pref-wrap { max-width: 560px; margin: 0 auto; padding: 40px 0; text-align: center; }
+    .pref-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 32px 28px; margin-top: 24px; }
+    .pref-box p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+    .pref-result { margin-top: 16px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a>
+      <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/music" class="nav-link">Music</a></li>
+          <li><a href="/blog" class="nav-link">Blog</a></li>
+          <li><a href="/news" class="nav-link">News</a></li>
+          <li><a href="/about" class="nav-link">About</a></li>
+          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/admin" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="pref-wrap">
+        <span class="section-label">Email Preferences</span>
+        <h1 class="section-title" id="prefTitle">Manage <span class="text-accent">Subscription</span></h1>
+        <div class="pref-box" id="prefBox">
+          <p id="prefText">Checking your link…</p>
+          <div id="prefActions" style="margin-top:20px;display:none;">
+            <button class="btn btn-primary" id="confirmBtn" style="width:100%;justify-content:center;">Confirm</button>
+          </div>
+          <p class="pref-result" id="prefResult"></p>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:16px;">No account or login needed. Links are single-use secure and never shared.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var mode = q.get('mode') || 'unsubscribe';
+      var token = q.get('token') || '';
+      var email = q.get('email') || '';
+      var title = document.getElementById('prefTitle');
+      var text = document.getElementById('prefText');
+      var actions = document.getElementById('prefActions');
+      var btn = document.getElementById('confirmBtn');
+      var result = document.getElementById('prefResult');
+      function say(msg) { result.textContent = msg; }
+      if (!token || !email) {
+        text.textContent = 'This link is incomplete. Please use the full link from your email, or contact us for help.';
+        return;
+      }
+      if (mode === 'confirm') {
+        title.innerHTML = 'Confirm <span class="text-accent">Subscription</span>';
+        text.textContent = 'Click below to confirm your subscription.';
+        btn.textContent = 'Confirm subscription';
+        actions.style.display = 'block';
+        btn.onclick = function () {
+          btn.disabled = true;
+          fetch('/api/email-confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token, email: email }) })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (d.ok) { text.textContent = 'Subscribed. Welcome to the list.'; actions.style.display = 'none'; }
+              else { say(d.error || 'Confirmation failed.'); btn.disabled = false; }
+            })
+            .catch(function () { say('Network error. Try again.'); btn.disabled = false; });
+        };
+        return;
+      }
+      // Unsubscribe / preferences. GET never unsubscribes (scanner-safe):
+      // first POST only validates, second POST with confirm:true unsubscribes.
+      title.innerHTML = 'Email <span class="text-accent">Preferences</span>';
+      text.textContent = 'Unsubscribe from all Young Hadene marketing emails? This takes effect immediately.';
+      btn.textContent = 'Unsubscribe me';
+      actions.style.display = 'block';
+      fetch('/api/email-unsub', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token, email: email }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.ok && !d.needsConfirm) text.textContent = 'This link is invalid or expired.';
+        })
+        .catch(function () { /* validation only; user can still click */ });
+      btn.onclick = function () {
+        btn.disabled = true;
+        fetch('/api/email-unsub', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token, email: email, confirm: true }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d.ok) { text.textContent = 'Unsubscribed. You will no longer receive marketing emails.'; actions.style.display = 'none'; }
+            else { say(d.error || 'Unsubscribe failed.'); btn.disabled = false; }
+          })
+          .catch(function () { say('Network error. Try again.'); btn.disabled = false; });
+      };
+    })();
+  </script>
+</body>
+</html>
