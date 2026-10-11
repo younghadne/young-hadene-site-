@@ -197,26 +197,9 @@ async function notFound(env) {
 }
 
 async function countView(store, slug) {
-  try {
-    const t = await store.get('blog:' + slug);
-    if (!t) return;
-    const doc = JSON.parse(t);
-    doc.views = (Number(doc.views) || 0) + 1;
-    await store.put('blog:' + slug, JSON.stringify(doc));
-    const index = JSON.parse((await store.get('blog:index')) || '[]');
-    if (Array.isArray(index)) {
-      const hit = index.find((x) => x && x.slug === slug);
-      if (hit) {
-        hit.views = doc.views;
-        await store.put('blog:index', JSON.stringify(index));
-      }
-    }
-    try {
-      const s = JSON.parse((await store.get('stats')) || '{}');
-      s.viewsTotal = (Number(s.viewsTotal) || 0) + 1;
-      await store.put('stats', JSON.stringify(s));
-    } catch { /* aggregate only */ }
-  } catch { /* best effort */ }
+  // Disabled 2026-10-11: per-view KV writes exhausted the 1,000/day quota and
+  // blocked real publishes. Views are tracked via the /api/track beacon.
+  return;
 }
 
 export async function onRequestGet(context) {
