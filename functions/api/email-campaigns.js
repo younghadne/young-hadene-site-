@@ -208,7 +208,7 @@ export async function onRequestPost(context) {
       const secretKey = env && env.AWS_SECRET_ACCESS_KEY;
       if (!accessKey || !secretKey) return json({ ok: false, dryRun: true, detail: 'AWS credentials not configured; rendered MIME validated only.', subject: '[TEST] ' + c.subject });
       const raw = buildRawMime({ from, to, subject: '[TEST] ' + c.subject, textBody: text, htmlBody: html, unsubHttpsUrl: unsubUrl, unsubMailto: 'mailto:' + settings.senderEmail + '?subject=unsubscribe' });
-      const r = await sesSendRaw({ region: (env && env.AWS_REGION) || settings.sesRegion || 'us-east-1', accessKey, secretKey, rawMime: raw, configSet: settings.sesConfigSet || undefined });
+      const r = await sesSendRaw({ region: (env && env.AWS_REGION) || settings.sesRegion || 'us-east-1', accessKey, secretKey, rawMime: raw, configSet: settings.sesConfigSet || undefined, testClient: env.YH_SES_TEST_CLIENT });
       await audit(store, 'campaign.test-send', id + ' to=' + to + ' status=' + r.status);
       return json({ ok: r.ok, status: r.status, detail: r.body });
     }

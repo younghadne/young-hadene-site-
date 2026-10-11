@@ -16,6 +16,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.1149.0",
     "node-cron": "^4.2.1",
     "openai": "^6.39.1"
   }

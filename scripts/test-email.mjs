@@ -9,8 +9,10 @@ import { pathToFileURL } from 'node:url';
 
 // Endpoints use ESM `export` syntax for Cloudflare, but the repo package is
 // CommonJS, so plain node import of the .js files fails. Stage verbatim
-// copies as .mjs (rewriting only the shared-lib specifier) and test those.
-const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'emailtest-'));
+// copies as .mjs inside the repo (so @aws-sdk/* resolves via node_modules)
+// and test those.
+const TMP = path.join('scripts', '.tmp-email-test');
+fs.mkdirSync(TMP, { recursive: true });
 fs.copyFileSync('functions/api/_email-lib.js', path.join(TMP, '_email-lib.mjs'));
 async function loadEp(name) {
   const src = fs.readFileSync('functions/api/' + name + '.js', 'utf8')
@@ -339,4 +341,54 @@ await t('58k-recipient campaign simulation (synthetic, mocked SES)', async () =>
   console.log('  ETA math at 14/s: ' + Math.ceil(launch.data.eligible / 14) + 's (~' + (Math.ceil(launch.data.eligible / 14 / 60)) + ' min) + SES daily-quota check required');
 });
 
-console.log('\n' + pass + ' test groups passed' + (process.exitCode ? ' WITH FAILURES' : ''));
+// ---------- 13. SDK sends via SESv2 API; MessageId recorded ----------
+// Uses a middleware-mocked SESv2Client: real SDK serialization + SigV4
+// signing still execute; only the HTTP transport is short-circuited.
+async function mockSesClient(captured, output) {
+  const { SESv2Client } = await import('@aws-sdk/client-sesv2');
+  const client = new SESv2Client({ region: 'us-east-1', credentials: { accessKeyId: 'AKIAEXAMPLE', secretAccessKey: 'secret' } });
+  client.middlewareStack.add(
+    (next) => async (args) => {
+      captured.push({ url: String(args.request.protocol + '//' + args.request.hostname + args.request.path), auth: args.request.headers['authorization'] || args.request.headers['Authorization'] });
+      return { response: { statusCode: 200, headers: {} }, output };
+    },
+    { step: 'finalizeRequest' }
+  );
+  return client;
+}
+
+await t('SDK SendEmail hits SESv2 API; batch records MessageIds', async () => {
+  const captured = [];
+  const client = await mockSesClient(captured, { $metadata: { httpStatusCode: 200 }, MessageId: 'test-mid-1' });
+  const r = await lib.sesSendRaw({ region: 'us-east-1', accessKey: 'AKIAEXAMPLE', secretKey: 'secret', rawMime: 'From: a@b.c\r\n\r\nx', testClient: client });
+  assert.equal(r.ok, true);
+  assert.equal(r.body.MessageId, 'test-mid-1');
+  assert.match(captured[0].url, /email\.us-east-1\.amazonaws\.com\/v2\/email\/outbound-emails/);
+  assert.match(captured[0].auth, /^AWS4-HMAC-SHA256 Credential=AKIAEXAMPLE\//);
+  // batch with injected client records mids (no AWS creds needed)
+  const env = envWithKv();
+  env.YH_SES_TEST_CLIENT = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, MessageId: 'test-mid-1' });
+  await post(EP.settings, env, { password: 'test-pw-123', action: 'save', settings: { senderName: 'YH', senderEmail: 'mail@example.com', mailingAddress: '1 St' } });
+  await post(EP.contacts, env, { password: 'test-pw-123', action: 'import', csv: 'm0@example.com\n' });
+  const l = await post(EP.contacts, env, { password: 'test-pw-123', action: 'list', q: 'm0@example.com' });
+  await post(EP.contacts, env, { password: 'test-pw-123', action: 'set-consent', id: l.data.contacts[0].id, evidence: 't' });
+  const mk = await post(EP.campaigns, env, { password: 'test-pw-123', action: 'create', title: 'C', subject: 'S', text: 'b' });
+  await post(EP.campaigns, env, { password: 'test-pw-123', action: 'launch', id: mk.data.campaign.id });
+  // give batch AWS-shaped env minus real keys: client comes from test hook
+  env.AWS_ACCESS_KEY_ID = 'x';
+  env.AWS_SECRET_ACCESS_KEY = 'y';
+  const b = await post(EP.batch, env, { password: 'test-pw-123', campaignId: mk.data.campaign.id, maxSends: 5 });
+  assert.equal(b.data.sent, 1);
+  assert.equal(b.data.dryRun, false);
+  const marker = JSON.parse(await env.YH_POSTS.get('email:sent:' + mk.data.campaign.id + ':' + l.data.contacts[0].id));
+  assert.equal(marker.mid, 'test-mid-1');
+});
+
+await t('SDK GetAccount parses production/quota shape', async () => {
+  const client = await mockSesClient([], { $metadata: { httpStatusCode: 200 }, ProductionAccessEnabled: true, SendQuota: { Max24HourSend: 50000, MaxSendRate: 14, SentLast24Hours: 10 } });
+  const r = await lib.sesGetAccount({ region: 'us-east-1', accessKey: 'AKIAEXAMPLE', secretKey: 'secret', testClient: client });
+  assert.equal(r.ok, true);
+  assert.equal(r.body.ProductionAccessEnabled, true);
+  assert.equal(r.body.SendQuota.Max24HourSend, 50000);
+});
+try { fs.rmSync(TMP, { recursive: true, force: true }); } catch { /* cleanup staged copies */ }

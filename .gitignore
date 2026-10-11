@@ -9,3 +9,5 @@ analytics.json
 yh_blogPosts.json
 
 .wrangler/
+
+scripts/.tmp-email-test/

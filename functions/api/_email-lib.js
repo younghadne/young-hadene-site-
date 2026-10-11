@@ -185,96 +185,42 @@ export function buildRawMime({ from, to, subject, textBody, htmlBody, unsubHttps
   return lines.join('\r\n');
 }
 
-// ---- AWS SigV4 (SESv2 SendEmail Raw over HTTPS) ----
-async function hmacKey(secret, msg) {
-  const k = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', k, enc.encode(msg));
-  return new Uint8Array(sig);
+// ---- AWS SDK v2 (official): SESv2 SendEmail Raw + GetAccount ----
+// Credentials always come from server-side env, never from the repo or browser.
+import { SESv2Client, SendEmailCommand, GetAccountCommand } from '@aws-sdk/client-sesv2';
+
+function sesClient(region, accessKey, secretKey) {
+  return new SESv2Client({ region, credentials: { accessKeyId: accessKey, secretAccessKey: secretKey } });
 }
 
-export async function sesSendRaw({ region, accessKey, secretKey, rawMime, configSet, fetchFn }) {
-  const f = fetchFn || fetch;
-  const host = 'email.' + region + '.amazonaws.com';
-  const path = '/v2/email/outbound-emails';
-  const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
-  const dateStamp = amzDate.substring(0, 8);
-  const body = JSON.stringify(
-    configSet
-      ? { Content: { Raw: { Data: b64encode(enc.encode(rawMime)) } }, ConfigurationSetName: configSet }
-      : { Content: { Raw: { Data: b64encode(enc.encode(rawMime)) } } }
-  );
-  const payloadHash = await sha256hexBytes(body);
-  const headers = {
-    'content-type': 'application/json',
-    host,
-    'x-amz-date': amzDate,
-  };
-  const signedHeaders = 'content-type;host;x-amz-date';
-  const canonical =
-    'POST\n' + path + '\n\n' +
-    Object.keys(headers).map((k) => k + ':' + headers[k] + '\n').join('') +
-    '\n' + signedHeaders + '\n' + payloadHash;
-  const scope = dateStamp + '/' + region + '/ses/aws4_request';
-  const stringToSign = 'AWS4-HMAC-SHA256\n' + amzDate + '\n' + scope + '\n' + (await sha256hexBytes(canonical));
-  let k = await hmacKey('AWS4' + secretKey, dateStamp);
-  const Kh = async (kb, m) => {
-    const key = await crypto.subtle.importKey('raw', kb, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-    return new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(m)));
-  };
-  k = await Kh(k, region);
-  k = await Kh(k, 'ses');
-  k = await Kh(k, 'aws4_request');
-  const sigK = await crypto.subtle.importKey('raw', k, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = [...new Uint8Array(await crypto.subtle.sign('HMAC', sigK, enc.encode(stringToSign)))]
-    .map((x) => x.toString(16).padStart(2, '0')).join('');
-  const res = await f('https://' + host + path, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Amz-Date': amzDate,
-      Authorization: 'AWS4-HMAC-SHA256 Credential=' + accessKey + '/' + scope + ', SignedHeaders=' + signedHeaders + ', Signature=' + sig,
-    },
-    body,
-  });
-  const text = await res.text();
-  let parsed = null;
-  try { parsed = JSON.parse(text); } catch { /* non-JSON error */ }
-  return { ok: res.ok, status: res.status, body: parsed || text };
+function sdkErr(e) {
+  const status = (e && e.$metadata && e.$metadata.httpStatusCode) || 0;
+  const msg = (e && (e.message || e.name)) || 'unknown-error';
+  return { ok: false, status, body: { error: String(msg).substring(0, 300), name: e && e.name } };
+}
+
+export async function sesSendRaw({ region, accessKey, secretKey, rawMime, configSet, testClient }) {
+  try {
+    const input = { Content: { Raw: { Data: enc.encode(rawMime) } } };
+    if (configSet) input.ConfigurationSetName = configSet;
+    // testClient is honored only when explicitly passed (unit tests); production always builds a real client.
+    const client = testClient || sesClient(region, accessKey, secretKey);
+    const out = await client.send(new SendEmailCommand(input));
+    return { ok: true, status: 200, body: { MessageId: out.MessageId } };
+  } catch (e) {
+    return sdkErr(e);
+  }
 }
 
 // ---- SES GetAccount (quota/health; read-only) ----
-export async function sesGetAccount({ region, accessKey, secretKey, fetchFn }) {
-  const f = fetchFn || fetch;
-  const host = 'email.' + region + '.amazonaws.com';
-  const path = '/v2/email/account';
-  const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
-  const dateStamp = amzDate.substring(0, 8);
-  const payloadHash = await sha256hexBytes('');
-  const headers = { host, 'x-amz-date': amzDate };
-  const signedHeaders = 'host;x-amz-date';
-  const canonical = 'GET\n' + path + '\n\n' + 'host:' + host + '\n' + 'x-amz-date:' + amzDate + '\n\n' + signedHeaders + '\n' + payloadHash;
-  const scope = dateStamp + '/' + region + '/ses/aws4_request';
-  const stringToSign = 'AWS4-HMAC-SHA256\n' + amzDate + '\n' + scope + '\n' + (await sha256hexBytes(canonical));
-  const Kh = async (kb, m) => {
-    const key = await crypto.subtle.importKey('raw', kb, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-    return new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(m)));
-  };
-  let k = await hmacKey('AWS4' + secretKey, dateStamp);
-  k = await Kh(k, region); k = await Kh(k, 'ses'); k = await Kh(k, 'aws4_request');
-  const sigK = await crypto.subtle.importKey('raw', k, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = [...new Uint8Array(await crypto.subtle.sign('HMAC', sigK, enc.encode(stringToSign)))]
-    .map((x) => x.toString(16).padStart(2, '0')).join('');
-  const res = await f('https://' + host + path, {
-    method: 'GET',
-    headers: {
-      'X-Amz-Date': amzDate,
-      Authorization: 'AWS4-HMAC-SHA256 Credential=' + accessKey + '/' + scope + ', SignedHeaders=' + signedHeaders + ', Signature=' + sig,
-    },
-  });
-  const text = await res.text();
-  let parsed = null;
-  try { parsed = JSON.parse(text); } catch { /* */ }
-  return { ok: res.ok, status: res.status, body: parsed || text };
+export async function sesGetAccount({ region, accessKey, secretKey, testClient }) {
+  try {
+    const client = testClient || sesClient(region, accessKey, secretKey);
+    const out = await client.send(new GetAccountCommand({}));
+    return { ok: true, status: 200, body: out };
+  } catch (e) {
+    return sdkErr(e);
+  }
 }
 
 // ---- SNS signature verification (bounce/complaint ingestion) ----

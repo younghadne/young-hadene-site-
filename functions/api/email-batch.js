@@ -84,15 +84,16 @@ export async function onRequestPost(context) {
       const raw = buildRawMime({ from, to: ct.email, subject: c.subject, textBody: text, htmlBody: html, unsubHttpsUrl: unsubUrl, unsubMailto: 'mailto:' + settings.senderEmail + '?subject=unsubscribe' });
       let r;
       try {
-        r = await sesSendRaw({ region, accessKey, secretKey, rawMime: raw, configSet: settings.sesConfigSet || undefined });
+        r = await sesSendRaw({ region, accessKey, secretKey, rawMime: raw, configSet: settings.sesConfigSet || undefined, testClient: env.YH_SES_TEST_CLIENT });
       } catch (e) {
         r = { ok: false, status: 0, body: 'fetch-error:' + e.message };
       }
       if (r.ok) {
         sent++;
         c.stats.sent = (c.stats.sent || 0) + 1;
-        await store.put(sentKey, String(Date.now()), { expirationTtl: 90 * 86400 });
-        perSend.push({ id: ct.id, sent: true });
+        const mid = r.body && r.body.MessageId ? String(r.body.MessageId).substring(0, 120) : '';
+        await store.put(sentKey, JSON.stringify({ ts: Date.now(), mid }), { expirationTtl: 90 * 86400 });
+        perSend.push({ id: ct.id, sent: true, mid });
       } else {
         const s = Number(r.status) || 0;
         const transient = s === 429 || s === 500 || s === 502 || s === 503 || s === 0 || /throttl|toomany|slowdown|tryagain/i.test(JSON.stringify(r.body || ''));

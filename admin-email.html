@@ -217,8 +217,22 @@
       /* ---- health + audit ---- */
       function loadHealth() {
         api('/api/email-settings', { action: 'health' }).then(function (d) {
-          $('tab-health').innerHTML = '<div class="em-card"><h3>SES account</h3><pre class="em-note">' + esc(JSON.stringify(d, null, 2)).substring(0, 2000) + '</pre>' +
-            '<p class="em-note">If credentials are missing, configure AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION as Cloudflare Pages secrets, plus EMAIL_SECRET and EMAIL_WEBHOOK_KEY. SNS bounce/complaint topic must target POST /api/email-events?key=EMAIL_WEBHOOK_KEY.</p></div>';
+          var b = (d && d.account) || {};
+          var q = b.SendQuota || {};
+          function row(k, v) { return '<tr><td>' + k + '</td><td>' + esc(v) + '</td></tr>'; }
+          var html = '<div class="em-card"><h3>SES account (live API values — never hardcoded)</h3>';
+          if (!d.ok) {
+            html += '<div class="em-alert">' + esc(d.error || 'SES status unknown') + '</div>';
+          } else {
+            html += '<table class="em-table">' +
+              row('Production access', b.ProductionAccessEnabled ? 'YES (production)' : 'NO (sandbox — sending restricted)') +
+              row('Daily quota (Max24HourSend)', q.Max24HourSend) +
+              row('Max send rate', q.MaxSendRate + '/sec') +
+              row('Sent last 24h', q.SentLast24Hours) +
+              row('Last check', new Date().toISOString()) + '</table>';
+          }
+          html += '<p class="em-note">Region, verified identities, config sets, and event destinations are managed in AWS; DNS (DKIM/SPF/DMARC) in your DNS dashboard. Credentials stay in Cloudflare Pages secrets and never appear here.</p></div>';
+          $('tab-health').innerHTML = html;
         });
       }
       function loadAudit() {

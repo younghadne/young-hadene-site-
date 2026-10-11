@@ -190,6 +190,6 @@ async function sendViaSes(env, settings, to, subject, text, html, unsub) {
   if (!accessKey || !secretKey) return { ok: false, status: 503, dryRun: true, detail: 'AWS credentials not configured; dry-run only.' };
   const from = (settings.senderName ? settings.senderName + ' <' + settings.senderEmail + '>' : settings.senderEmail);
   const raw = buildRawMime({ from, to, subject, textBody: text, htmlBody: html, unsubHttpsUrl: (unsub && unsub.https) || 'https://younghadene.ca/unsubscribe', unsubMailto: (unsub && unsub.mailto) || ('mailto:' + settings.senderEmail + '?subject=unsubscribe') });
-  const r = await sesSendRaw({ region, accessKey, secretKey, rawMime: raw, configSet: settings.sesConfigSet || undefined });
+  const r = await sesSendRaw({ region, accessKey, secretKey, rawMime: raw, configSet: settings.sesConfigSet || undefined, testClient: env.YH_SES_TEST_CLIENT });
   return { ok: r.ok, status: r.status, dryRun: false, detail: r.body && (r.body.MessageId || r.body.message || JSON.stringify(r.body)).toString().substring(0, 200) };
 }
