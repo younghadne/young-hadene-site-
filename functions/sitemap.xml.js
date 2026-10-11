@@ -12,6 +12,8 @@ const STATIC_PAGES = [
   { loc: '/blog.html', changefreq: 'weekly', priority: '0.9' },
   { loc: '/news.html', changefreq: 'daily', priority: '0.9' },
   { loc: '/about.html', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/press.html', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/haitian-canadian-drill.html', changefreq: 'monthly', priority: '0.7' },
   { loc: '/contact.html', changefreq: 'monthly', priority: '0.7' },
   { loc: '/services.html', changefreq: 'monthly', priority: '0.7' },
   { loc: '/editorial-policy.html', changefreq: 'yearly', priority: '0.5' },
