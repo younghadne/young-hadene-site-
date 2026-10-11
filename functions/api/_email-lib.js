@@ -77,6 +77,42 @@ export async function emailHash(email) {
   return sha256hexBytes('yh-email:' + normEmail(email));
 }
 
+// ---- Deliverability validation (list hygiene for bounce prevention) ----
+// MX lookup via DNS-over-HTTPS (works in Workers and Node; no raw DNS API).
+// Returns { mx: true|false|'unknown', domain }. 'unknown' on resolver failure
+// (never treated as proof of invalidity).
+export async function checkDomainMx(domain, fetchFn, cache) {
+  const d = String(domain || '').trim().toLowerCase();
+  if (!d || d.indexOf('.') < 0) return { mx: false, domain: d };
+  if (cache && cache.has(d)) return cache.get(d);
+  const f = fetchFn || fetch;
+  try {
+    const res = await f('https://cloudflare-dns.com/dns-query?name=' + encodeURIComponent(d) + '&type=MX', {
+      headers: { Accept: 'application/dns-json' },
+    });
+    if (!res.ok) throw new Error('doh-' + res.status);
+    const j = await res.json();
+    // Status 0 = NOERROR. MX answers live in Answer with type 15.
+    const answers = (j && j.Answer) || [];
+    const hasMx = j.Status === 0 && answers.some((a) => a && a.type === 15);
+    const out = { mx: hasMx, domain: d };
+    if (cache) cache.set(d, out);
+    return out;
+  } catch (e) {
+    return { mx: 'unknown', domain: d, error: String((e && e.message) || e).substring(0, 80) };
+  }
+}
+
+export async function validateDeliverability(email, fetchFn, cache) {
+  const e = normEmail(email);
+  if (!validEmail(e)) return { valid: false, reason: 'bad-syntax' };
+  const domain = e.split('@')[1] || '';
+  const r = await checkDomainMx(domain, fetchFn, cache);
+  if (r.mx === true) return { valid: true, reason: 'mx-ok', domain };
+  if (r.mx === 'unknown') return { valid: true, reason: 'mx-unverified', domain, warning: 'resolver unavailable; not counted as invalid' };
+  return { valid: false, reason: 'no-mx', domain };
+}
+
 // ---- Tokens (HMAC, no storage; deterministic + idempotent) ----
 export async function tokenFor(env, purpose, email) {
   const secret = env && env.EMAIL_SECRET;
@@ -113,8 +149,11 @@ export function isSuppressed(suppression, hash) {
 }
 
 // A contact is mailable only with explicit opt-in consent (never by import alone).
+// Quarantined (invalid) addresses are never mailable.
 export function consentEligible(contact) {
-  if (!contact || contact.status === 'unsubscribed') return { ok: false, reason: 'unsubscribed' };
+  if (!contact || contact.status === 'unsubscribed' || contact.status === 'invalid') {
+    return { ok: false, reason: contact && contact.status === 'invalid' ? 'invalid-address' : 'unsubscribed' };
+  }
   if (contact.bounce && contact.bounce.hard) return { ok: false, reason: 'hard-bounce' };
   if (contact.complaint) return { ok: false, reason: 'complaint' };
   const c = contact.consent || {};

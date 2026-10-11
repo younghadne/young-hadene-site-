@@ -62,6 +62,21 @@ async function post(ep, env, body, headers) {
 }
 
 let pass = 0;
+// Default DoH mock: all domains MX-ok except *.invalid (NXDOMAIN-style).
+// Individual tests may replace globalThis.fetch; restore to this afterwards.
+const dohMock = async (url, opts) => {
+  const u = String(url);
+  if (u.startsWith('https://cloudflare-dns.com/dns-query')) {
+    const name = new URL(u).searchParams.get('name') || '';
+    if (name.endsWith('.invalid') || name === 'invalid') {
+      return new Response(JSON.stringify({ Status: 3, Answer: [] }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+    return new Response(JSON.stringify({ Status: 0, Answer: [{ type: 15, data: '10 mail.example.com.' }] }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }
+  return realFetch(url, opts);
+};
+const realFetch = globalThis.fetch;
+globalThis.fetch = dohMock;
 async function t(name, fn) {
   try { await fn(); pass++; console.log('ok -', name); }
   catch (e) { console.error('FAIL -', name, '\n', e); process.exitCode = 1; }
@@ -446,5 +461,36 @@ await t('resume, test-send, and batch all respect SES enforcement', async () => 
   assert.equal(r.data.sent || 0, 0);
   const c = JSON.parse(await env.YH_POSTS.get('email:camp:' + mk.data.campaign.id));
   assert.equal(c.status, 'paused');
+});
+await t('MX validation quarantines undeliverable domains; never mails them', async () => {
+  const env = envWithKv();
+  await post(EP.settings, env, { password: 'test-pw-123', action: 'save', settings: { senderName: 'YH', senderEmail: 'mail@example.com', mailingAddress: '1 St' } });
+  const r = await post(EP.contacts, env, { password: 'test-pw-123', action: 'import', csv: 'ok@example.com\nbad@ghost.invalid\n' });
+  assert.equal(r.data.quarantined, 1);
+  const l = await post(EP.contacts, env, { password: 'test-pw-123', action: 'list', limit: 10 });
+  const bad = l.data.contacts.find((c) => c.email === 'bad@ghost.invalid');
+  assert.equal(bad.status, 'invalid');
+  // even explicit consent cannot make quarantined status pass eligibility directly;
+  // admin override via set-consent reactivates (audited), but recipientEligible rejects invalid:
+  const elig = lib.recipientEligible({ status: 'invalid', emailHash: 'x', consent: { status: 'opted-in' } }, {}, null);
+  assert.equal(elig.ok, false);
+  // validate-list re-checks and reports (already-validated are skipped by default)
+  const v = await post(EP.contacts, env, { password: 'test-pw-123', action: 'validate-list', limit: 100, onlyUnvalidated: false });
+  assert.ok(v.data.checked >= 2);
+});
+
+await t('resolver failure is unverified, never invalid', async () => {
+  const saved = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).startsWith('https://cloudflare-dns.com/')) throw new Error('dns-down');
+    return dohMock(url);
+  };
+  try {
+    const v = await lib.validateDeliverability('x@example.com');
+    assert.equal(v.valid, true);
+    assert.equal(v.reason, 'mx-unverified');
+  } finally {
+    globalThis.fetch = saved;
+  }
 });
 try { fs.rmSync(TMP, { recursive: true, force: true }); } catch { /* cleanup staged copies */ }

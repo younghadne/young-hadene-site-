@@ -197,9 +197,13 @@
             '<div class="em-row"><input id="imp-src" placeholder="Source (e.g. signup-form-v1)"><input id="imp-purpose" placeholder="Purpose (marketing)"></div>' +
             '<div class="em-row"><textarea id="imp-csv" rows="5" placeholder="email per line (header row with email is ok)"></textarea></div>' +
             '<button class="btn btn-primary" id="imp-go">Import</button> <span class="em-note" id="imp-out"></span></div>' +
+            '<div class="em-row"><button class="btn btn-outline" id="val-go">Validate deliverability (MX check, quarantines failures)</button> <span class="em-note" id="val-out"></span></div>' +
             '<div class="em-card"><h3>Lookup</h3><div class="em-row"><input id="lk-q" placeholder="email contains…"><button class="btn btn-outline" id="lk-go">Search</button></div><div id="lk-out"></div></div>';
           $('imp-go').onclick = function () {
             api('/api/email-contacts', { action: 'import', csv: $('imp-csv').value, source: $('imp-src').value, purpose: $('imp-purpose').value || 'marketing' }).then(function (r) { $('imp-out').textContent = JSON.stringify(r); loadContacts(); });
+          };
+          $('val-go').onclick = function () {
+            api('/api/email-contacts', { action: 'validate-list', limit: 500 }).then(function (r) { $('val-out').textContent = JSON.stringify(r); });
           };
           $('lk-go').onclick = function () {
             api('/api/email-contacts', { action: 'list', q: $('lk-q').value, limit: 30 }).then(function (r) {

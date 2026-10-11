@@ -1,6 +1,6 @@
 // Contacts: CSV import, consent management, double opt-in, suppression-safe.
 // POST /api/email-contacts  { password, action, ... }
-import { json, checkAuth, kv, normEmail, validEmail, emailHash, tokenFor, sesSendRaw, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml } from './_email-lib.js';
+import { json, checkAuth, kv, normEmail, validEmail, emailHash, tokenFor, sesSendRaw, buildRawMime, buildComplianceFooterText, buildComplianceFooterHtml, validateDeliverability } from './_email-lib.js';
 
 function newId() {
   return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -84,14 +84,17 @@ export async function onRequestPost(context) {
 
     if (action === 'import') {
       // CSV import NEVER grants consent and NEVER reactivates suppression.
+      // Optional MX validation quarantines undeliverable domains at intake.
       const csv = String(body.csv || '');
       const source = String(body.source || 'csv-import').substring(0, 120);
       const purpose = String(body.purpose || 'marketing').substring(0, 80);
       const privacyVersion = String(body.privacyVersion || 'v1').substring(0, 20);
+      const validateMx = body.validateMx !== false;
       const settings = await getSettings(store);
       const rows = parseCsv(csv);
       const start = rows.length && /email/i.test(rows[0].join(',')) ? 1 : 0;
-      let imported = 0, duplicates = 0, invalid = 0, skippedSuppressed = 0;
+      let imported = 0, duplicates = 0, invalid = 0, skippedSuppressed = 0, quarantined = 0;
+      const mxCache = new Map();
       const suppression = JSON.parse((await store.get('email:suppression')) || '{}');
       for (let i = start; i < rows.length; i++) {
         const email = normEmail(rows[i][0]);
@@ -108,20 +111,60 @@ export async function onRequestPost(context) {
             continue; // never overwrite consent on re-import
           }
         }
-        const id = newId();
         const now = Date.now();
         const rec = {
-          id, email, emailHash: hash, status: settings.doubleOptIn ? 'pending' : 'active',
+          id: newId(), email, emailHash: hash, status: settings.doubleOptIn ? 'pending' : 'active',
           categories: [], consent: { status: 'unknown', purpose, source, method: 'csv-import', ts: now, evidence: 'csv row ' + (i + 1), privacyVersion },
           confirmTs: settings.doubleOptIn ? 0 : now, createdAt: now, updatedAt: now,
         };
-        await store.put('email:c:' + id, JSON.stringify(rec));
-        await store.put(byKey, id);
+        if (validateMx) {
+          const v = await validateDeliverability(email, fetch, mxCache);
+          rec.validation = { mx: v.reason, domain: v.domain || '', ts: now };
+          if (!v.valid) {
+            rec.status = 'invalid'; // quarantined: never mailable, never counted eligible
+            quarantined++;
+          }
+        }
+        await store.put('email:c:' + rec.id, JSON.stringify(rec));
+        await store.put(byKey, rec.id);
         imported++;
-        if (imported % 200 === 0) { /* bounded; large imports run in chunks by caller */ }
       }
-      await audit(store, 'contacts.import', 'imported=' + imported + ' dup=' + duplicates + ' invalid=' + invalid + ' suppressed-skip=' + skippedSuppressed + ' src=' + source);
-      return json({ ok: true, imported, duplicates, invalid, skippedSuppressed, note: 'Imported contacts carry NO consent until confirmed/opted in. Suppressed addresses were not reactivated.' });
+      await audit(store, 'contacts.import', 'imported=' + imported + ' dup=' + duplicates + ' invalid=' + invalid + ' quarantined=' + quarantined + ' suppressed-skip=' + skippedSuppressed + ' src=' + source);
+      return json({ ok: true, imported, duplicates, invalid, quarantined, skippedSuppressed, note: 'Imported contacts carry NO consent until confirmed/opted in. MX failures are quarantined, never mailed. Suppressed addresses were not reactivated.' });
+    }
+
+    if (action === 'validate-list') {
+      // Re-validate stored contacts (bounded per call); quarantine MX failures.
+      const limit = Math.min(2000, Math.max(1, Number(body.limit) || 500));
+      const onlyUnvalidated = body.onlyUnvalidated !== false;
+      const mxCache = new Map();
+      let checked = 0, quarantined = 0, okCount = 0, unverified = 0;
+      let cursor;
+      const updated = [];
+      outer: do {
+        const res = await store.list({ prefix: 'email:c:', limit: 200, cursor });
+        for (const k of res.keys) {
+          if (checked >= limit) break outer;
+          const c = JSON.parse((await store.get(k.name)) || 'null');
+          if (!c || c.status === 'unsubscribed') continue;
+          if (onlyUnvalidated && c.validation) continue;
+          checked++;
+          const v = await validateDeliverability(c.email, fetch, mxCache);
+          c.validation = { mx: v.reason, domain: v.domain || '', ts: Date.now() };
+          if (!v.valid && v.reason !== 'mx-unverified') {
+            if (c.status !== 'invalid') {
+              c.status = 'invalid';
+              c.updatedAt = Date.now();
+              quarantined++;
+              updated.push(c.id);
+            }
+          } else if (v.valid) { okCount++; if (v.reason === 'mx-unverified') unverified++; }
+          await store.put('email:c:' + c.id, JSON.stringify(c));
+        }
+        cursor = res.list_complete ? undefined : res.cursor;
+      } while (cursor);
+      await audit(store, 'contacts.validate-list', 'checked=' + checked + ' ok=' + okCount + ' quarantined=' + quarantined + ' unverified=' + unverified);
+      return json({ ok: true, checked, ok: okCount, quarantined, unverified, note: 'Resolver failures are never counted as invalid. Quarantined addresses are excluded from all sends.' });
     }
 
     if (action === 'set-consent') {
