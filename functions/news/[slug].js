@@ -140,7 +140,7 @@ function buildNewsHtml(d, related) {
   const relBox = related && related.length
     ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}.html">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
-  return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-NHVXLPHRKL"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-NHVXLPHRKL');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
+  return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-G6KR0GM63L');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
     `<title>${escHtml(pageTitle)} — Young Hadene News</title>` +
     `<meta name="description" content="${desc}">` +
     `<link rel="canonical" href="${escHtml(canon)}">` +
