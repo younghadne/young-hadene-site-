@@ -133,7 +133,7 @@ function buildArticleHtml(d, related) {
     datePublished: d.date || '', image: d.image || (SITE_URL + '/images/poster1.png'),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
+  return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-NHVXLPHRKL"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-NHVXLPHRKL');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
     `<title>${escHtml(pageTitle)} — Young Hadene</title>` +
     `<meta name="description" content="${escHtml(desc)}">` +
     `<link rel="canonical" href="${escHtml(canon)}">` +
