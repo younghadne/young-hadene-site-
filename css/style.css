@@ -1613,7 +1613,7 @@ h1, h2, h3, h4, h5, h6 {
   .hero-subtitle { font-size: 0.85rem; letter-spacing: 0.08em; }
   .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
   .hero-actions .btn { width: 100%; justify-content: center; padding: 16px 24px; }
-  .hero-badge { font-size: 0.6rem; padding: 5px 12px; }
+  .hero-badge { font-size: 0.75rem; padding: 5px 12px; }
   .hero-figure, .hero-car, .hero-ground-streak { display: none; }
   .skyline { opacity: 0.06; }
   .cn-tower { opacity: 0.35; }
@@ -1689,8 +1689,8 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 480px) {
   .hero-title { font-size: 2.4rem; }
   .hero-title .text-accent { font-size: 3rem; }
-  .hero-subtitle { font-size: 0.72rem; }
-  .hero-badge { font-size: 0.55rem; }
+  .hero-subtitle { font-size: 0.75rem; }
+  .hero-badge { font-size: 0.75rem; }
   .hero { min-height: 90vh; min-height: 90svh; }
   .hero-particles { display: none; }
   .cn-tower { opacity: 0.15; }
@@ -1734,8 +1734,8 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 380px) {
   .hero-title { font-size: 2rem; }
   .hero-title .text-accent { font-size: 2.5rem; }
-  .hero-subtitle { font-size: 0.65rem; letter-spacing: 0.06em; }
-  .hero-badge { font-size: 0.5rem; padding: 4px 10px; }
+  .hero-subtitle { font-size: 0.75rem; letter-spacing: 0.06em; }
+  .hero-badge { font-size: 0.75rem; padding: 4px 10px; }
   .hero-actions .btn { padding: 14px 18px; font-size: 0.75rem; }
 
   .section-title { font-size: 1.4rem; }
@@ -1948,3 +1948,4 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 .hero-title, .hero-subtitle, .hero-badge, .hero-actions { animation: none !important; opacity: 1 !important; }
 /* Defer decorative background posters until their card scrolls into view (.visible from IntersectionObserver) */
 .feature-card.fade-in:not(.visible) > div[style*="poster"], .newsletter-inner.fade-in:not(.visible) { background-image: none !important; }
+.footer-social svg { width: 20px; height: 20px; fill: currentColor; }
