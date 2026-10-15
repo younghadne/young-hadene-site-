@@ -1,3 +1,4 @@
+import { NEWS_NOINDEX } from './_news-noindex.js';
 // GET /news-sitemap.xml — dynamic Google News sitemap from KV (fresh items
 // from the last 2 days), unioned with the static file so nothing is lost.
 // New items appear instantly, no rebuild.
@@ -33,7 +34,7 @@ export async function onRequestGet(context) {
         if (Array.isArray(parsed)) arr = parsed;
       } catch { arr = []; }
       for (const p of arr) {
-        if (!p || !p.slug) continue;
+        if (!p || !p.slug || NEWS_NOINDEX.has(p.slug)) continue;
         const vis = p.status === 'published' || !p.status ||
           (p.status === 'scheduled' && p.scheduledFor && Number(p.scheduledFor) <= now);
         if (!vis) continue;

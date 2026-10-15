@@ -7,6 +7,8 @@
 // (pre-KV legacy posts), then the site 404.
 //
 // Allows both /news/<slug> and /news/<slug>.html
+import { NEWS_NOINDEX } from '../_news-noindex.js';
+
 const SITE_URL = 'https://younghadene.ca';
 
 function escHtml(s) {
@@ -146,7 +148,7 @@ function buildNewsHtml(d, related) {
   const relBox = related && related.length
     ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
-  return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-G6KR0GM63L');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
+  return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-G6KR0GM63L');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">${NEWS_NOINDEX.has(d.slug) ? '<meta name="robots" content="noindex, follow">' : ''}` +
     `<title>${escHtml(newsTitle(pageTitle))}</title>` +
     `<meta name="description" content="${desc}">` +
     `<link rel="canonical" href="${escHtml(canon)}">` +
@@ -243,9 +245,11 @@ export async function onRequestGet(context) {
           const arr = t ? JSON.parse(t) : [];
           if (Array.isArray(arr)) index = arr;
         } catch { index = []; }
+        const hdrs = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' };
+        if (NEWS_NOINDEX.has(doc.slug)) hdrs['X-Robots-Tag'] = 'noindex, follow';
         return new Response(buildNewsHtml(doc, relatedOf(doc, index)), {
           status: 200,
-          headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+          headers: hdrs,
         });
       }
       const redirs = await readRedirects(store);
