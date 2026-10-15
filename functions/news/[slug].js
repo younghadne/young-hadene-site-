@@ -112,6 +112,12 @@ function fmtStamp(ms) {
   } catch { return ''; }
 }
 
+// Suffix only when it keeps the title <= 60 chars.
+function newsTitle(t) {
+  const s = String(t || '');
+  return (s + ' — Young Hadene News').length > 60 ? s : s + ' — Young Hadene News';
+}
+
 function buildNewsHtml(d, related) {
   const pubMs = Number(d.dateNum || 0) || null;
   const iso = new Date(pubMs || Date.now()).toISOString();
@@ -141,7 +147,7 @@ function buildNewsHtml(d, related) {
     ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
   return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-G6KR0GM63L');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
-    `<title>${escHtml(pageTitle)} — Young Hadene News</title>` +
+    `<title>${escHtml(newsTitle(pageTitle))}</title>` +
     `<meta name="description" content="${desc}">` +
     `<link rel="canonical" href="${escHtml(canon)}">` +
     `<meta property="og:title" content="${escHtml(ogTitle)}">` +

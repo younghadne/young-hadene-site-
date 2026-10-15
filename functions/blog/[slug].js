@@ -104,6 +104,14 @@ function relatedOf(doc, index) {
   }
 }
 
+
+// Title suffix only when the name is absent and the result stays <= 60 chars.
+function fullTitle(t) {
+  const s = String(t || '');
+  if (/young hadene/i.test(s) || (s + ' — Young Hadene').length > 60) return s;
+  return s + ' — Young Hadene';
+}
+
 function buildArticleHtml(d, related) {
   const tagList = String(d.tags || '').split(',').map((t) => t.trim()).filter(Boolean);
   const desc = String(d.seoDesc || d.excerpt || d.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160);
@@ -134,7 +142,7 @@ function buildArticleHtml(d, related) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
   return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-G6KR0GM63L');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
-    `<title>${escHtml(pageTitle)} — Young Hadene</title>` +
+    `<title>${escHtml(fullTitle(pageTitle))}</title>` +
     `<meta name="description" content="${escHtml(desc)}">` +
     `<link rel="canonical" href="${escHtml(canon)}">` +
     `<meta property="og:title" content="${escHtml(ogTitle)}">` +
