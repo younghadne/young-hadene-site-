@@ -129,7 +129,7 @@ function buildArticleHtml(d, related) {
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Article',
     headline: d.title || '', description: desc,
-    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Recording Artist', url: SITE_URL + '/about', sameAs: ['https://www.instagram.com/YOUNGHADENE', YOUTUBE_URL, SPOTIFY_URL, GOOGLE_URL] },
+    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Recording Artist', url: SITE_URL + '/about', sameAs: ['https://www.instagram.com/YOUNGHADENE', YOUTUBE_URL, SPOTIFY_URL] },
     datePublished: d.date || '', image: d.image || (SITE_URL + '/images/poster1.png'),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });

@@ -24,31 +24,51 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎵</text></svg>">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "MusicAlbum",
-        "@id": "https://younghadene.ca/music#they-took-me-down",
-        "name": "They Took Me Down",
-        "byArtist": { "@id": "https://younghadene.ca/about#person" },
-        "datePublished": "2026-10-02",
-        "numTracks": 11,
-        "recordLabel": "Str8hitsRecords",
-        "url": "https://younghadene.ca/music"
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MusicGroup",
+      "@id": "https://younghadene.ca/#artist",
+      "name": "Young Hadene",
+      "url": "https://younghadene.ca/"
+    },
+    {
+      "@type": "MusicAlbum",
+      "@id": "https://younghadene.ca/music#they-took-me-down",
+      "name": "They Took Me Down",
+      "byArtist": {
+        "@id": "https://younghadene.ca/#artist"
       },
-      {
-        "@type": "MusicAlbum",
-        "@id": "https://younghadene.ca/music#markham-road",
-        "name": "Markham Road",
-        "byArtist": { "@id": "https://younghadene.ca/about#person" },
-        "datePublished": "2024-03-11",
-        "numTracks": 11,
-        "recordLabel": "Str8HitsRecords",
-        "url": "https://music.apple.com/ca/album/markham-road/1735602911"
-      }
-    ]
-  }
+      "datePublished": "2026-10-02",
+      "numTracks": 11,
+      "recordLabel": "Str8hitsRecords",
+      "url": "https://music.apple.com/ca/album/they-took-me-down/6816007984"
+    },
+    {
+      "@type": "MusicAlbum",
+      "@id": "https://younghadene.ca/music#markham-road",
+      "name": "Markham Road",
+      "byArtist": {
+        "@id": "https://younghadene.ca/#artist"
+      },
+      "datePublished": "2024-03-11",
+      "numTracks": 11,
+      "recordLabel": "Str8HitsRecords",
+      "url": "https://music.apple.com/ca/album/markham-road/1735602911"
+    },
+    {
+      "@type": "MusicAlbum",
+      "@id": "https://younghadene.ca/music#sacrifices-and-success",
+      "name": "Sacrifices & Success",
+      "byArtist": {
+        "@id": "https://younghadene.ca/#artist"
+      },
+      "datePublished": "2025",
+      "url": "https://music.apple.com/ca/artist/young-hadene/1080604782/see-all?section=full-albums"
+    }
+  ]
+}
   </script>
   <style>
     .platform-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; justify-content: center; }
