@@ -77,6 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ---- Defer heavy embeds (Spotify) until scrolled near or after interaction ----
+  const deferred = document.querySelectorAll('iframe[data-src]');
+  if (deferred.length) {
+    const load = (f) => { if (f.dataset.src) { f.src = f.dataset.src; delete f.dataset.src; } };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { if (en.isIntersecting) { load(en.target); io.unobserve(en.target); } });
+      }, { rootMargin: '200px 0px' });
+      deferred.forEach((f) => io.observe(f));
+    } else {
+      deferred.forEach(load);
+    }
+  }
+
   // ---- YouTube facade: load the iframe only on tap (autoplay) ----
   document.querySelectorAll('.yt-facade').forEach((btn) => {
     btn.addEventListener('click', () => {

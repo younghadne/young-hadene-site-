@@ -1944,3 +1944,7 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
   .hero-title .text-accent { font-size: clamp(2.8rem, 13vw, 4.2rem); }
 }
 .video-list { list-style: none; padding: 0; margin: 10px 0 0; text-align: center; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.8; }
+/* LCP: render hero text immediately (no opacity-0 entrance) */
+.hero-title, .hero-subtitle, .hero-badge, .hero-actions { animation: none !important; opacity: 1 !important; }
+/* Defer decorative background posters until their card scrolls into view (.visible from IntersectionObserver) */
+.feature-card.fade-in:not(.visible) > div[style*="poster"], .newsletter-inner.fade-in:not(.visible) { background-image: none !important; }
