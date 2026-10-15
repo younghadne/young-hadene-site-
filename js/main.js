@@ -48,20 +48,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.querySelector('.hamburger');
   const navList = document.querySelector('.nav-list');
 
-  if (hamburger) {
+  if (hamburger && navList) {
+    if (!navList.id) navList.id = 'site-nav';
+    hamburger.setAttribute('aria-controls', navList.id);
+    hamburger.setAttribute('aria-expanded', 'false');
+
+    const setMenu = (open) => {
+      hamburger.classList.toggle('active', open);
+      navList.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
     hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      navList.classList.toggle('open');
+      setMenu(!navList.classList.contains('open'));
     });
 
-    // Close menu on link click
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navList.classList.remove('open');
-      });
+    // Close menu on link tap
+    navList.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setMenu(false);
+    });
+
+    // Close menu on Escape and return focus to the toggle
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navList.classList.contains('open')) {
+        setMenu(false);
+        hamburger.focus();
+      }
     });
   }
+
+  // ---- YouTube facade: load the iframe only on tap (autoplay) ----
+  document.querySelectorAll('.yt-facade').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = btn.dataset.ytSrc;
+      iframe.title = btn.dataset.ytTitle || 'YouTube video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      btn.replaceChildren(iframe);
+      btn.removeAttribute('aria-label');
+      iframe.focus();
+    }, { once: true });
+  });
 
   // ---- Header scroll effect ----
   const header = document.querySelector('.header');
