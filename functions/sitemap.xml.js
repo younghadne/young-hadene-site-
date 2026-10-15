@@ -8,16 +8,16 @@ const SITE_URL = 'https://younghadene.ca';
 
 const STATIC_PAGES = [
   { loc: '/', changefreq: 'monthly', priority: '1.0' },
-  { loc: '/music.html', changefreq: 'monthly', priority: '0.9' },
-  { loc: '/blog.html', changefreq: 'weekly', priority: '0.9' },
-  { loc: '/news.html', changefreq: 'daily', priority: '0.9' },
-  { loc: '/about.html', changefreq: 'monthly', priority: '0.8' },
-  { loc: '/press.html', changefreq: 'monthly', priority: '0.8' },
-  { loc: '/haitian-canadian-drill.html', changefreq: 'monthly', priority: '0.7' },
-  { loc: '/contact.html', changefreq: 'monthly', priority: '0.7' },
-  { loc: '/services.html', changefreq: 'monthly', priority: '0.7' },
-  { loc: '/editorial-policy.html', changefreq: 'yearly', priority: '0.5' },
-  { loc: '/corrections-policy.html', changefreq: 'yearly', priority: '0.5' },
+  { loc: '/music', changefreq: 'monthly', priority: '0.9' },
+  { loc: '/blog', changefreq: 'weekly', priority: '0.9' },
+  { loc: '/news', changefreq: 'daily', priority: '0.9' },
+  { loc: '/about', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/press', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/haitian-canadian-drill', changefreq: 'monthly', priority: '0.7' },
+  { loc: '/contact', changefreq: 'monthly', priority: '0.7' },
+  { loc: '/services', changefreq: 'monthly', priority: '0.7' },
+  { loc: '/editorial-policy', changefreq: 'yearly', priority: '0.5' },
+  { loc: '/corrections-policy', changefreq: 'yearly', priority: '0.5' },
 ];
 
 function esc(s) {
@@ -65,7 +65,7 @@ export async function onRequestGet(context) {
         const pr = section === 'blog' ? '0.8' : '0.9';
         for (const p of arr) {
           if (!p || !p.slug || !isVisible(p, now)) continue;
-          const loc = `${SITE_URL}/${section}/${p.slug}.html`;
+          const loc = `${SITE_URL}/${section}/${p.slug}`;
           if (seen.has(loc)) continue;
           seen.add(loc);
           const lm = lastmodOf(p);
