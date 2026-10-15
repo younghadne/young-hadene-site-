@@ -1943,3 +1943,4 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
   .hero-title { font-size: clamp(2.4rem, 11vw, 3.6rem); }
   .hero-title .text-accent { font-size: clamp(2.8rem, 13vw, 4.2rem); }
 }
+.video-list { list-style: none; padding: 0; margin: 10px 0 0; text-align: center; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.8; }
