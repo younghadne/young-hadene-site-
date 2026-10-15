@@ -7,7 +7,7 @@ function esc(s) {
 }
 
 function itemXml(p) {
-  const link = `${SITE_URL}/news/${p.slug}.html`;
+  const link = `${SITE_URL}/news/${p.slug}`;
   const desc = String(p.excerpt || p.content || p.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 300);
   return '  <item>\n    <title>' + esc(p.title) + '</title>\n    <link>' + esc(link) + '</link>\n    <guid isPermaLink="true">' + esc(link) + '</guid>\n    <description>' + esc(desc) + '</description>\n    <pubDate>' + new Date(Number(p.dateNum) || Date.now()).toUTCString() + '</pubDate>\n    <category>' + esc(p.category || 'News') + '</category>\n  </item>\n';
 }
@@ -33,7 +33,7 @@ export async function onRequestGet(context) {
         const vis = p.status === 'published' || !p.status ||
           (p.status === 'scheduled' && p.scheduledFor && Number(p.scheduledFor) <= now);
         if (!vis) continue;
-        const link = `${SITE_URL}/news/${p.slug}.html`;
+        const link = `${SITE_URL}/news/${p.slug}`;
         if (seen.has(link)) continue;
         seen.add(link);
         items += itemXml(p);
@@ -58,7 +58,7 @@ export async function onRequestGet(context) {
         }
       }
     } catch { /* static union is best-effort */ }
-    const rss = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>' + SITE_URL + '/news.html</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n' +
+    const rss = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>' + SITE_URL + '/news</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n' +
       items + '</channel>\n</rss>\n';
     return new Response(rss, {
       status: 200,

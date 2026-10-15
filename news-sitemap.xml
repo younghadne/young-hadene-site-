@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
-    <loc>https://younghadene.ca/news/exposed-vocals-feature-they-took-me-down.html</loc>
+    <loc>https://younghadene.ca/news/exposed-vocals-feature-they-took-me-down</loc>
     <news:news>
       <news:publication>
         <news:name>Young Hadene</news:name>
@@ -13,7 +13,7 @@
     </news:news>
   </url>
   <url>
-    <loc>https://younghadene.ca/news/they-took-me-down-album-spotlight.html</loc>
+    <loc>https://younghadene.ca/news/they-took-me-down-album-spotlight</loc>
     <news:news>
       <news:publication>
         <news:name>Young Hadene</news:name>
@@ -24,7 +24,7 @@
     </news:news>
   </url>
   <url>
-    <loc>https://younghadene.ca/news/young-hadene-launches-official-newsroom.html</loc>
+    <loc>https://younghadene.ca/news/young-hadene-launches-official-newsroom</loc>
     <news:news>
       <news:publication>
         <news:name>Young Hadene</news:name>
