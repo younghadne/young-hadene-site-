@@ -111,7 +111,7 @@ function buildArticleHtml(d, related) {
   const ogTitle = d.ogTitle || d.title;
   const ogDesc = d.ogDesc || desc;
   const ogImage = d.ogImage || (SITE_URL + '/images/poster1.png');
-  const canon = d.canonical || (SITE_URL + '/blog/' + d.slug + '.html');
+  const canon = String(d.canonical || (SITE_URL + '/blog/' + d.slug)).replace(/^https?:\/\/(www\.)?younghadene\.ca/i, SITE_URL).replace(/\.html$/i, '');
   const author = d.author || 'Young Hadene';
   const tagsMeta = tagList.map((t) => `<meta property="article:tag" content="${escHtml(t)}">`).join('');
   const tagsBox = tagList.length
@@ -122,14 +122,14 @@ function buildArticleHtml(d, related) {
   const hero = d.image
     ? `<img src="${escHtml(d.image)}" alt="${escHtml(d.imageAlt || d.title)}" loading="lazy" style="max-width:100%;border-radius:12px;margin:0 0 24px;">`
     : '';
-  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/blog.html" style="color:var(--text-muted)">Blog</a> &rsaquo; <span>${escHtml(d.category || 'Music')}</span></nav>`;
+  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/blog" style="color:var(--text-muted)">Blog</a> &rsaquo; <span>${escHtml(d.category || 'Music')}</span></nav>`;
   const relBox = related && related.length
-    ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/blog/${escHtml(r.slug)}.html">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
+    ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/blog/${escHtml(r.slug)}">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Article',
     headline: d.title || '', description: desc,
-    author: { '@type': 'Person', '@id': SITE_URL + '/about.html#person', name: author, jobTitle: 'Recording Artist', url: SITE_URL + '/about.html', sameAs: ['https://www.instagram.com/YOUNGHADENE', YOUTUBE_URL, SPOTIFY_URL, GOOGLE_URL] },
+    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Recording Artist', url: SITE_URL + '/about', sameAs: ['https://www.instagram.com/YOUNGHADENE', YOUTUBE_URL, SPOTIFY_URL, GOOGLE_URL] },
     datePublished: d.date || '', image: d.image || (SITE_URL + '/images/poster1.png'),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
@@ -151,13 +151,13 @@ function buildArticleHtml(d, related) {
     `<script type="application/ld+json">${schema}<\/script>` +
     `<style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:16px;line-height:1.05}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta span{color:var(--accent)}.article-wrap h2{font-size:1.6rem;margin-top:48px;margin-bottom:16px;font-family:var(--font-heading);letter-spacing:.04em}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem}.article-wrap li{margin-bottom:8px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic;color:var(--text-secondary)}.article-wrap .cta-box{text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:32px;margin:40px 0}.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:32px}</style>` +
     `</head><body>` +
-    `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link active">Blog</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>` +
-    `<section class="section" style="padding-top:120px;"><div class="container"><a href="/blog.html" class="back-link">&#8592; Back to Blog</a><div class="article-wrap">` +
+    `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music" class="nav-link">Music</a></li><li><a href="/blog" class="nav-link active">Blog</a></li><li><a href="/contact" class="nav-link">Contact</a></li></ul></nav></div></header>` +
+    `<section class="section" style="padding-top:120px;"><div class="container"><a href="/blog" class="back-link">&#8592; Back to Blog</a><div class="article-wrap">` +
     crumbs +
-    `<div class="meta">${escHtml(d.date || '')} &middot; <span>${escHtml(d.category || 'Music')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
+    `<div class="meta">${escHtml(d.date || '')} &middot; <span>${escHtml(d.category || 'Music')}</span> &middot; By <a href="/about" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${tagsBox}${relBox}` +
     `<div class="cta-box"><h3>Find Young Hadene on Google</h3><p>Follow, get updates & leave a review.</p><p><a href="${GOOGLE_URL}" target="_blank" rel="noopener" class="btn btn-primary">★ View Google Profile</a></p></div>` +
-    `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:0 0 40px;">About this coverage: read our <a href="/editorial-policy.html" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy.html" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
+    `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:0 0 40px;">About this coverage: read our <a href="/editorial-policy" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
     `</div></div></section>` +
     `<footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>` +
     `<script src="/js/main.js"></script></body></html>`;
@@ -239,7 +239,7 @@ export async function onRequestGet(context) {
       if (redirs[slug]) {
         return new Response(null, {
           status: 301,
-          headers: { Location: '/blog/' + redirs[slug] + '.html', 'Cache-Control': 'max-age=3600' },
+          headers: { Location: '/blog/' + redirs[slug], 'Cache-Control': 'max-age=3600' },
         });
       }
     }
