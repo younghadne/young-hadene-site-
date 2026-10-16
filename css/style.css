@@ -55,6 +55,8 @@
   --radius-sm: 2px;
   --max-width: 1280px;
   --header-height: 76px;
+  --dur-1: 120ms; --dur-2: 200ms; --dur-3: 400ms; --dur-4: 600ms;
+  --ease-out: cubic-bezier(.2,.7,.2,1); --ease-in-out: cubic-bezier(.65,0,.35,1);
 }
 
 /* ----- Reset & Base ----- */
@@ -1653,10 +1655,6 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 /* ============================
    BATCH 2 — cinematic hero (visual-spec-batch2 §1)
    ============================ */
-:root {
-  --dur-1: 120ms; --dur-2: 200ms; --dur-3: 400ms; --dur-4: 600ms;
-  --ease-out: cubic-bezier(.2,.7,.2,1); --ease-in-out: cubic-bezier(.65,0,.35,1);
-}
 .hero-links, .hero-badge { display: none !important; }
 .hero-video {
   position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;
@@ -1667,7 +1665,7 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 .hero-gradient {
   background:
     radial-gradient(120% 60% at 50% 100%, rgba(200,16,46,.10), transparent 70%),
-    linear-gradient(180deg, rgba(7,7,10,.55) 0%, rgba(7,7,10,.15) 45%, rgba(7,7,10,.85) 82%, #07070A 100%);
+    linear-gradient(180deg, rgba(7,7,10,.55) 0%, rgba(7,7,10,.15) 45%, rgba(7,7,10,.85) 82%, var(--bg-primary) 100%);
 }
 .hero-title { font-size: clamp(4rem, 14vw, 11rem); line-height: .88; }
 .hero-title .text-accent { font-size: inherit; }
@@ -1772,7 +1770,7 @@ html { scroll-behavior: auto; }
    ============================ */
 .the-look { padding: 80px 0 0; background: var(--bg-secondary); }
 .the-look .section-header { margin-bottom: 24px; }
-.section-intro { font: 400 1rem/1.5 'Inter', var(--font-body); color: #8A8794; max-width: 48ch; margin: 8px auto 0; }
+.section-intro { font: 400 1rem/1.5 'Inter', var(--font-body); color: var(--text-muted); max-width: 48ch; margin: 8px auto 0; }
 .look-rail { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--bg-primary); }
 .look-rail::-webkit-scrollbar { display: none; }
 .look-rail li { flex: 0 0 82vw; scroll-snap-align: start; }
