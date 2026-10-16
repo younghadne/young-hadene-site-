@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"></script>
+  <meta charset="UTF-8">
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-G6KR0GM63L');
+  (function(){
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function loadGtag(){
+      if (done) return; done = true;
+      evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
+  })();
 </script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked</title>
-  <meta name="description" content="The definitive list of the best Toronto rappers — from Drake to the underground. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more.">
+  <meta name="description" content="The definitive list of the best Toronto rappers — from Drake to the underground. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon…">
   
   <meta property="og:title" content="Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked">
   <meta property="og:description" content="The definitive list of the best Toronto rappers from the 6ix. Featuring Haitian-Toronto drill artist Young Hadene, Drake, Jazz Cartier, and more.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-  <meta property="og:url" content="https://younghadene.ca/blog/top-toronto-rappers.html">
+  <meta property="og:url" content="https://younghadene.ca/blog/top-toronto-rappers">
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="../css/style.css">
@@ -79,7 +93,7 @@
 
   <title>The Pulse of Underground Canadian Hip Hop: Beyond the Charts</title>
   <meta name="description" content="Discover the raw energy of underground Canadian hip hop. From Toronto’s streets to global beats, explore the artists reshaping the industry.">
-  <link rel="canonical" href="https://younghadene.ca/blog/the-pulse-of-underground-canadian-hip-hop-beyond-the-charts.html">
+  <link rel="canonical" href="https://younghadene.ca/blog/the-pulse-of-underground-canadian-hip-hop-beyond-the-charts">
   <meta property="og:title" content="The Pulse of Underground Canadian Hip Hop: Beyond the Charts">
   <meta property="og:description" content="Discover the raw energy of underground Canadian hip hop. From Toronto’s streets to global beats, explore the artists reshaping the industry.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
@@ -113,7 +127,7 @@
   </header>
   <section class="section" style="padding-top:120px;">
     <div class="container">
-      <a href="../blog.html" class="back-link">&#8592; Back to Blog</a>
+      <a href="/blog" class="back-link">&#8592; Back to Blog</a>
       <div class="article-wrap">
         <div class="meta">October 8, 2026 &middot; <span>Music</span></div>
         <h1>The Pulse of Underground Canadian Hip Hop: Beyond the Charts</h1>
@@ -167,7 +181,7 @@
           </div>
         </div>
         <div>
-          <h4>Navigate</h4>
+          <h2 class="footer-heading">Navigate</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/music">Music</a></li>
@@ -176,7 +190,7 @@
           </ul>
         </div>
         <div>
-          <h4>Music</h4>
+          <h2 class="footer-heading">Music</h2>
           <ul>
             <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a></li>
             <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782">Apple Music</a></li>
@@ -185,11 +199,11 @@
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h2 class="footer-heading">Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
             <li><a href="/contact">Bookings</a></li>
-            <li><a href="/contact.html">Press Kit</a></li>
+            <li><a href="/contact">Press Kit</a></li>
             <li><a href="/contact">Collaborate</a></li>
           </ul>
         </div>
@@ -206,7 +220,6 @@
 
 
   <script src="../js/main.js"></script>
-  <script>(function(){var d={path:location.pathname,referrer:document.referrer||"",ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon("/api/track",JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open("POST","/api/track",true);x.setRequestHeader("Content-Type","application/json");x.send(JSON.stringify(d))}})();</script>
 </body>
 </html>
 

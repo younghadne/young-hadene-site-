@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"></script>
+  <meta charset="UTF-8">
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-G6KR0GM63L');
+  (function(){
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function loadGtag(){
+      if (done) return; done = true;
+      evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
+  })();
 </script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Young Hadene Press, Interviews &amp; Music Features</title>
   <meta name="description" content="Explore interviews, music features, press releases, and online coverage featuring Young Hadene, the Haitian-born, Toronto-based hip-hop and drill artist.">
-  <link rel="canonical" href="https://younghadene.ca/press.html">
+  <link rel="canonical" href="https://younghadene.ca/press">
   <meta property="og:title" content="Young Hadene Press, Interviews &amp; Music Features">
   <meta property="og:description" content="Interviews, music features, press releases, and platform profiles covering Young Hadene.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-  <meta property="og:url" content="https://younghadene.ca/press.html">
+  <meta property="og:url" content="https://younghadene.ca/press">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Young Hadene Press, Interviews &amp; Music Features">
@@ -49,7 +63,7 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://younghadene.ca/" },
-      { "@type": "ListItem", "position": 2, "name": "Press", "item": "https://younghadene.ca/press.html" }
+      { "@type": "ListItem", "position": 2, "name": "Press", "item": "https://younghadene.ca/press" }
     ]
   }
   </script>
@@ -196,18 +210,18 @@
           </div>
         </div>
         <div>
-          <h4>Navigate</h4>
+          <h2 class="footer-heading">Navigate</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/music">Music</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/press.html">Press</a></li>
+            <li><a href="/press">Press</a></li>
             <li><a href="/contact">Contact</a></li>
             <li><a href="/admin">Admin</a></li>
           </ul>
         </div>
         <div>
-          <h4>Music</h4>
+          <h2 class="footer-heading">Music</h2>
           <ul>
             <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener">Spotify</a></li>
             <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782">Apple Music</a></li>
@@ -216,12 +230,12 @@
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h2 class="footer-heading">Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
-            <li><a href="/contact.html">Bookings</a></li>
-            <li><a href="/contact.html">Press Kit</a></li>
-            <li><a href="/contact.html">Collaborate</a></li>
+            <li><a href="/contact">Bookings</a></li>
+            <li><a href="/contact">Press Kit</a></li>
+            <li><a href="/contact">Collaborate</a></li>
           </ul>
         </div>
       </div>

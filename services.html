@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"></script>
+  <meta charset="UTF-8">
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-G6KR0GM63L');
+  (function(){
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function loadGtag(){
+      if (done) return; done = true;
+      evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
+  })();
 </script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Services — Young Hadene: Artist Promotion, Beats, Mixing & More</title>
+  <title>Services — Young Hadene: Promotion, Beats & Mixing</title>
   <meta name="description" content="Professional music services by Young Hadene — artist promotion, cover art design, mixing & mastering, custom beats, and social media marketing.">
-  <link rel="canonical" href="https://younghadene.ca/services.html">
+  <link rel="canonical" href="https://younghadene.ca/services">
   <meta property="og:title" content="Services — Young Hadene: Artist Promotion, Beats, Mixing & More">
   <meta property="og:description" content="Professional music services by Young Hadene — artist promotion, cover art design, mixing & mastering, custom beats, and social media marketing.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-  <meta property="og:url" content="https://younghadene.ca/services.html">
+  <meta property="og:url" content="https://younghadene.ca/services">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="css/style.css">
@@ -71,7 +85,7 @@
           <h3>Artist Promotion</h3>
           <p>Get your music heard. Targeted playlist pitching, press outreach, and social strategy tailored to the Toronto underground and beyond.</p>
           <div class="price">from $199</div>
-          <a href="/contact.html" class="btn btn-primary">Book Now</a>
+          <a href="/contact" class="btn btn-primary">Book Now</a>
         </div>
 
         <div class="service-card fade-in">
@@ -79,7 +93,7 @@
           <h3>Cover Art Design</h3>
           <p>Custom cover art and visual identity that matches the dark trap aesthetic. Singles, EPs, albums, and full branding packages.</p>
           <div class="price">from $149</div>
-          <a href="/contact.html" class="btn btn-primary">Book Now</a>
+          <a href="/contact" class="btn btn-primary">Book Now</a>
         </div>
 
         <div class="service-card fade-in">
@@ -87,7 +101,7 @@
           <h3>Mixing & Mastering</h3>
           <p>Professional mixing and mastering with a focus on heavy, clear, hard-hitting trap and drill production. Industry-grade quality.</p>
           <div class="price">from $249</div>
-          <a href="/contact.html" class="btn btn-primary">Book Now</a>
+          <a href="/contact" class="btn btn-primary">Book Now</a>
         </div>
 
         <div class="service-card fade-in">
@@ -95,7 +109,7 @@
           <h3>Custom Beats</h3>
           <p>Exclusive, original beats in the dark trap / Toronto drill style. Full ownership, high-quality WAV stems, and commercial rights included.</p>
           <div class="price">from $99</div>
-          <a href="/contact.html" class="btn btn-primary">Book Now</a>
+          <a href="/contact" class="btn btn-primary">Book Now</a>
         </div>
 
         <div class="service-card fade-in">
@@ -103,7 +117,7 @@
           <h3>Social Media Marketing</h3>
           <p>Grow your presence. Content strategy, short-form video production, campaign management, and engagement growth for real results.</p>
           <div class="price">from $299</div>
-          <a href="/contact.html" class="btn btn-primary">Book Now</a>
+          <a href="/contact" class="btn btn-primary">Book Now</a>
         </div>
 
         <div class="service-card fade-in">
@@ -111,7 +125,7 @@
           <h3>Full Artist Package</h3>
           <p>The complete bundle — promotion, beats, cover art, mixing & mastering, and social strategy. Everything you need to drop like a pro.</p>
           <div class="price">from $799</div>
-          <a href="/contact.html" class="btn btn-primary">Book Now</a>
+          <a href="/contact" class="btn btn-primary">Book Now</a>
         </div>
 
       </div>
@@ -148,14 +162,14 @@
           </div>
         </div>
         <div>
-          <h4>Navigate</h4>
+          <h2 class="footer-heading">Navigate</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/blog">Blog</a></li>
           </ul>
         </div>
         <div>
-          <h4>Music</h4>
+          <h2 class="footer-heading">Music</h2>
           <ul>
             <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener">Spotify</a></li>
             <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782">Apple Music</a></li>
@@ -164,12 +178,12 @@
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h2 class="footer-heading">Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
-            <li><a href="/contact.html">Bookings</a></li>
-            <li><a href="/contact.html">Press Kit</a></li>
-            <li><a href="/contact.html">Collaborate</a></li>
+            <li><a href="/contact">Bookings</a></li>
+            <li><a href="/contact">Press Kit</a></li>
+            <li><a href="/contact">Collaborate</a></li>
           </ul>
         </div>
       </div>
@@ -184,6 +198,5 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script>(function(){var d={path:location.pathname,referrer:document.referrer||"",ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon("/api/track",JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open("POST","/api/track",true);x.setRequestHeader("Content-Type","application/json");x.send(JSON.stringify(d))}})();</script>
 </body>
 </html>

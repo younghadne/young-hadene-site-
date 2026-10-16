@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"></script>
+  <meta charset="UTF-8">
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-G6KR0GM63L');
+  (function(){
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function loadGtag(){
+      if (done) return; done = true;
+      evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
+  })();
 </script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes</title>
   <meta name="description" content="Young Hadene's blog — Toronto hip-hop, studio sessions, lifestyle, behind the scenes, and dark trap culture from the 6ix.">
-  <link rel="canonical" href="https://younghadene.ca/blog.html">
+  <link rel="canonical" href="https://younghadene.ca/blog">
   <meta property="og:title" content="Blog — Young Hadene: Toronto Music, Culture & Behind the Scenes">
   <meta property="og:description" content="Toronto hip-hop, studio sessions, lifestyle, behind the scenes, and dark trap culture from the 6ix.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-  <meta property="og:url" content="https://younghadene.ca/blog.html">
+  <meta property="og:url" content="https://younghadene.ca/blog">
   <meta property="og:type" content="blog">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Blog — Young Hadene: Toronto Music & Culture">
@@ -29,7 +43,7 @@
     "@type": "Blog",
     "name": "Young Hadene Blog",
     "description": "Toronto hip-hop, studio sessions, lifestyle, and dark trap culture from the 6ix.",
-    "url": "https://younghadene.ca/blog.html",
+    "url": "https://younghadene.ca/blog",
     "author": {
       "@type": "MusicGroup",
       "name": "Young Hadene"
@@ -123,7 +137,7 @@
   <!-- ===== HEADER ===== -->
   <header class="header">
     <div class="header-inner">
-      <a href="/index.html" class="logo">
+      <a href="/" class="logo">
         YOUNG<span class="logo-accent">HADENE</span>
         <span class="logo-sub">Toronto • Dark Trap</span>
       </a>
@@ -134,13 +148,13 @@
       </button>
       <nav>
         <ul class="nav-list">
-          <li><a href="/index.html" class="nav-link">Home</a></li>
-          <li><a href="/music.html" class="nav-link">Music</a></li>
-          <li><a href="/blog.html" class="nav-link active">Blog</a></li>
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/music" class="nav-link">Music</a></li>
+          <li><a href="/blog" class="nav-link active">Blog</a></li>
           <li><a href="/news" class="nav-link">News</a></li>
           <li><a href="/about" class="nav-link">About</a></li>
-          <li><a href="/contact.html" class="nav-link">Contact</a></li>
-          <li><a href="/admin.html" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
+          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/admin" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
         </ul>
       </nav>
     </div>
@@ -200,7 +214,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="/index.html" class="logo">
+          <a href="/" class="logo">
             YOUNG<span class="logo-accent">HADENE</span>
             <span class="logo-sub">Toronto • Dark Trap</span>
           </a>
@@ -213,17 +227,17 @@
           </div>
         </div>
         <div>
-          <h4>Navigate</h4>
+          <h2 class="footer-heading">Navigate</h2>
           <ul>
-            <li><a href="/index.html">Home</a></li>
-            <li><a href="/music.html">Music</a></li>
-            <li><a href="/blog.html">Blog</a></li>
-            <li><a href="/contact.html">Contact</a></li>
-            <li><a href="/admin.html">Admin</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/music">Music</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/admin">Admin</a></li>
           </ul>
         </div>
         <div>
-          <h4>Music</h4>
+          <h2 class="footer-heading">Music</h2>
           <ul>
             <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener">Spotify</a></li>
             <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782">Apple Music</a></li>
@@ -232,12 +246,12 @@
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h2 class="footer-heading">Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
-            <li><a href="/contact.html">Bookings</a></li>
-            <li><a href="/contact.html">Press Kit</a></li>
-            <li><a href="/contact.html">Collaborate</a></li>
+            <li><a href="/contact">Bookings</a></li>
+            <li><a href="/contact">Press Kit</a></li>
+            <li><a href="/contact">Collaborate</a></li>
           </ul>
         </div>
       </div>
@@ -264,7 +278,7 @@
       { id: 1780257977431, title: 'What to Know About Caribbean influence on drill music in 2026', slug: 'what-to-know-about-caribbean-influence-on-drill-music-in-202', category: 'Toronto', date: 'May 31, 2026', dateNum: 1780257977431, featured: false, content: 'A deep dive into Caribbean influence on drill music.' },
       { id: 1780257953675, title: 'What to Know About Haitian-Toronto music fusion in 2026', slug: 'what-to-know-about-haitian-toronto-music-fusion-in-2026', category: 'Toronto', date: 'May 31, 2026', dateNum: 1780257953675, featured: false, content: 'A deep dive into Haitian-Toronto music fusion.' },
       { id: 1780257768027, title: 'What to Know About Haitian Canadian artists to know in 2026', slug: 'what-to-know-about-haitian-canadian-artists-to-know-in-2026', category: 'Toronto', date: 'May 31, 2026', dateNum: 1780257768027, featured: false, content: 'A deep dive into Haitian Canadian artists to know.' },
-      { id: 8, title: 'Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked', slug: 'top-toronto-rappers', category: 'Music', date: 'May 31, 2026', dateNum: 1748736000000, featured: true, content: "The definitive list of the best Toronto rappers — from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more. Read the full article: https://younghadene.ca/blog/top-toronto-rappers.html" },
+      { id: 8, title: 'Best Toronto Rappers 2026 — Top Toronto Hip Hop Artists Ranked', slug: 'top-toronto-rappers', category: 'Music', date: 'May 31, 2026', dateNum: 1748736000000, featured: true, content: "The definitive list of the best Toronto rappers — from Drake to the underground drill scene. Includes Haitian-Toronto drill artist Young Hadene, Jazz Cartier, Sean Leon, and more. Read the full article: https://younghadene.ca/blog/top-toronto-rappers" },
       { id: 1, title: 'The Underground Toronto Sound: Why 2026 Is Different', slug: 'underground-toronto-sound-2026', category: 'Toronto', date: 'May 28, 2026', dateNum: 1748448000000, featured: false, content: "The city's hip-hop scene has shifted. From basement studios in Scarborough to sold-out shows at the Danforth Music Hall, Toronto's underground is louder and more authentic than ever. Here's what changed and who's leading it." },
       { id: 2, title: 'Late Night in the Lab — Building "No Sleep"', slug: 'late-night-lab-no-sleep', category: 'Studio Sessions', date: 'May 20, 2026', dateNum: 1747785600000, featured: false, content: 'The making of the heaviest track yet. From 3 AM melodies to 808s that shake the walls. Every great track starts with a late night. This one was no different — pulling inspiration from the empty Toronto streets at 3 AM, the hum of the city that never quite sleeps.' },
       { id: 3, title: 'Toronto After Midnight — A Dark Trap Diary', slug: 'toronto-after-midnight', category: 'Lifestyle', date: 'May 14, 2026', dateNum: 1747267200000, featured: false, content: 'Night drives through the 6ix, empty streets, and the inspiration that only comes after midnight. There is something about this city when the lights dim and the crowds disappear.' },
@@ -432,7 +446,7 @@
           "@type": "MusicGroup",
           "name": "Young Hadene"
         },
-        "url": "https://younghadene.ca/blog.html",
+        "url": "https://younghadene.ca/blog",
         "articleSection": post.category
       });
 
@@ -464,6 +478,5 @@
     document.addEventListener('DOMContentLoaded', renderBlog);
   </script>
   <script src="/js/main.js"></script>
-  <script>(function(){var d={path:location.pathname,referrer:document.referrer||'',ua:navigator.userAgent,pageTitle:document.title};if(navigator.sendBeacon){navigator.sendBeacon('/api/track',JSON.stringify(d))}else{var x=new XMLHttpRequest();x.open('POST','/api/track',true);x.setRequestHeader('Content-Type','application/json');x.send(JSON.stringify(d))}})();</script>
 </body>
 </html>

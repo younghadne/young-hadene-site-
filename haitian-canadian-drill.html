@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"></script>
+  <meta charset="UTF-8">
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-G6KR0GM63L');
+  (function(){
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function loadGtag(){
+      if (done) return; done = true;
+      evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
+  })();
 </script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Haitian-Canadian Music and Toronto Drill — Young Hadene</title>
   <meta name="description" content="How Haitian heritage meets Toronto drill and dark trap: the story behind Haitian-Canadian music in the 6ix, told through independent artist Young Hadene.">
-  <link rel="canonical" href="https://younghadene.ca/haitian-canadian-drill.html">
+  <link rel="canonical" href="https://younghadene.ca/haitian-canadian-drill">
   <meta property="og:title" content="Haitian-Canadian Music and Toronto Drill">
   <meta property="og:description" content="Haitian heritage meets Toronto drill and dark trap — how Haitian-Canadian music found a home in the 6ix underground.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-  <meta property="og:url" content="https://younghadene.ca/haitian-canadian-drill.html">
+  <meta property="og:url" content="https://younghadene.ca/haitian-canadian-drill">
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Haitian-Canadian Music and Toronto Drill">
@@ -38,16 +52,16 @@
     "description": "How Haitian heritage meets Toronto drill and dark trap: the story behind Haitian-Canadian music in the 6ix, told through independent artist Young Hadene.",
     "author": {
       "@type": "Person",
-      "@id": "https://younghadene.ca/about.html#person",
+      "@id": "https://younghadene.ca/about#person",
       "name": "Young Hadene",
-      "url": "https://younghadene.ca/about.html"
+      "url": "https://younghadene.ca/about"
     },
     "datePublished": "2026-10-11",
     "dateModified": "2026-10-11",
     "image": "https://younghadene.ca/images/poster1.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://younghadene.ca/haitian-canadian-drill.html"
+      "@id": "https://younghadene.ca/haitian-canadian-drill"
     }
   }
   </script>
@@ -57,8 +71,8 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://younghadene.ca/" },
-      { "@type": "ListItem", "position": 2, "name": "Toronto", "item": "https://younghadene.ca/blog.html" },
-      { "@type": "ListItem", "position": 3, "name": "Haitian-Canadian Music and Toronto Drill", "item": "https://younghadene.ca/haitian-canadian-drill.html" }
+      { "@type": "ListItem", "position": 2, "name": "Toronto", "item": "https://younghadene.ca/blog" },
+      { "@type": "ListItem", "position": 3, "name": "Haitian-Canadian Music and Toronto Drill", "item": "https://younghadene.ca/haitian-canadian-drill" }
     ]
   }
   </script>
@@ -98,13 +112,13 @@
 
   <section class="section" style="padding-top:120px;">
     <div class="container">
-      <a href="/blog.html" class="back-link">&#8592; Back to Blog</a>
+      <a href="/blog" class="back-link">&#8592; Back to Blog</a>
       <div class="article-wrap">
-        <nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/blog.html" style="color:var(--text-muted)">Toronto</a> &rsaquo; <span>Haitian-Canadian Drill</span></nav>
-        <div class="meta">October 11, 2026 &middot; <span>Toronto</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">Young Hadene</a></div>
+        <nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/blog" style="color:var(--text-muted)">Toronto</a> &rsaquo; <span>Haitian-Canadian Drill</span></nav>
+        <div class="meta">October 11, 2026 &middot; <span>Toronto</span> &middot; By <a href="/about" rel="author" style="color:inherit">Young Hadene</a></div>
         <h1>Haitian-Canadian Music and Toronto Drill</h1>
 
-        <p>Haitian-Canadian music meets Toronto drill wherever an artist carries both worlds at once — Haitian roots on one side, the 6ix underground on the other. <a href="/about.html">Young Hadene</a>, a Haitian-born, Toronto-raised independent artist working in drill and dark trap, is one working example of that connection. This article explains what the fusion actually sounds like, why Toronto was fertile ground for it, and where to hear it.</p>
+        <p>Haitian-Canadian music meets Toronto drill wherever an artist carries both worlds at once — Haitian roots on one side, the 6ix underground on the other. <a href="/about">Young Hadene</a>, a Haitian-born, Toronto-raised independent artist working in drill and dark trap, is one working example of that connection. This article explains what the fusion actually sounds like, why Toronto was fertile ground for it, and where to hear it.</p>
 
         <div class="takeaways">
           <h2>Key Takeaways</h2>
@@ -124,19 +138,19 @@
         <p>None of this means every Toronto drill artist draws on the same influences, and it would be wrong to treat whole communities as a single sound. The honest version is narrower: individual artists bring their own households, blocks, and playlists into the booth, and the city's drill scene is wide enough to hold all of it.</p>
 
         <h2>Where to Hear It</h2>
-        <p>New listeners can start with the tracks featured on this site's <a href="/music.html">music page</a>: "No Sleep," "6ix Side," "Pressure," and "After Dark" trace the range from hard drill energy to moodier trap. The full-length project <em>They Took Me Down</em> — eleven tracks released October 2, 2026 — collects that development in one place and is streaming on all platforms.</p>
-        <p>For the wider context, read <a href="/blog/inside-young-hadene-an-honest-look.html">an honest look at the artist behind the music</a> and browse the <a href="/blog.html">blog's Toronto coverage</a> for the scene around him.</p>
+        <p>New listeners can start with the tracks featured on this site's <a href="/music">music page</a>: "No Sleep," "6ix Side," "Pressure," and "After Dark" trace the range from hard drill energy to moodier trap. The full-length project <em>They Took Me Down</em> — eleven tracks released October 2, 2026 — collects that development in one place and is streaming on all platforms.</p>
+        <p>For the wider context, read <a href="/blog/inside-young-hadene-an-honest-look">an honest look at the artist behind the music</a> and browse the <a href="/blog">blog's Toronto coverage</a> for the scene around him.</p>
 
         <h2>Questions Listeners Ask</h2>
         <p><strong>Is Haitian-Canadian drill its own genre?</strong> Not formally — consider it a descriptor for drill and dark trap made by Haitian-Canadian artists, or music where that heritage audibly shapes the delivery. Genres get named by movements, not by single articles.</p>
         <p><strong>Does every Haitian-Toronto rapper sound the same?</strong> No. Shared heritage doesn't produce a shared formula; compare releases yourself and you'll hear how differently artists handle it.</p>
-        <p><strong>Where can independent Toronto artists be heard?</strong> Beyond the major streaming platforms, this site's <a href="/music.html">embedded players</a> and <a href="/blog.html">release coverage</a> follow the underground alongside the better-known names.</p>
+        <p><strong>Where can independent Toronto artists be heard?</strong> Beyond the major streaming platforms, this site's <a href="/music">embedded players</a> and <a href="/blog">release coverage</a> follow the underground alongside the better-known names.</p>
 
         <h2>References</h2>
         <ul>
           <li><a href="https://exposedvocals.com/press-room/young-hadene-releases-new-album-they-took-me-down/" target="_blank" rel="noopener">Exposed Vocals: Young Hadene releases 'They Took Me Down'</a> — album details and independent-release background.</li>
-          <li><a href="/about.html">About Young Hadene</a> — biography and sound.</li>
-          <li><a href="/editorial-policy.html">Editorial policy</a> — how this site's music coverage is produced and corrected.</li>
+          <li><a href="/about">About Young Hadene</a> — biography and sound.</li>
+          <li><a href="/editorial-policy">Editorial policy</a> — how this site's music coverage is produced and corrected.</li>
         </ul>
 
         <div class="cta-box">
@@ -163,18 +177,18 @@
           </div>
         </div>
         <div>
-          <h4>Navigate</h4>
+          <h2 class="footer-heading">Navigate</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/music">Music</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/press.html">Press</a></li>
+            <li><a href="/press">Press</a></li>
             <li><a href="/contact">Contact</a></li>
             <li><a href="/admin">Admin</a></li>
           </ul>
         </div>
         <div>
-          <h4>Music</h4>
+          <h2 class="footer-heading">Music</h2>
           <ul>
             <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener">Spotify</a></li>
             <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782">Apple Music</a></li>
@@ -183,12 +197,12 @@
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h2 class="footer-heading">Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
-            <li><a href="/contact.html">Bookings</a></li>
-            <li><a href="/contact.html">Press Kit</a></li>
-            <li><a href="/contact.html">Collaborate</a></li>
+            <li><a href="/contact">Bookings</a></li>
+            <li><a href="/contact">Press Kit</a></li>
+            <li><a href="/contact">Collaborate</a></li>
           </ul>
         </div>
       </div>

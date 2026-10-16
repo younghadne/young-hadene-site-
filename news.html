@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"></script>
+  <meta charset="UTF-8">
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-G6KR0GM63L');
+  (function(){
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    function loadGtag(){
+      if (done) return; done = true;
+      evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L';
+      document.head.appendChild(s);
+    }
+    evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
+  })();
 </script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>News — Young Hadene: Releases, Shows & Toronto Drill Updates</title>
   <meta name="description" content="Official Young Hadene newsroom: new releases, show announcements, videos, and Toronto drill and dark trap updates — reported first-hand from the 6ix.">
-  <link rel="canonical" href="https://younghadene.ca/news.html">
+  <link rel="canonical" href="https://younghadene.ca/news">
   <meta property="og:title" content="News — Young Hadene">
   <meta property="og:description" content="Releases, shows, videos, and Toronto drill scene updates — straight from the source.">
   <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
-  <meta property="og:url" content="https://younghadene.ca/news.html">
+  <meta property="og:url" content="https://younghadene.ca/news">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="News — Young Hadene">
@@ -31,10 +45,10 @@
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
     "name": "Young Hadene News",
-    "url": "https://younghadene.ca/news.html",
+    "url": "https://younghadene.ca/news",
     "logo": "https://younghadene.ca/images/poster1.png",
-    "publishingPrinciples": "https://younghadene.ca/editorial-policy.html",
-    "correctionsPolicy": "https://younghadene.ca/corrections-policy.html"
+    "publishingPrinciples": "https://younghadene.ca/editorial-policy",
+    "correctionsPolicy": "https://younghadene.ca/corrections-policy"
   }
   </script>
   <link rel="stylesheet" href="css/style.css">
@@ -76,14 +90,14 @@
     <div class="container">
       <span class="section-label">Newsroom</span>
       <h1 class="section-title">Latest <span class="text-accent">News</span></h1>
-      <p class="section-subtitle">Releases, shows, videos, and Toronto drill updates — reported first-hand from the 6ix. This is the artist's own newsroom; for independent interviews and outside coverage, see <a href="/press.html" style="color:var(--accent);">Press &amp; Features</a>.</p>
+      <p class="section-subtitle">Releases, shows, videos, and Toronto drill updates — reported first-hand from the 6ix. This is the artist's own newsroom; for independent interviews and outside coverage, see <a href="/press" style="color:var(--accent);">Press &amp; Features</a>.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
       <div class="news-grid">
-        <a class="news-card" href="/news/exposed-vocals-feature-they-took-me-down.html">
+        <a class="news-card" href="/news/exposed-vocals-feature-they-took-me-down">
           <img src="images/poster1.webp" alt="Young Hadene 'They Took Me Down' album press feature" loading="lazy">
           <div class="news-card-body">
             <span class="cat">Press</span>
@@ -92,7 +106,7 @@
             <span class="date">October 10, 2026 · By Young Hadene</span>
           </div>
         </a>
-        <a class="news-card" href="/news/they-took-me-down-album-spotlight.html">
+        <a class="news-card" href="/news/they-took-me-down-album-spotlight">
           <img src="images/poster3.webp" alt="Young Hadene dark trap album spotlight visual" loading="lazy">
           <div class="news-card-body">
             <span class="cat">Music</span>
@@ -101,7 +115,7 @@
             <span class="date">October 10, 2026 · By Young Hadene</span>
           </div>
         </a>
-        <a class="news-card" href="/news/young-hadene-launches-official-newsroom.html">
+        <a class="news-card" href="/news/young-hadene-launches-official-newsroom">
           <img src="images/poster5.webp" alt="Young Hadene official newsroom launch" loading="lazy">
           <div class="news-card-body">
             <span class="cat">Announcement</span>
@@ -111,7 +125,7 @@
           </div>
         </a>
       </div>
-      <p style="text-align:center;margin-top:32px;font-size:.8rem;color:var(--text-muted);">News tips or corrections: <a href="mailto:contact@younghadene.ca" style="color:var(--accent);">contact@younghadene.ca</a> · <a href="/editorial-policy.html" style="color:var(--accent);">Editorial Policy</a></p>
+      <p style="text-align:center;margin-top:32px;font-size:.8rem;color:var(--text-muted);">News tips or corrections: <a href="mailto:contact@younghadene.ca" style="color:var(--accent);">contact@younghadene.ca</a> · <a href="/editorial-policy" style="color:var(--accent);">Editorial Policy</a></p>
     </div>
   </section>
 
@@ -129,19 +143,19 @@
           </div>
         </div>
         <div>
-          <h4>Navigate</h4>
+          <h2 class="footer-heading">Navigate</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/music">Music</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/press.html">Press</a></li>
+            <li><a href="/press">Press</a></li>
             <li><a href="/news">News</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/contact">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4>Newsroom</h4>
+          <h2 class="footer-heading">Newsroom</h2>
           <ul>
             <li><a href="/news">Latest News</a></li>
             <li><a href="/editorial-policy">Editorial Policy</a></li>
@@ -149,7 +163,7 @@
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h2 class="footer-heading">Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
             <li><a href="/contact">Bookings</a></li>
@@ -195,7 +209,7 @@
         function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
         var html = fresh.map(function (p) {
           var blurb = p.excerpt || String(p.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 140);
-          return '<a class="news-card" href="/news/' + esc(p.slug) + '.html">'
+          return '<a class="news-card" href="/news/' + esc(p.slug) + '">'
             + '<div class="news-card-body"><span class="cat">' + esc(p.category || 'News') + '</span>'
             + '<h2>' + esc(p.title) + '</h2><p>' + esc(blurb) + '</p>'
             + '<span class="date">' + esc(p.date || '') + ' · By Young Hadene</span></div></a>';

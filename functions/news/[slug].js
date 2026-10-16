@@ -112,6 +112,12 @@ function fmtStamp(ms) {
   } catch { return ''; }
 }
 
+// Suffix only when it keeps the title <= 60 chars.
+function newsTitle(t) {
+  const s = String(t || '');
+  return (s + ' — Young Hadene News').length > 60 ? s : s + ' — Young Hadene News';
+}
+
 function buildNewsHtml(d, related) {
   const pubMs = Number(d.dateNum || 0) || null;
   const iso = new Date(pubMs || Date.now()).toISOString();
@@ -123,25 +129,25 @@ function buildNewsHtml(d, related) {
   const ogTitle = d.ogTitle || d.title;
   const ogDesc = d.ogDesc || desc;
   const ogImage = d.ogImage || (SITE_URL + '/images/poster1.png');
-  const canon = d.canonical || (SITE_URL + '/news/' + d.slug + '.html');
+  const canon = String(d.canonical || (SITE_URL + '/news/' + d.slug)).replace(/^https?:\/\/(www\.)?younghadene\.ca/i, SITE_URL).replace(/\.html$/i, '');
   const author = d.author || 'Young Hadene';
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: d.title || '', description: desc, image: d.image || (SITE_URL + '/images/poster1.png'),
     datePublished: iso, dateModified: modIso,
-    author: { '@type': 'Person', '@id': SITE_URL + '/about.html#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about.html' },
+    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about' },
     publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
   const hero = d.image
     ? `<img src="${escHtml(d.image)}" alt="${escHtml(d.imageAlt || d.title)}" loading="lazy" style="max-width:100%;border-radius:12px;margin:0 0 24px;">`
     : '';
-  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/news.html" style="color:var(--text-muted)">News</a> &rsaquo; <span>${escHtml(d.category || 'News')}</span></nav>`;
+  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/news" style="color:var(--text-muted)">News</a> &rsaquo; <span>${escHtml(d.category || 'News')}</span></nav>`;
   const relBox = related && related.length
-    ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}.html">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
+    ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
   return `<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-G6KR0GM63L"><\/script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-G6KR0GM63L');<\/script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">` +
-    `<title>${escHtml(pageTitle)} — Young Hadene News</title>` +
+    `<title>${escHtml(newsTitle(pageTitle))}</title>` +
     `<meta name="description" content="${desc}">` +
     `<link rel="canonical" href="${escHtml(canon)}">` +
     `<meta property="og:title" content="${escHtml(ogTitle)}">` +
@@ -159,12 +165,12 @@ function buildNewsHtml(d, related) {
     `<script type="application/ld+json">${schema}<\/script>` +
     `<style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:16px;line-height:1.08}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta a{color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading)}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic}</style>` +
     `</head><body>` +
-    `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link">Blog</a></li><li><a href="/news.html" class="nav-link active">News</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header>` +
-    `<section class="section" style="padding-top:120px;"><div class="container"><a href="/news.html" class="back-link">&#8592; Back to News</a><div class="article-wrap">` +
+    `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music" class="nav-link">Music</a></li><li><a href="/blog" class="nav-link">Blog</a></li><li><a href="/news" class="nav-link active">News</a></li><li><a href="/contact" class="nav-link">Contact</a></li></ul></nav></div></header>` +
+    `<section class="section" style="padding-top:120px;"><div class="container"><a href="/news" class="back-link">&#8592; Back to News</a><div class="article-wrap">` +
     crumbs +
-    `<div class="meta">${escHtml(stamp)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about.html" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
+    `<div class="meta">${escHtml(stamp)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${relBox}` +
-    `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:32px 0 0;">Young Hadene News is the artist's official newsroom. Read our <a href="/editorial-policy.html" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy.html" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
+    `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:32px 0 0;">Young Hadene News is the artist's official newsroom. Read our <a href="/editorial-policy" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
     `</div></div></section>` +
     `<footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; Young Hadene. All rights reserved. Toronto. 6ix.</p></div></div></footer>` +
     `<script src="../js/main.js"></script></body></html>`;
@@ -205,7 +211,8 @@ async function notFound(env) {
 
 async function countView(store, slug) {
   // Disabled 2026-10-11: per-view KV writes exhausted the 1,000/day quota and
-  // blocked real publishes. Views are tracked via the /api/track beacon.
+  // blocked real publishes. The client /api/track beacon was also removed
+  // (no Function handled it; it returned 405), so views are not counted.
   return;
 }
 
@@ -246,7 +253,7 @@ export async function onRequestGet(context) {
       if (redirs[slug]) {
         return new Response(null, {
           status: 301,
-          headers: { Location: '/news/' + redirs[slug] + '.html', 'Cache-Control': 'max-age=3600' },
+          headers: { Location: '/news/' + redirs[slug], 'Cache-Control': 'max-age=3600' },
         });
       }
     }
