@@ -7,6 +7,8 @@
 // (pre-KV legacy posts), then the site 404.
 //
 // Allows both /blog/<slug> and /blog/<slug>.html
+import { BLOG_REDIRECTS, BLOG_STATIC_FIRST } from '../_blog-redirects.js';
+
 const SITE_URL = 'https://younghadene.ca';
 const GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
 const SPOTIFY_URL = 'https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA';
@@ -217,6 +219,10 @@ export async function onRequestGet(context) {
     const raw = String((params && params.slug) || '').replace(/\.html$/i, '');
     const slug = slugify(raw);
     if (!slug || slug === 'index') return env.ASSETS.fetch(request);
+    if (Object.prototype.hasOwnProperty.call(BLOG_REDIRECTS, slug)) {
+      return new Response(null, { status: 301, headers: { Location: BLOG_REDIRECTS[slug], 'Cache-Control': 'max-age=3600' } });
+    }
+    if (BLOG_STATIC_FIRST.has(slug)) return env.ASSETS.fetch(request);
     const store = env && env.YH_POSTS;
     if (store) {
       const tomb = await readTomb(store);
