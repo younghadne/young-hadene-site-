@@ -1863,3 +1863,34 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 /* Defer decorative background posters until their card scrolls into view (.visible from IntersectionObserver) */
 .feature-card.fade-in:not(.visible) > div[style*="poster"], .newsletter-inner.fade-in:not(.visible) { background-image: none !important; }
 .footer-social svg { width: 20px; height: 20px; fill: currentColor; }
+
+/* ============================
+   BATCH 2 — cinematic hero (visual-spec-batch2 §1)
+   ============================ */
+:root {
+  --dur-1: 120ms; --dur-2: 200ms; --dur-3: 400ms; --dur-4: 600ms;
+  --ease-out: cubic-bezier(.2,.7,.2,1); --ease-in-out: cubic-bezier(.65,0,.35,1);
+}
+.hero-particles, .hero-ground-streak, .hero-links, .hero-badge { display: none !important; }
+.hero-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;
+  object-fit: cover; opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-4) var(--ease-out);
+}
+.hero-video.is-playing { opacity: .55; }
+.hero-gradient {
+  background:
+    radial-gradient(120% 60% at 50% 100%, rgba(200,16,46,.10), transparent 70%),
+    linear-gradient(180deg, rgba(7,7,10,.55) 0%, rgba(7,7,10,.15) 45%, rgba(7,7,10,.85) 82%, #07070A 100%);
+}
+.hero-title { font-size: clamp(4rem, 14vw, 11rem); line-height: .88; }
+.hero .hero-subtitle {
+  font-family: 'Inter', var(--font-body); font-weight: 500; text-transform: uppercase;
+  letter-spacing: .12em; font-size: clamp(0.875rem, 2vw, 1.125rem);
+  color: rgba(237,235,230,.8); margin: 12px 0 24px;
+}
+.btn-stream { min-height: 52px; border-radius: 2px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; box-shadow: none; }
+@media (max-width: 767px) {
+  .hero-actions { max-width: none; }
+  .hero-actions .btn-stream { width: 100%; }
+}
