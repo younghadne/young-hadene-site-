@@ -106,6 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
   });
 
+
+  // ---- Netflix-style videos: tap-to-load facade + row arrows ----
+  const nfvFrame = (id, title) => { const f = document.createElement('iframe'); f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0'; f.title = title || 'YouTube video'; f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'; f.allowFullscreen = true; return f; };
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('a.nfv-card');
+    if (card && card.dataset.id) { e.preventDefault(); const t = card.querySelector('.nfv-thumb'); if (t && !t.querySelector('iframe')) { const f = nfvFrame(card.dataset.id, card.textContent.trim()); t.replaceChildren(f); f.focus(); } return; }
+    const play = e.target.closest('.nfv-btn-play');
+    if (play) { const bill = play.closest('.nfv-bill'); const m = bill && bill.querySelector('.nfv-bill-media'); if (m && !m.querySelector('iframe')) { const f = nfvFrame(play.dataset.id, play.getAttribute('aria-label')); m.replaceChildren(f); bill.classList.add('playing'); f.focus(); } return; }
+    const arrow = e.target.closest('.nfv-arrow');
+    if (arrow) { const tr = arrow.closest('.nfv-row').querySelector('.nfv-track'); const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; tr.scrollBy({ left: Number(arrow.dataset.dir) * tr.clientWidth * 0.9, behavior: rm ? 'auto' : 'smooth' }); }
+  });
+
   // ---- Header scroll effect ----
   const header = document.querySelector('.header');
   let lastScroll = 0;
