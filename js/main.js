@@ -221,3 +221,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function later() { window.requestIdleCallback ? requestIdleCallback(start, { timeout: 2000 }) : setTimeout(start, 200); }
   document.readyState === 'complete' ? later() : addEventListener('load', later, { once: true });
 })();
+
+// ---- Batch 2: album sticky Stream bar (shown once the deep-link row scrolls away, hidden at the end row) ----
+(function () {
+  var bar = document.querySelector('.album-sticky'), row = document.getElementById('album-links'), end = document.querySelector('.album-end');
+  if (!bar || !row || !('IntersectionObserver' in window)) return;
+  var a = bar.querySelector('a'), past = false, atEnd = false;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.target === row) past = !e.isIntersecting && e.boundingClientRect.top < 0;
+      else atEnd = e.isIntersecting;
+    });
+    var on = past && !atEnd;
+    bar.classList.toggle('is-shown', on);
+    bar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    a.tabIndex = on ? 0 : -1;
+  });
+  io.observe(row); if (end) io.observe(end);
+})();

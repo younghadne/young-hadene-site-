@@ -181,7 +181,7 @@
 @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
 </style>
 </head>
-<body>
+<body class="album-page">
 <header class="header">
     <div class="header-inner">
       <a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a>
@@ -189,8 +189,8 @@
       <nav>
         <ul class="nav-list">
           <li><a href="/" class="nav-link">Home</a></li>
-          <li><a href="/music" class="nav-link">Music</a></li>
-          <li><a href="/blog" class="nav-link active">Blog</a></li>
+          <li><a href="/music" class="nav-link active">Music</a></li>
+          <li><a href="/blog" class="nav-link">Blog</a></li>
           <li><a href="/news" class="nav-link">News</a></li>
           <li><a href="/about" class="nav-link">About</a></li>
           <li><a href="/contact" class="nav-link">Contact</a></li>
@@ -202,8 +202,16 @@
 <section class="section" style="padding-top:120px;">
 <div class="container">
 <a href="/music" class="back-link">&#8592; Back to Music</a>
-<div class="article-wrap">
+<div class="album-layout">
+<aside class="album-aside">
+<picture class="album-cover"><source media="(max-width: 767px)" srcset="/images/poster1-640.webp" type="image/webp"><img src="/images/poster1-960.webp" width="960" height="960" alt="" fetchpriority="high" decoding="async"></picture>
+<a class="btn btn-primary btn-stream album-stream-desk" href="https://music.apple.com/ca/album/they-took-me-down/6816007984" target="_blank" rel="noopener">Stream Now</a>
+</aside>
+<div class="article-wrap album-main">
 <h1>They Took Me Down</h1>
+<p class="album-meta">Album · <span class="signal">2026</span> · 11 tracks · ~20 min</p>
+<p class="album-byline">Young Hadene · Str8hitsRecords</p>
+<ul class="album-links" id="album-links" aria-label="Stream They Took Me Down"><li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.85-1.74-6.45-2.14-10.68-1.17a.75.75 0 1 1-.33-1.46c4.63-1.06 8.6-.6 11.77 1.34.36.22.47.68.25 1.04zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.26-2-8.24-2.59-12.1-1.42a.94.94 0 1 1-.54-1.8c4.4-1.33 9.88-.68 13.62 1.62.44.27.58.85.31 1.29zm.13-3.4C15.2 8.3 8.76 8.08 5.03 9.21a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 11.4-1.05 15.9 1.62a1.12 1.12 0 1 1-1.15 1.93z"/></svg><span>Spotify</span></a></li><li><a href="https://music.apple.com/ca/album/they-took-me-down/6816007984" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 2.5v13.2a3.3 3.3 0 1 1-2-3V6.9L9 9v8.7a3.3 3.3 0 1 1-2-3V4.6z"/></svg><span>Apple Music</span></a></li><li><a href="https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg><span>YouTube</span></a></li><li><a href="https://soundcloud.com/young_hadene" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1 14.5l.4-2.2L1 10c0-.1-.1-.2-.2-.2s-.2.1-.2.2l-.3 2.3.3 2.2c0 .1.1.2.2.2s.2-.1.2-.2zm2.1 1.2l.5-3.4-.5-5.3c0-.1-.1-.2-.3-.2-.1 0-.2.1-.2.2l-.4 5.3.4 3.4c0 .1.1.2.2.2.2 0 .3-.1.3-.2zm2.2.1l.4-3.5-.4-6.5c0-.2-.2-.3-.3-.3-.2 0-.3.1-.3.3l-.4 6.5.4 3.5c0 .2.1.3.3.3.1 0 .3-.1.3-.3zm2.2 0l.4-3.5-.4-7.4c0-.2-.2-.4-.4-.4s-.4.2-.4.4l-.3 7.4.3 3.5c0 .2.2.4.4.4s.4-.2.4-.4zm2.3 0l.3-3.5-.3-7.6c0-.3-.2-.5-.5-.5s-.4.2-.5.5l-.3 7.6.3 3.5c0 .3.2.5.5.5s.5-.2.5-.5zm10.9.4A3.3 3.3 0 0 0 24 12.9a3.3 3.3 0 0 0-4.6-3 6 6 0 0 0-6-5.5c-.7 0-1.4.1-2 .4-.3.1-.3.2-.3.4v11c0 .3.2.5.4.5z"/></svg><span>SoundCloud</span></a></li></ul>
 <h2>About the album</h2>
 <p><em>They Took Me Down</em> is an 11-track album from Young Hadene, released on October 2, 2026 through his independent imprint, Str8hitsRecords.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> It runs about 20 minutes, and Apple Music files it under Hip-Hop/Rap.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <p>Young Hadene was born in Haiti, spent part of his childhood in Florida and is now based in Toronto. That route runs through his work, and you can read more of it in <a href="/blog/young-hadene-haitian-toronto-story">his Haitian-Toronto story</a> or on the <a href="/about">about page</a>. He puts out his music independently, and <em>They Took Me Down</em> is his newest full-length release.</p>
@@ -211,7 +219,7 @@
 <h2>The sound</h2>
 <p>Young Hadene makes Toronto drill and dark trap. If those are new to you, start with <a href="/blog/what-is-toronto-drill-music">what Toronto drill music is</a> and <a href="/blog/dark-trap-vs-drill-differences">how dark trap differs from drill</a>. The tracks on <em>They Took Me Down</em> are short, between about one and three minutes each, so the whole album plays straight through in one sitting.<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <h2>Tracklist</h2>
-<ol>
+<ol class="tracklist">
 <li>Out the Mud</li>
 <li>Bandz on Bandz</li>
 <li>Final Warning</li>
@@ -232,6 +240,7 @@
 <li><a href="https://www.youtube.com/@Young_Hadene">YouTube</a></li>
 </ul>
 <p>Find the rest of the catalogue on the <a href="/music">music page</a>, or go back <a href="/">home</a>.</p>
+<details class="album-credits"><summary>Credits</summary><dl><dt>Artist</dt><dd>Young Hadene</dd><dt>Label</dt><dd>Str8hitsRecords</dd><dt>℗</dt><dd>2026 str8hitsrecords</dd></dl></details>
 <div class="footnote">
 <hr />
 <ol>
@@ -243,6 +252,9 @@
 </li>
 </ol>
 </div>
+<nav class="album-end" aria-label="Keep going"><a href="/music">More music <span aria-hidden="true">&#8594;</span></a><a href="/#join-the-6ix">Join The 6ix <span aria-hidden="true">&#8594;</span></a></nav>
+</div>
+<div class="album-sticky" aria-hidden="true"><img src="/images/poster1-640.webp" width="40" height="40" alt=""><span>They Took Me Down</span><a class="btn btn-primary" href="#album-links" tabindex="-1">Stream</a></div>
 </div>
 </div>
 </section>
