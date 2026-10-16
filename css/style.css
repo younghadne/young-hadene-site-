@@ -1798,3 +1798,7 @@ html { scroll-behavior: auto; }
 #releases { scroll-margin-top: var(--header-height); }
 .releases-stream { margin: 0 0 32px; }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* WebKit 390px overflow fix: long unbroken footnote URLs (S&S Apple Music source) pushed the page 6px wide */
+.album-page .article-wrap p, .album-page .footnote li, .album-page .album-credits dd { overflow-wrap: anywhere; }
+.album-page > .section { overflow-x: clip; }
