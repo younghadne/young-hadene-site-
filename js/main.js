@@ -139,7 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }, observerOptions);
 
   // stagger siblings via --i (capped at 6 in CSS)
-  fadeElements.forEach(el => { if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
+  // Content is visible by default (no-JS safe); hide-for-reveal only once JS runs.
+  // Anything already in the viewport is marked visible first so it never flashes out.
+  const vh = window.innerHeight;
+  fadeElements.forEach(el => { const r = el.getBoundingClientRect(); if (r.top < vh && r.bottom > 0) el.classList.add('visible'); });
+  document.documentElement.classList.add('reveal-ready');
+  fadeElements.forEach(el => { if (el.classList.contains('visible')) return; if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
 
   // ---- Play button handler ----
   document.querySelectorAll('.btn-play').forEach(btn => {
