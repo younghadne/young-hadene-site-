@@ -203,3 +203,6 @@
 /blog/youtube-visuals-for-underground-rap-2026-2026-guide.html /blog/how-to-promote-rap-music-in-toronto 301
 /blog/haitian-rappers-in-toronto-new-generation /blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation 301
 /blog/haitian-rappers-in-toronto-new-generation.html /blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation 301
+
+# Stale duplicate sitemap -> canonical sitemap (fixes sitemap_fresh.xml drift).
+/sitemap_fresh.xml /sitemap.xml 301
