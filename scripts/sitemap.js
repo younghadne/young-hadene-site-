@@ -34,7 +34,7 @@ function gitDate(file) {
   try { return execFileSync('git', ['log', '-1', '--format=%cs', '--', file], { cwd: ROOT }).toString().trim(); } catch { return ''; }
 }
 function pages() {
-  const out = [];
+  const out = [], seen = new Set();
   for (const file of walk(ROOT)) {
     const rel = path.relative(ROOT, file).replace(/\\/g, '/');
     let url = '/' + rel.replace(/\.html$/, '').replace(/(^|\/)index$/, '');
@@ -46,6 +46,8 @@ function pages() {
     if (m && (m[1] === 'blog' ? REDIRECTS[m[2]] : NOINDEX.has(m[2]))) continue;
     const can = (html.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
     if (can && can.replace(SITE, '').replace(/\/$/, '') !== (url === '/' ? '' : url)) continue;
+    if (seen.has(url)) continue; // e.g. blog.html and blog/index.html both = /blog
+    seen.add(url);
     out.push({ url, file: rel });
   }
   return out.sort((a, b) => (a.url === '/' ? -1 : b.url === '/' ? 1 : a.url.localeCompare(b.url)));
@@ -76,8 +78,10 @@ function fileFor(u) {
   return null;
 }
 function validate(list) {
-  const errs = [], redir = redirectSources();
+  const errs = [], redir = redirectSources(), dup = new Set();
   for (const loc of list) {
+    if (dup.has(loc)) errs.push(`duplicate URL: ${loc}`);
+    dup.add(loc);
     const u = loc.replace(SITE, '') || '/';
     if (!loc.startsWith(SITE + '/')) { errs.push(`not on ${SITE}: ${loc}`); continue; }
     if (/\.html$/.test(u)) errs.push(`ends in .html: ${loc}`);
