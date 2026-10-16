@@ -1,0 +1,9 @@
+# Keep admin pages out of search/AI indexes (meta robots is also set in the HTML).
+/admin
+  X-Robots-Tag: noindex, nofollow
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+/admin-email
+  X-Robots-Tag: noindex, nofollow
+/admin-email.html
+  X-Robots-Tag: noindex, nofollow
