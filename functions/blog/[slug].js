@@ -206,7 +206,8 @@ async function notFound(env) {
 
 async function countView(store, slug) {
   // Disabled 2026-10-11: per-view KV writes exhausted the 1,000/day quota and
-  // blocked real publishes. Views are tracked via the /api/track beacon.
+  // blocked real publishes. The client /api/track beacon was also removed
+  // (no Function handled it; it returned 405), so views are not counted.
   return;
 }
 
