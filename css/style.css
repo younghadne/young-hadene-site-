@@ -1762,3 +1762,7 @@ html { scroll-behavior: auto; }
 /* Section headline accent words use the full accent (large type >= 24px) — beats .text-accent (--accent-text) */
 .section-title .text-accent { color: var(--accent); }
 
+/* Tap targets: footer links >= 44px tall without moving layout (padding offset by negative margin) */
+.footer ul li a, .footer-bottom-links a { padding-block: 14px; margin-block: -14px; }
+/* Footnote/superscript links: >= 24px tap area */
+sup a { padding: 4px 9px; }
