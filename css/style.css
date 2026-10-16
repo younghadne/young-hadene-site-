@@ -1225,7 +1225,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: scale(1.1);
 }
 
-.service-card h3 {
+.service-card h3, .service-card h2 {
   font-size: 1.3rem;
   margin-bottom: 12px;
   position: relative;
@@ -1510,7 +1510,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-lift);
   border-color: var(--accent);
 }
-.feature-card h3, .service-card h3 {
+.feature-card h3, .service-card h3, .service-card h2 {
   letter-spacing: 0.03em;
 }
 .blog-card-image img, .featured-image img, .gallery-card img, .about-image img {
@@ -2095,3 +2095,16 @@ body .article-wrap .meta span{color:#79C043}
 
 /* Mobile header: the off-canvas <nav> stays a 0-width flex item after the button, so space-between centred the button; pin it right */
 @media (max-width:768px){.header-inner>.hamburger{margin-left:auto}}
+
+/* =====================================================================
+   RETAG COMPENSATION (seo-cleanup, PR #7). Headings promoted one level
+   to fix skipped levels keep the exact metrics the old h3/h4 had under
+   Ninefold: Anton (var(--font-heading)), uppercase, the base h1-h6
+   line-height 1.1, and their original sizes/margins/colours. Overrides
+   Ninefold's h2 display rule (letter-spacing -0.01em, line-height .95)
+   and the page-level .article-wrap h2/h3 rules.
+   ===================================================================== */
+.service-card h2{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;letter-spacing:.03em;line-height:1.1;text-transform:uppercase;margin:0 0 12px}
+.article-wrap .artist-card .info h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;letter-spacing:.04em;line-height:1.1;text-transform:uppercase;margin:0 0 4px;color:inherit}
+.article-wrap .az-card h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;letter-spacing:.04em;line-height:1.1;text-transform:uppercase;margin:0 0 8px;color:var(--accent)}
+.article-wrap .cta-box h2{font-family:var(--font-heading);font-size:1.15rem;font-weight:700;letter-spacing:.03em;line-height:1.1;text-transform:uppercase;margin:0 0 10px;color:var(--text-primary)}
