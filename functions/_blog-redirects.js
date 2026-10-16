@@ -108,5 +108,7 @@ export const BLOG_REDIRECTS = {
 // Slugs whose staged static page (blog/<slug>.html) must win over an older
 // KV doc with the same slug, until the KV copy is updated via the admin.
 export const BLOG_STATIC_FIRST = new Set([
+  "young-hadene-music-videos",
+  "young-hadene-shorts",
   'haitian-rappers-in-toronto-young-hadene-and-the-new-generation',
 ]);
