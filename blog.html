@@ -210,7 +210,7 @@
       <div class="container">
         <div class="blog-grid" id="blogGrid"><article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">BEHIND</span>
+      <span class="card-art-label">BEHIND THE SCENES</span>
       <span class="category-tag">Behind The Scenes</span>
     </div>
     <div class="blog-card-body">
@@ -222,7 +222,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">BEHIND</span>
+      <span class="card-art-label">BEHIND THE SCENES</span>
       <span class="category-tag">Behind The Scenes</span>
     </div>
     <div class="blog-card-body">
@@ -246,7 +246,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">BEHIND</span>
+      <span class="card-art-label">BEHIND THE SCENES</span>
       <span class="category-tag">Behind The Scenes</span>
     </div>
     <div class="blog-card-body">
@@ -270,7 +270,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">TORONT</span>
+      <span class="card-art-label">TORONTO</span>
       <span class="category-tag">Toronto</span>
     </div>
     <div class="blog-card-body">
@@ -282,7 +282,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">TORONT</span>
+      <span class="card-art-label">TORONTO</span>
       <span class="category-tag">Toronto</span>
     </div>
     <div class="blog-card-body">
@@ -294,7 +294,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">TORONT</span>
+      <span class="card-art-label">TORONTO</span>
       <span class="category-tag">Toronto</span>
     </div>
     <div class="blog-card-body">
@@ -306,7 +306,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">TORONT</span>
+      <span class="card-art-label">TORONTO</span>
       <span class="category-tag">Toronto</span>
     </div>
     <div class="blog-card-body">
@@ -318,7 +318,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">STUDIO</span>
+      <span class="card-art-label">STUDIO SESSIONS</span>
       <span class="category-tag">Studio Sessions</span>
     </div>
     <div class="blog-card-body">
@@ -330,7 +330,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">LIFEST</span>
+      <span class="card-art-label">LIFESTYLE</span>
       <span class="category-tag">Lifestyle</span>
     </div>
     <div class="blog-card-body">
@@ -342,7 +342,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">BEHIND</span>
+      <span class="card-art-label">BEHIND THE SCENES</span>
       <span class="category-tag">Behind The Scenes</span>
     </div>
     <div class="blog-card-body">
@@ -366,7 +366,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">TORONT</span>
+      <span class="card-art-label">TORONTO</span>
       <span class="category-tag">Toronto</span>
     </div>
     <div class="blog-card-body">
@@ -378,7 +378,7 @@
   </article>
         <article class="blog-card">
     <div class="blog-card-image">
-      <span class="card-art-label">STUDIO</span>
+      <span class="card-art-label">STUDIO SESSIONS</span>
       <span class="category-tag">Studio Sessions</span>
     </div>
     <div class="blog-card-body">
@@ -698,7 +698,7 @@
         return `
         <article class="blog-card fade-in">
           <div class="blog-card-image">
-            <span class="card-art-label">${post.category.substring(0, 6).toUpperCase()}</span>
+            <span class="card-art-label">${escapeHtml(post.category).toUpperCase()}</span>
             <span class="category-tag">${escapeHtml(post.category)}</span>
           </div>
           <div class="blog-card-body">

@@ -1086,7 +1086,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .blog-card-image .card-art-label {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: clamp(0.9rem, 3.2vw, 1.2rem);
+  white-space: nowrap;
   color: rgba(255, 255, 255, 0.05);
   letter-spacing: 0.1em;
 }
