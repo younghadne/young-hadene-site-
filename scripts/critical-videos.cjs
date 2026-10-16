@@ -33,6 +33,7 @@ const pages = [['videos.html', '/videos.html'], ['videos/shorts.html', '/videos/
       return ser(sheet.cssRules, 'r');
     }, [...keep]);
     await p.close();
+    out += '.back-link{display:inline-flex;align-items:center;min-height:44px}';
     out = out.replace(/url\("?\.\.\/fonts\//g, 'url("/fonts/');
     let html = fs.readFileSync(file, 'utf8');
     html = html.replace(/\n?<style id="critical-css">[\s\S]*?<\/style>/, '');
