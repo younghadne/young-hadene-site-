@@ -1767,3 +1767,7 @@ html { scroll-behavior: auto; }
 .footer ul li a, .footer-bottom-links a { padding-block: 14px; margin-block: -14px; }
 /* Footnote/superscript links: >= 24px tap area */
 sup a, .footnote-backref, .about-content a[href="/about"] { padding: 4px 10px; margin: -4px -10px; }
+/* Newsletter label: light text + accent bar (contrast >= 4.5:1 over poster bg) */
+.newsletter-inner .section-label { color: #EDEBE6 !important; }
+.newsletter-inner .section-label::before { content: ""; display: block; width: 24px; height: 2px; background: var(--accent); margin-bottom: 8px; }
+@media (max-width: 768px) { .newsletter-inner .section-label::before { margin-left: auto; margin-right: auto; } }
