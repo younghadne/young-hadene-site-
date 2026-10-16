@@ -1781,9 +1781,3 @@ html { scroll-behavior: auto; }
 @media (hover: hover) and (pointer: fine) { .look-rail .poster-tile:hover img { filter: none; } }
 @media (min-width: 768px) { .look-rail { overflow: visible; } .look-rail li { flex: 1 1 0; } }
 
-/* Batch 2: neutral album-cover placeholder (no image weight) until real cover art arrives */
-.album-cover--ph { aspect-ratio: 1; background: #07070A; border: 1px solid #2A2A2A; display: flex; align-items: center; justify-content: center; padding: 8%; box-sizing: border-box; }
-.album-cover--ph span { font-family: 'Anton', 'Impact', sans-serif; color: #8A8794; font-size: clamp(2rem, 9vw, 3.5rem); line-height: 1; text-transform: uppercase; text-align: center; }
-.album-cover--ph::after { display: none; }
-@media (min-width: 1024px) { .album-cover--ph span { font-size: clamp(2rem, 3.2vw, 3rem); } }
-.album-thumb-ph { flex: 0 0 40px !important; width: 40px; height: 40px; background: #07070A; border: 1px solid #2A2A2A; box-sizing: border-box; }
