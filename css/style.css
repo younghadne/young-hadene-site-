@@ -1765,4 +1765,4 @@ html { scroll-behavior: auto; }
 /* Tap targets: footer links >= 44px tall without moving layout (padding offset by negative margin) */
 .footer ul li a, .footer-bottom-links a { padding-block: 14px; margin-block: -14px; }
 /* Footnote/superscript links: >= 24px tap area */
-sup a { padding: 4px 10px; }
+sup a, .footnote-backref, .about-content a[href="/about"] { padding: 4px 10px; margin: -4px -10px; }
