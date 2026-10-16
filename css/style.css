@@ -1872,7 +1872,7 @@ input,textarea,select{background:var(--surface);color:var(--paper);border:1px so
 .nf-rows p a{color:var(--paper);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
 .nf-subhead{margin:72px 0 24px}
 /* look rail */
-.nf-look{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;list-style:none;margin:0;padding:0}
+.nf-look{overscroll-behavior-x:contain;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;list-style:none;margin:0;padding:0}
 .nf-look img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--radius);display:block}
 /* quote */
 .nf-quote{text-align:center;max-width:900px;margin:0 auto}
@@ -1993,7 +1993,7 @@ input,textarea,select{background:var(--surface);color:var(--paper);border:1px so
  .nfv-tall .nfv-track,.nfv-row.nfv-tall .nfv-track{grid-auto-columns:42%}
  .nfv-bill{aspect-ratio:auto;max-height:none;display:flex;flex-direction:column}
  .nfv-bill-media{position:relative;aspect-ratio:16/9}
- .nfv-bill-panel{position:static;max-width:none;border:0;border-radius:0;padding:20px}
+ .nfv-bill-panel{position:static;max-width:none;border:0;border-radius:0;padding:20px;min-height:218px}
  .nfv-bill.playing .nfv-bill-panel{display:block}
  .nfv-grid{grid-template-columns:repeat(2,1fr)}
 }

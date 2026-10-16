@@ -132,19 +132,24 @@ function buildNewsHtml(d, related) {
   const ogDesc = d.ogDesc || desc;
   const ogImage = d.ogImage || (SITE_URL + '/images/poster1.png');
   const canon = String(d.canonical || (SITE_URL + '/news/' + d.slug)).replace(/^https?:\/\/(www\.)?younghadene\.ca/i, SITE_URL).replace(/\.html$/i, '');
-  const author = d.author || 'Young Hadene';
+  const hasExplicitAuthor = Boolean(d.author);
+  const author = d.author || 'Young Hadene Team';
+  const authorSchema = hasExplicitAuthor
+    ? { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about' }
+    : { '@type': 'Organization', name: 'Young Hadene Team', url: SITE_URL };
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: d.title || '', description: desc, image: d.image || (SITE_URL + '/images/poster1.png'),
     datePublished: iso, dateModified: modIso,
-    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about' },
+    author: authorSchema,
     publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
   const hero = d.image
     ? `<img src="${escHtml(d.image)}" alt="${escHtml(d.imageAlt || d.title)}" loading="lazy" style="max-width:100%;border-radius:12px;margin:0 0 24px;">`
     : '';
-  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/news" style="color:var(--text-muted)">News</a> &rsaquo; <span>${escHtml(d.category || 'News')}</span></nav>`;
+  const crumbTitle = escHtml(d.title);
+  const crumbs = `<nav aria-label="Breadcrumb" class="news-crumbs"><a href="/" style="color:var(--text-muted)">Home</a><span aria-hidden="true">&rsaquo;</span><a href="/news" style="color:var(--text-muted)">News</a><span aria-hidden="true">&rsaquo;</span><span class="crumb-current" title="${crumbTitle}">${crumbTitle}</span></nav>`;
   const relBox = related && related.length
     ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
@@ -165,7 +170,7 @@ function buildNewsHtml(d, related) {
     `<link rel="stylesheet" href="../css/style.css">` +
     `<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>">` +
     `<script type="application/ld+json">${schema}<\/script>` +
-    `<style>.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:16px;line-height:1.08}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta a{color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading)}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic}</style>` +
+    `<style>.news-crumbs{display:flex;align-items:center;gap:0.35em;margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;overflow:hidden;min-width:0;max-width:100%}.news-crumbs>a,.news-crumbs>span[aria-hidden]{flex:none}.news-crumbs .crumb-current{min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.article-wrap{max-width:720px;margin:0 auto;padding:40px 0}.article-wrap h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:16px;line-height:1.08}.article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em}.article-wrap .meta a{color:var(--accent)}.article-wrap p{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;font-size:.95rem}.article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading)}.article-wrap h3{font-size:1.15rem;margin-top:28px;margin-bottom:10px;color:var(--accent)}.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px}.article-wrap .takeaways,.article-wrap .toc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px 28px;margin-bottom:32px}.article-wrap blockquote{border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;background:var(--bg-card);font-style:italic}</style>` +
     `</head><body>` +
     `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music" class="nav-link">Music</a></li><li><a href="/blog" class="nav-link">Blog</a></li><li><a href="/news" class="nav-link active">News</a></li><li><a href="/contact" class="nav-link">Contact</a></li></ul></nav></div></header>` +
     `<section class="section" style="padding-top:120px;"><div class="container"><a href="/news" class="back-link">&#8592; Back to News</a><div class="article-wrap">` +
