@@ -235,8 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     var on = past && !atEnd;
     bar.classList.toggle('is-shown', on);
-    bar.setAttribute('aria-hidden', on ? 'false' : 'true');
-    a.tabIndex = on ? 0 : -1;
+    bar.inert = !on;
+    if (on) bar.removeAttribute('aria-hidden'); else bar.setAttribute('aria-hidden', 'true');
   });
   io.observe(row); if (end) io.observe(end);
 })();
