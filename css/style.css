@@ -426,8 +426,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   letter-spacing: 0.01em;
   margin-bottom: 8px;
-  animation: fade-in-up 0.8s 0.2s ease-out forwards;
-  opacity: 0;
+  animation: hero-rise 400ms ease-out both;
   text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
 }
 
@@ -444,8 +443,7 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 300;
-  animation: fade-in-up 0.8s 0.4s ease-out forwards;
-  opacity: 0;
+  animation: hero-rise 400ms 60ms ease-out both;
 }
 
 .hero-actions {
@@ -454,8 +452,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  animation: fade-in-up 0.8s 0.5s ease-out forwards;
-  opacity: 0;
+  animation: hero-rise 400ms 120ms ease-out both;
 }
 
 .hero-scroll-indicator {
@@ -472,8 +469,6 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.65rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  animation: fade-in-up 0.8s 0.8s ease-out forwards, bounce-y 2s ease-in-out infinite;
-  opacity: 0;
 }
 
 .scroll-line {
@@ -1324,14 +1319,13 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(0);
 }
 
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Hero entrance: transform only (text is opacity 1 from first paint, so LCP is not delayed) */
+@keyframes hero-rise {
+  from { transform: translateY(16px); }
+  to { transform: none; }
 }
-
-@keyframes fade-in-down {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-title, .hero-subtitle, .hero-actions { animation: none !important; }
 }
 
 @keyframes bounce-y {
@@ -1609,8 +1603,6 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
   .hero-scroll-indicator { display: none; }
 }
 .video-list { list-style: none; padding: 0; margin: 10px 0 0; text-align: center; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.8; }
-/* LCP: render hero text immediately (no opacity-0 entrance) */
-.hero-title, .hero-subtitle, .hero-badge, .hero-actions { animation: none !important; opacity: 1 !important; }
 /* Defer decorative background posters until their card scrolls into view (.visible from IntersectionObserver) */
 .reveal-ready .feature-card.fade-in:not(.visible) > div[style*="poster"], .reveal-ready .newsletter-inner.fade-in:not(.visible) { background-image: none !important; }
 .footer-social svg { width: 20px; height: 20px; fill: currentColor; }
@@ -1700,9 +1692,9 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 html { scroll-behavior: auto; }
 .reveal-ready .fade-in { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out); transition-delay: calc(min(var(--i, 0), 6) * 60ms); }
 .reveal-ready .fade-in.visible { opacity: 1; transform: none; }
-.hero .fade-in, .reveal-ready .hero .fade-in, .hero-title, .hero-media img { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
+.hero .fade-in, .reveal-ready .hero .fade-in, .hero-media img { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
 .scroll-line { animation: none !important; }
-.hero-scroll-indicator { animation: none !important; opacity: 1; }
+.hero-scroll-indicator { animation: none !important; }
 .feature-card:hover, .service-card:hover, .blog-card:hover { transform: none; box-shadow: var(--shadow-card); }
 .btn { transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out); box-shadow: none; }
 .btn:active { transform: scale(.98); }
