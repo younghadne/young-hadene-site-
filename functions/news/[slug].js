@@ -144,7 +144,7 @@ function buildNewsHtml(d, related) {
   const hero = d.image
     ? `<img src="${escHtml(d.image)}" alt="${escHtml(d.imageAlt || d.title)}" loading="lazy" style="max-width:100%;border-radius:12px;margin:0 0 24px;">`
     : '';
-  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/news" style="color:var(--text-muted)">News</a> &rsaquo; <span>${escHtml(d.category || 'News')}</span></nav>`;
+  const crumbs = `<nav aria-label="Breadcrumb" style="margin-bottom:24px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;"><a href="/" style="color:var(--text-muted)">Home</a> &rsaquo; <a href="/news" style="color:var(--text-muted)">News</a> &rsaquo; <span>${escHtml(d.title)}</span></nav>`;
   const relBox = related && related.length
     ? `<div class="toc"><h2>Related Articles</h2><ul>` + related.map((r) => `<li><a href="/news/${escHtml(r.slug)}">${escHtml(r.title)}</a></li>`).join('') + `</ul></div>`
     : '';
