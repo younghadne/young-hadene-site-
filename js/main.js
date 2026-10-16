@@ -138,7 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, observerOptions);
 
-  fadeElements.forEach(el => observer.observe(el));
+  // stagger siblings via --i (capped at 6 in CSS)
+  fadeElements.forEach(el => { if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
 
   // ---- Play button handler ----
   document.querySelectorAll('.btn-play').forEach(btn => {

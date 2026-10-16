@@ -1951,3 +1951,45 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
   .album-links { grid-template-columns: 1fr 1fr; }
   .album-credits[open] { } 
 }
+
+/* ============================
+   BATCH 2 — motion system (spec §3): opacity/transform only, tokens, no lift/glow
+   ============================ */
+html { scroll-behavior: auto; }
+.fade-in { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out); transition-delay: calc(min(var(--i, 0), 6) * 60ms); }
+.fade-in.visible { opacity: 1; transform: none; }
+.hero .fade-in, .hero-title, .hero-media img { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
+.cn-tower-pod, .scroll-line { animation: none !important; }
+.hero-scroll-indicator { animation: none !important; opacity: 1; }
+.feature-card:hover, .service-card:hover, .blog-card:hover { transform: none; box-shadow: var(--shadow-card); }
+.btn { transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out); box-shadow: none; }
+.btn:active { transform: scale(.98); }
+/* Poster hover (fine pointer only): scale 1.03 + inset red border */
+.poster-tile { position: relative; overflow: hidden; display: block; }
+.poster-tile img { transition: transform var(--dur-3) var(--ease-out), filter var(--dur-3) var(--ease-out); }
+.poster-tile::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px var(--accent); opacity: 0; transition: opacity var(--dur-2) var(--ease-out); pointer-events: none; }
+@media (hover: hover) and (pointer: fine) {
+  .poster-tile:hover img, .gallery-card:hover img { transform: scale(1.03); }
+  .poster-tile:hover::after { opacity: 1; }
+}
+.poster-tile:focus-within::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { opacity: 1 !important; transform: none !important; transition: opacity 150ms linear !important; }
+  .poster-tile img, .gallery-card img, .btn { transform: none !important; transition: none !important; }
+  .hero-video { display: none !important; }
+  .album-sticky { transition: none !important; }
+}
+
+/* ============================
+   BATCH 2 — The Look strip (spec §4)
+   ============================ */
+.the-look { padding: 80px 0 0; background: var(--bg-secondary); }
+.the-look .section-header { margin-bottom: 24px; }
+.section-intro { font: 400 1rem/1.5 'Inter', var(--font-body); color: #8A8794; max-width: 48ch; margin: 8px auto 0; }
+.look-rail { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--bg-primary); }
+.look-rail::-webkit-scrollbar { display: none; }
+.look-rail li { flex: 0 0 82vw; scroll-snap-align: start; }
+.look-rail .poster-tile { aspect-ratio: 4 / 5; }
+.look-rail img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(.35) contrast(1.05); }
+@media (hover: hover) and (pointer: fine) { .look-rail .poster-tile:hover img { filter: none; } }
+@media (min-width: 768px) { .look-rail { overflow: visible; } .look-rail li { flex: 1 1 0; } }
