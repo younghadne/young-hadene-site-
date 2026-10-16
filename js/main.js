@@ -129,22 +129,22 @@ document.addEventListener('DOMContentLoaded', () => {
     rootMargin: '0px 0px -50px 0px'
   };
 
+  // Content is visible by default (no-JS safe). The first IO callback (runs after the browser's own
+  // layout, so no forced reflow) marks on-screen items visible, then html.reveal-ready enables hiding.
+  let firstPass = true;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting || (firstPass && entry.boundingClientRect.top < window.innerHeight)) {
         entry.target.classList.add('visible');
         observer.unobserve(entry.target);
       }
     });
+    if (firstPass) { firstPass = false; document.documentElement.classList.add('reveal-ready'); }
   }, observerOptions);
 
   // stagger siblings via --i (capped at 6 in CSS)
-  // Content is visible by default (no-JS safe); hide-for-reveal only once JS runs.
-  // Anything already in the viewport is marked visible first so it never flashes out.
-  const vh = window.innerHeight;
-  fadeElements.forEach(el => { const r = el.getBoundingClientRect(); if (r.top < vh && r.bottom > 0) el.classList.add('visible'); });
-  document.documentElement.classList.add('reveal-ready');
-  fadeElements.forEach(el => { if (el.classList.contains('visible')) return; if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
+  fadeElements.forEach(el => { if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
+  if (!fadeElements.length) document.documentElement.classList.add('reveal-ready');
 
   // ---- Play button handler ----
   document.querySelectorAll('.btn-play').forEach(btn => {
