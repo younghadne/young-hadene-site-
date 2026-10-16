@@ -222,3 +222,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   io.observe(row); if (end) io.observe(end);
 })();
+
+// ---- Ninefold index swap: hovering/focusing a title swaps the cover art ----
+(function () {
+  var root = document.querySelector('[data-nf-index]');
+  if (!root) return;
+  var rows = root.querySelectorAll('a.nf-row'), arts = root.querySelectorAll('.nf-art img'), meta = root.querySelector('[data-nf-meta]');
+  function on(i) {
+    rows.forEach(function (r, j) { r.parentElement.classList.toggle('is-on', j === i); });
+    arts.forEach(function (a, j) { a.classList.toggle('is-on', j === i); });
+    if (meta) meta.textContent = rows[i].querySelector('.nf-meta:not(.n)').textContent;
+  }
+  rows.forEach(function (r, i) { r.addEventListener('mouseenter', function () { on(i); }); r.addEventListener('focus', function () { on(i); }); });
+})();
