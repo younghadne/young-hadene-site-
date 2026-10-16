@@ -192,7 +192,7 @@
       <div class="container">
         <div class="featured-article fade-in" id="featuredArticle"><div class="featured-card">
   <div class="featured-image">
-    <span class="featured-image-label">MUSI</span>
+    <span class="featured-image-label">MUSIC</span>
     <div class="featured-image-overlay"><span class="category-badge">Music</span></div>
   </div>
   <div class="featured-content">
@@ -652,7 +652,7 @@
       container.innerHTML = `
         <div class="featured-card">
           <div class="featured-image">
-            <span class="featured-image-label">${featured.category.substring(0, 4).toUpperCase()}</span>
+            <span class="featured-image-label">${escapeHtml(featured.category).toUpperCase()}</span>
             <div class="featured-image-overlay">
               <span class="category-badge">${escapeHtml(featured.category)}</span>
             </div>
