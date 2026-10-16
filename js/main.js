@@ -204,30 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// ---- Batch 2: hero video slot (fades in over the poster after load; poster stays LCP) ----
-(function () {
-  var v = document.querySelector('.hero-video');
-  if (!v) return;
-  var c = navigator.connection || {};
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '')) return;
-  var mob = v.dataset.srcMobile, desk = v.dataset.srcDesktop;
-  if (!mob && !desk) return; // no clip supplied yet
-  function start() {
-    var src = (matchMedia('(max-width:767px)').matches && mob) || desk || mob;
-    src.split(',').forEach(function (u) {
-      var s = document.createElement('source'); s.src = u.trim();
-      if (/\.webm$/.test(s.src)) s.type = 'video/webm'; else if (/\.mp4$/.test(s.src)) s.type = 'video/mp4';
-      v.appendChild(s);
-    });
-    v.addEventListener('playing', function () { v.classList.add('is-playing'); }, { once: true });
-    v.load(); v.play().catch(function () {});
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { e[0].isIntersecting && !document.hidden ? v.play().catch(function () {}) : v.pause(); }).observe(v);
-    document.addEventListener('visibilitychange', function () { document.hidden ? v.pause() : v.play().catch(function () {}); });
-  }
-  function later() { window.requestIdleCallback ? requestIdleCallback(start, { timeout: 2000 }) : setTimeout(start, 200); }
-  document.readyState === 'complete' ? later() : addEventListener('load', later, { once: true });
-})();
-
 // ---- Batch 2: album sticky Stream bar (shown once the deep-link row scrolls away, hidden at the end row) ----
 (function () {
   var bar = document.querySelector('.album-sticky'), row = document.getElementById('album-links'), end = document.querySelector('.album-end');
