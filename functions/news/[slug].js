@@ -132,12 +132,16 @@ function buildNewsHtml(d, related) {
   const ogDesc = d.ogDesc || desc;
   const ogImage = d.ogImage || (SITE_URL + '/images/poster1.png');
   const canon = String(d.canonical || (SITE_URL + '/news/' + d.slug)).replace(/^https?:\/\/(www\.)?younghadene\.ca/i, SITE_URL).replace(/\.html$/i, '');
-  const author = d.author || 'Young Hadene';
+  const hasExplicitAuthor = Boolean(d.author);
+  const author = d.author || 'Young Hadene Team';
+  const authorSchema = hasExplicitAuthor
+    ? { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about' }
+    : { '@type': 'Organization', name: 'Young Hadene Team', url: SITE_URL };
   const schema = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: d.title || '', description: desc, image: d.image || (SITE_URL + '/images/poster1.png'),
     datePublished: iso, dateModified: modIso,
-    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about' },
+    author: authorSchema,
     publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   });
