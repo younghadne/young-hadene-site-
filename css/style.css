@@ -1173,7 +1173,9 @@ h1, h2, h3, h4, h5, h6 {
 /* Pagination */
 .pagination {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 8px;
   margin-top: 48px;
 }
@@ -1788,3 +1790,5 @@ html { scroll-behavior: auto; }
 .album-card-title { display: block; margin-top: 10px; font-family: 'Anton', 'Impact', sans-serif; font-size: clamp(1rem, 3.5vw, 1.35rem); text-transform: uppercase; letter-spacing: .02em; line-height: 1.1; }
 .album-card-new { position: absolute; top: 8px; left: 8px; z-index: 1; background: #C8102E; color: #fff; font: 700 11px/1 'Inter', var(--font-body); text-transform: uppercase; letter-spacing: .08em; padding: 5px 7px; border-radius: 2px; }
 @media (max-width: 767px) { .album-page .back-link { margin-bottom: 20px; } }
+.pagination-gap { min-width: 20px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); }
+.pagination a { flex: 0 0 44px; border-radius: 2px; }

@@ -719,9 +719,22 @@
       const filtered = currentCategory === 'all' ? posts.filter(p => !p.featured) : posts.filter(p => p.category === currentCategory);
       if (filtered.length <= 6) { container.innerHTML = ''; return; }
       const pages = Math.ceil(filtered.length / 6);
-      container.innerHTML = Array.from({ length: pages }, (_, i) =>
-        `<a href="#" class="${i === 0 ? 'active' : ''}">${i + 1}</a>`
-      ).join('') + '<a href="#">&#8594;</a>';
+      const cur = Math.min(Math.max(window.__yhPage || 1, 1), pages);
+      const show = [...new Set([1, cur - 1, cur, cur + 1, pages])].filter(n => n >= 1 && n <= pages).sort((a, b) => a - b);
+      let html = '', prev = 0;
+      show.forEach(n => {
+        if (n - prev > 1) html += '<span class="pagination-gap" aria-hidden="true">&hellip;</span>';
+        html += `<a href="#" data-page="${n}" class="${n === cur ? 'active' : ''}"${n === cur ? ' aria-current="page"' : ''}>${n}</a>`;
+        prev = n;
+      });
+      container.innerHTML = html + `<a href="#" data-page="${Math.min(cur + 1, pages)}" aria-label="Next page">&#8594;</a>`;
+      if (!container.dataset.bound) {
+        container.dataset.bound = '1';
+        container.addEventListener('click', (e) => {
+          const a = e.target.closest('a[data-page]'); if (!a) return;
+          e.preventDefault(); window.__yhPage = +a.dataset.page; renderPagination();
+        });
+      }
     }
 
     // ---- Category filter ----
