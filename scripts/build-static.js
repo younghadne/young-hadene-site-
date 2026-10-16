@@ -73,7 +73,7 @@ for (const f of fresh) {
   const title = extractTitle(html).split('—')[0].split('|')[0].trim() || f;
   const pubDate = new Date(fs.statSync(full).mtime).toISOString();
   news += '  <url>\n';
-  news += `    <loc>${SITE_URL}/news/${esc(f)}</loc>\n`;
+  news += `    <loc>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</loc>\n`;
   news += '    <news:news>\n';
   news += '      <news:publication>\n';
   news += '        <news:name>Young Hadene</news:name>\n';
@@ -97,7 +97,7 @@ const items = newsFiles.filter(newsIndexable)
 let rss = '<?xml version="1.0" encoding="UTF-8"?>\n';
 rss += '<rss version="2.0">\n<channel>\n';
 rss += '<title>Young Hadene — News</title>\n';
-rss += `<link>${SITE_URL}/news.html</link>\n`;
+rss += `<link>${SITE_URL}/news</link>\n`;
 rss += '<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n';
 rss += '<language>en-ca</language>\n';
 for (const { f, mtime } of items) {
@@ -106,8 +106,8 @@ for (const { f, mtime } of items) {
   const desc = extractMeta(html, 'description') || title;
   rss += '  <item>\n';
   rss += `    <title>${esc(title)}</title>\n`;
-  rss += `    <link>${SITE_URL}/news/${esc(f)}</link>\n`;
-  rss += `    <guid isPermaLink="true">${SITE_URL}/news/${esc(f)}</guid>\n`;
+  rss += `    <link>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</link>\n`;
+  rss += `    <guid isPermaLink="true">${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</guid>\n`;
   rss += `    <pubDate>${new Date(mtime).toUTCString()}</pubDate>\n`;
   rss += `    <description>${esc(desc)}</description>\n`;
   rss += '  </item>\n';
