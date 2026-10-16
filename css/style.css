@@ -816,7 +816,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .newsletter-form .btn {
-  border-radius: 0 2px 2px 0;
+  border-radius: 2px;
   padding: 16px 28px;
 }
 
@@ -1190,7 +1190,6 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
   font-size: 0.85rem;
   color: var(--text-secondary);
   transition: all var(--transition);
