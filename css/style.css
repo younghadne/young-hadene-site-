@@ -1176,7 +1176,7 @@ h1, h2, h3, h4, h5, h6 {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 48px;
 }
 
