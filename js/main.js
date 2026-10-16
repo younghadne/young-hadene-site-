@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const NAV_ITEMS = [
     { label: 'Home', href: '/' },
     { label: 'Music', href: '/music' },
+    { label: 'Videos', href: '/videos' },
     { label: 'Blog', href: '/blog' },
     { label: 'News', href: '/news' },
     { label: 'About', href: '/about' },

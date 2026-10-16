@@ -2,6 +2,8 @@
 // _redirects does not apply to Functions routes, so /blog/:slug enforces this map
 // before any KV lookup. One hop: every target is a final 200 URL.
 export const BLOG_REDIRECTS = {
+  "young-hadene-music-videos": "/videos",
+  "young-hadene-shorts": "/videos/shorts",
   "6ix-community-cyphers-and-networking-2026-guide": "/blog/toronto-music-venues-for-hip-hop-artists",
   "6ix-rap-movement-explained-2026-guide": "/blog/toronto-rap-scene",
   "808-slides-dark-trap-mixing-tips-2026-guide": "/blog/dark-trap-vs-drill-differences",

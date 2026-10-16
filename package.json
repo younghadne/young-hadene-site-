@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node scripts/check-nav.js",
+    "test": "node scripts/check-nav.js && node scripts/sitemap.js --check && node scripts/check-head.mjs",
     "generate": "node scripts/generate-post.js",
     "server": "node server.js",
     "start": "node server.js",
     "dev": "node server.js",
-    "test:email": "node scripts/test-email.mjs"
+    "test:email": "node scripts/test-email.mjs",
+    "sitemap": "node scripts/sitemap.js"
   },
   "keywords": [],
   "author": "",
