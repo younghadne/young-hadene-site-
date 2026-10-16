@@ -10,14 +10,10 @@ User-agent: Claude-SearchBot
 User-agent: Applebot-Extended
 User-agent: Bingbot
 Allow: /
-Disallow: /admin.html
-Disallow: /admin
 Disallow: /api/
 
 User-agent: *
 Allow: /
-Disallow: /admin.html
-Disallow: /admin
 Disallow: /api/
 
 Sitemap: https://younghadene.ca/sitemap.xml

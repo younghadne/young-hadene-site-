@@ -130,16 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     rootMargin: '0px 0px -50px 0px'
   };
 
+  // Content is visible by default (no-JS safe). The first IO callback (runs after the browser's own
+  // layout, so no forced reflow) marks on-screen items visible, then html.reveal-ready enables hiding.
+  let firstPass = true;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting || (firstPass && entry.boundingClientRect.top < window.innerHeight)) {
         entry.target.classList.add('visible');
         observer.unobserve(entry.target);
       }
     });
+    if (firstPass) { firstPass = false; document.documentElement.classList.add('reveal-ready'); }
   }, observerOptions);
 
-  fadeElements.forEach(el => observer.observe(el));
+  // stagger siblings via --i (capped at 6 in CSS)
+  fadeElements.forEach(el => { if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
+  if (!fadeElements.length) document.documentElement.classList.add('reveal-ready');
 
   // ---- Play button handler ----
   document.querySelectorAll('.btn-play').forEach(btn => {
@@ -198,3 +204,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+// ---- Batch 2: album sticky Stream bar (shown once the deep-link row scrolls away, hidden at the end row) ----
+(function () {
+  var bar = document.querySelector('.album-sticky'), row = document.getElementById('album-links'), end = document.querySelector('.album-end');
+  if (!bar || !row || !('IntersectionObserver' in window)) return;
+  var a = bar.querySelector('a'), past = false, atEnd = false;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.target === row) past = !e.isIntersecting && e.boundingClientRect.top < 0;
+      else atEnd = e.isIntersecting;
+    });
+    var on = past && !atEnd;
+    bar.classList.toggle('is-shown', on);
+    bar.inert = !on;
+    if (on) bar.removeAttribute('aria-hidden'); else bar.setAttribute('aria-hidden', 'true');
+  });
+  io.observe(row); if (end) io.observe(end);
+})();
