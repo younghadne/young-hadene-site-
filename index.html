@@ -42,6 +42,8 @@
   <meta name="twitter:title" content="Young Hadene | Haitian-Toronto Drill & Dark Trap Artist">
   <meta name="twitter:description" content="Haitian-Toronto drill and dark trap artist. Haitian-born, Toronto-based.">
   <meta name="twitter:image" content="https://younghadene.ca/images/poster1.png">
+  <link rel="preload" as="image" href="images/hero-poster2-640.webp" media="(max-width: 767px)" fetchpriority="high">
+  <link rel="preload" as="image" href="images/hero-poster2-1440x810.webp" media="(min-width: 768px)" fetchpriority="high">
   <link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎧</text></svg>">
@@ -234,7 +236,7 @@
     <div class="hero-bg">
       <picture class="hero-media">
         <source media="(min-width: 768px)" srcset="images/hero-poster2-1440x810.webp" type="image/webp">
-        <img src="images/hero-poster2-640.webp" srcset="images/hero-poster2-640.webp 640w, images/hero-poster2-960.webp 960w" sizes="100vw" width="640" height="529" alt="" fetchpriority="high" decoding="async">
+        <img src="images/hero-poster2-640.webp" width="640" height="529" alt="" fetchpriority="high" decoding="async">
       </picture>
       <!-- Video slot: no src in HTML. js/main.js attaches <source>s from data-* after load
            (skipped under reduced-motion / save-data / 2g-3g) and fades it in over the poster. -->
@@ -242,34 +244,6 @@
       <div class="hero-gradient"></div>
       <div class="hero-vignette"></div>
 
-      <!-- Toronto skyline -->
-      <div class="skyline">
-        <div class="skyline-building tall"></div>
-        <div class="skyline-building medium"></div>
-        <div class="skyline-building short"></div>
-        <div class="skyline-building wide"></div>
-        <div class="skyline-building xl"></div>
-        <div class="skyline-building tall"></div>
-        <div class="skyline-building medium"></div>
-        <div class="skyline-building short"></div>
-        <div class="skyline-building wide"></div>
-        <div class="skyline-building xl"></div>
-        <div class="skyline-building tall"></div>
-        <div class="skyline-building medium"></div>
-        <div class="skyline-building short"></div>
-        <div class="skyline-building wide"></div>
-        <div class="skyline-building xl"></div>
-        <div class="skyline-building tall"></div>
-        <div class="skyline-building medium"></div>
-      </div>
-
-      <!-- CN Tower -->
-      <div class="cn-tower">
-        <div class="cn-tower-spire"></div>
-        <div class="cn-tower-pod"></div>
-        <div class="cn-tower-neck"></div>
-        <div class="cn-tower-pod"></div>
-      </div>
     </div>
 
     <div class="hero-content">
