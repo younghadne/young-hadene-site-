@@ -11,6 +11,8 @@ User-agent: Applebot-Extended
 User-agent: Bingbot
 Allow: /
 Disallow: /api/
+Disallow: /admin
+Disallow: /admin.html
 
 User-agent: *
 Allow: /
