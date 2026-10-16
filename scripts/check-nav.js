@@ -13,6 +13,7 @@ const ROOT = path.join(__dirname, '..');
 const REQUIRED = [
   { label: 'Home', hrefs: ['/', '/index.html', '../index.html'] },
   { label: 'Music', hrefs: ['/music', '/music.html', '../music.html'] },
+  { label: 'Videos', hrefs: ['/videos', '/videos.html', '../videos.html'] },
   { label: 'Blog', hrefs: ['/blog', '/blog.html', '../blog.html'] },
   { label: 'News', hrefs: ['/news', '/news.html', '../news.html'] },
   { label: 'About', hrefs: ['/about', '/about.html', '../about.html'] },
