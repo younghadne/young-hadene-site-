@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads after window load or first interaction -->
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -7,7 +7,7 @@
 
   gtag('config', 'G-G6KR0GM63L');
   (function(){
-    var done = false, evs = ['scroll', 'pointerdown', 'keydown'];
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
     function loadGtag(){
       if (done) return; done = true;
       evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
@@ -17,8 +17,9 @@
       document.head.appendChild(s);
     }
     evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
-    if (document.readyState === 'complete') setTimeout(loadGtag, 0);
-    else window.addEventListener('load', function(){ setTimeout(loadGtag, 0); }, {once: true});
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
   })();
 </script><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Notable &amp; Rising Toronto Rap Artists to Watch in 2026</title><meta name="description" content="Notable &amp; Rising Toronto Rap Artists to Watch in 2026
 

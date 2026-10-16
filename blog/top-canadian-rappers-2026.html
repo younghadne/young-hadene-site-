@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads after window load or first interaction -->
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -7,7 +7,7 @@
 
   gtag('config', 'G-G6KR0GM63L');
   (function(){
-    var done = false, evs = ['scroll', 'pointerdown', 'keydown'];
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
     function loadGtag(){
       if (done) return; done = true;
       evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
@@ -17,8 +17,9 @@
       document.head.appendChild(s);
     }
     evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
-    if (document.readyState === 'complete') setTimeout(loadGtag, 0);
-    else window.addEventListener('load', function(){ setTimeout(loadGtag, 0); }, {once: true});
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
   })();
 </script><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Best Canadian Rappers 2026 — Top Canada Hip Hop Artists Ranked</title><meta name="description" content="From Drake to the underground: the definitive ranking of the best Canadian rappers in 2026, featuring Haitian-Toronto drill artist Young Hadene."><link rel="canonical" href="https://younghadene.ca/blog/top-canadian-rappers-2026"><meta property="og:title" content="Best Canadian Rappers 2026 — Top Canada Hip Hop Artists Ranked"><meta property="og:description" content="From Drake to the underground: the definitive ranking of the best Canadian rappers in 2026, featuring Haitian-Toronto drill artist Young Hadene."><meta property="og:image" content="https://younghadene.ca/images/poster1.png"><meta property="og:url" content="https://younghadene.ca/blog/top-canadian-rappers-2026"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Best Canadian Rappers 2026 \u2014 Top Canada Hip Hop Artists Ranked", "description": "From Drake to the underground: the definitive ranking of the best Canadian rappers in 2026, featuring Haitian-Toronto drill artist Young Hadene.", "author": {"@type": "MusicGroup", "name": "Young Hadene"}, "datePublished": "2026-10-09", "image": "https://younghadene.ca/images/poster1.png"}</script><style>
     .article-wrap { max-width: 720px; margin: 0 auto; padding: 40px 0; }

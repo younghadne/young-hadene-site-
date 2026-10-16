@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads after window load or first interaction -->
+<!-- Google tag (gtag.js) — deferred: events queue in dataLayer; library loads on first interaction or ~3s after window load -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -7,7 +7,7 @@
 
   gtag('config', 'G-G6KR0GM63L');
   (function(){
-    var done = false, evs = ['scroll', 'pointerdown', 'keydown'];
+    var done = false, evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
     function loadGtag(){
       if (done) return; done = true;
       evs.forEach(function(e){ window.removeEventListener(e, loadGtag, true); });
@@ -17,8 +17,9 @@
       document.head.appendChild(s);
     }
     evs.forEach(function(e){ window.addEventListener(e, loadGtag, {capture: true, passive: true, once: true}); });
-    if (document.readyState === 'complete') setTimeout(loadGtag, 0);
-    else window.addEventListener('load', function(){ setTimeout(loadGtag, 0); }, {once: true});
+    function later(){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(loadGtag, {timeout: 2000}); else loadGtag(); }, 3000); }
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, {once: true});
   })();
 </script><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Young Hadene Launches Official Newsroom for Toronto Drill & Dark Trap Coverage — Young Hadene News</title><meta name="description" content="Young Hadene opens an official newsroom on younghadene.ca — first-hand release news, show announcements, and Toronto drill scene coverage with open…"><link rel="canonical" href="https://younghadene.ca/news/young-hadene-launches-official-newsroom"><meta property="og:title" content="Young Hadene Launches Official Newsroom"><meta property="og:description" content="First-hand release news, show announcements, and Toronto drill scene coverage — with open editorial standards."><meta property="og:image" content="https://younghadene.ca/images/poster1.png"><meta property="og:url" content="https://younghadene.ca/news/young-hadene-launches-official-newsroom"><meta property="og:type" content="article"><meta property="article:published_time" content="2026-10-10"><meta property="article:author" content="Young Hadene"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Young Hadene Launches Official Newsroom"><meta name="twitter:description" content="Toronto drill & dark trap coverage, straight from the source."><meta name="twitter:image" content="https://younghadene.ca/images/poster1.png"><link rel="stylesheet" href="../css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsArticle","headline":"Young Hadene Launches Official Newsroom for Toronto Drill & Dark Trap Coverage","description":"Young Hadene opens an official newsroom on younghadene.ca — first-hand release news, show announcements, and Toronto drill scene coverage.","datePublished":"2026-10-10T11:00:00-04:00","dateModified":"2026-10-10T11:00:00-04:00","author":{"@type":"Person","name":"Young Hadene","jobTitle":"Editor","url":"https://younghadene.ca/about"},"publisher":{"@type":"NewsMediaOrganization","name":"Young Hadene News","logo":{"@type":"ImageObject","url":"https://younghadene.ca/images/poster1.png"}},"image":"https://younghadene.ca/images/poster1.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://younghadene.ca/news/young-hadene-launches-official-newsroom"}}</script><style>
 .article-wrap{max-width:720px;margin:0 auto;padding:40px 0;}
