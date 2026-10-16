@@ -140,7 +140,7 @@ function buildNewsHtml(d, related) {
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: String(d.title || '').substring(0, 110), description: desc,
     datePublished: iso, dateModified: modIso,
-    author: { '@type': 'Person', name: author, url: SITE_URL + '/about' },
+    author: { '@type': 'Organization', name: author, url: SITE_URL + '/about' },
     publisher: { '@type': 'Organization', '@id': PUBLISHER_ID, name: 'Young Hadene', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
   };

@@ -34,6 +34,7 @@ for (const f of fs.readdirSync('news').filter((x) => x.endsWith('.html'))) {
   const s = fs.readFileSync('news/' + f, 'utf8');
   const ld = JSON.parse(s.match(/<script type="application\/ld\+json">(\{[^<]*"NewsArticle"[^<]*\})<\/script>/)[1]);
   for (const k of ['headline', 'author', 'datePublished', 'dateModified', 'publisher', 'mainEntityOfPage']) assert.ok(ld[k], `${f}: NewsArticle missing ${k}`);
+  assert.equal(ld.author['@type'], 'Organization', `${f}: author must be an Organization`);
   assert.equal(ld.author.name, NEWS_AUTHOR, `${f}: author must match NEWS_AUTHOR`);
   assert.equal(ld.publisher['@id'], 'https://younghadene.ca/#artist', `${f}: publisher @id`);
   assert.match(s, /class="byline"/, `${f}: visible byline`);
