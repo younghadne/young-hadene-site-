@@ -45,4 +45,5 @@ const pages = [['videos.html', '/videos.html'], ['videos/shorts.html', '/videos/
     console.log(file, out.length);
   }
   await b.close();
+  require('child_process').execFileSync('python3', ['scripts/critical-nf-tokens.py', ...pages.map(p => p[0])], { stdio: 'inherit' });
 })();
