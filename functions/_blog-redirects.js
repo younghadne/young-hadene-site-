@@ -111,4 +111,5 @@ export const BLOG_REDIRECTS = {
 // KV doc with the same slug, until the KV copy is updated via the admin.
 export const BLOG_STATIC_FIRST = new Set([
   'haitian-rappers-in-toronto-young-hadene-and-the-new-generation',
+  'top-toronto-rappers',
 ]);
