@@ -88,6 +88,9 @@ function sortIndex(index) {
 }
 
 function checkAuth(env, password) {
+  // Kill switch: Pages env NEWS_WRITES_DISABLED=1 freezes all news writes
+  // (POST + DELETE), e.g. while investigating a bulk import. Default: enabled.
+  if (env && env.NEWS_WRITES_DISABLED === '1') return { ok: false, status: 403, error: 'News publishing is disabled (NEWS_WRITES_DISABLED=1)' };
   const expected = env && env.ADMIN_PASSWORD;
   if (!expected) return { ok: false, status: 500, error: 'ADMIN_PASSWORD not configured on the server' };
   if (!password || !timingSafeEqual(String(password), String(expected))) {

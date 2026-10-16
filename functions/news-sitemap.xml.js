@@ -54,7 +54,8 @@ export async function onRequestGet(context) {
           let m;
           while ((m = re.exec(text)) !== null) {
             const locM = m[1].match(/<loc>([^<]*)<\/loc>/);
-            if (locM && !seen.has(locM[1])) {
+            const sm = locM && locM[1].match(/\/news\/([^/?#]+?)(?:\.html)?$/);
+            if (locM && !seen.has(locM[1]) && !(sm && NEWS_NOINDEX.has(sm[1]))) {
               seen.add(locM[1]);
               items += `  <url>${m[1]}</url>\n`;
             }
