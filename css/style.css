@@ -2092,3 +2092,6 @@ body .article-wrap .meta span{color:#79C043}
 .nf-footer .footer-social a{width:44px;height:44px}
 .nf-quote a.nf-meta{display:inline-block;padding:6px 12px !important;margin:-6px -12px}
 .nfv-wrap>a.back-link{min-height:44px}
+
+/* Mobile header: the off-canvas <nav> stays a 0-width flex item after the button, so space-between centred the button; pin it right */
+@media (max-width:768px){.header-inner>.hamburger{margin-left:auto}}
