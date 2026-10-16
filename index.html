@@ -49,7 +49,7 @@
   <link rel="preload" as="image" href="images/hero-poster2-1440x810.webp" media="(min-width: 768px)" fetchpriority="high">
   <link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Critical CSS (header + hero), generated from css/style.css; full stylesheet loads without blocking render -->
-  <style id="critical-css">@font-face{font-family: "Anton";font-style: normal;font-weight: 400;font-display: swap;src: url("fonts/anton-latin.woff2") format("woff2");unicode-range: U+0-FF,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family: "Inter";font-style: normal;font-weight: 400 700;font-display: swap;src: url("fonts/inter-latin-var.woff2") format("woff2");unicode-range: U+0-FF,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}:root{--bg-primary: #07070a;--bg-secondary: #0e0e12;--bg-card: #111116;--bg-card-hover: #1a1a21;--bg-elevated: #1a1a21;--accent: #c8102e;--accent-dark: #e5243b;--accent-hover: #e5243b;--accent-pressed: #9e0c24;--accent-text: #ff4d5e;--accent-glow: rgba(200,16,46,0.25);--accent-subtle: rgba(200,16,46,0.1);--signal: #d9a441;--gold: #d9a441;--text-primary: #edebe6;--on-accent: #fff;--text-secondary: #a6a3ae;--text-muted: #8a8794;--border-color: #26262e;--border-accent: #c8102e;--font-heading: "Anton","Impact",sans-serif;--font-subheading: "Anton","Impact",sans-serif;--font-body: "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--transition: 0.4s cubic-bezier(0.22,1,0.36,1);--shadow-card: 0 8px 32px rgba(0,0,0,0.5);--shadow-lift: 0 16px 48px rgba(0,0,0,0.55);--shadow-glow: 0 0 30px rgba(200,16,46,0.15);--radius: 4px;--radius-sm: 2px;--max-width: 1280px;--header-height: 76px;--dur-1: 120ms;--dur-2: 200ms;--dur-3: 400ms;--dur-4: 600ms;--ease-out: cubic-bezier(.2,.7,.2,1);--ease-in-out: cubic-bezier(.65,0,.35,1)}*,*::before,*::after{margin: 0;padding: 0;box-sizing: border-box}html{scroll-behavior: smooth;scroll-padding-top: var(--header-height)}body{font-family: var(--font-body);background-color: var(--bg-primary);color: var(--text-primary);line-height: 1.6;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;overflow-x: hidden;-webkit-tap-highlight-color: rgba(200,16,46,0.3);overscroll-behavior: none;background: var(--bg-primary);letter-spacing: -0.01em}img{max-width: 100%;display: block}a{color: inherit;text-decoration: none;transition: color var(--transition)}ul{list-style: none}.container{width: 100%;max-width: var(--max-width);margin: 0 auto;padding: 0 24px}h1{font-family: var(--font-heading);letter-spacing: 0.04em;text-transform: uppercase;line-height: 1.1}.text-accent{color: var(--accent)}.btn{display: inline-flex;align-items: center;gap: 10px;font-family: var(--font-body);font-size: 0.875rem;font-weight: 600;text-transform: uppercase;letter-spacing: 0.1em;padding: 15px 32px;border: none;border-radius: 2px;cursor: pointer;transition: all var(--transition);position: relative;overflow: hidden;min-height: 48px;justify-content: center}.btn-primary{background: var(--accent);color: var(--on-accent);border: 1px solid var(--accent);box-shadow: none}.header{position: fixed;top: 0;left: 0;width: 100%;z-index: 1000;background: rgba(7,7,10,0.72);backdrop-filter: blur(24px) saturate(1.2);-webkit-backdrop-filter: blur(24px) saturate(1.2);border-bottom: 1px solid rgba(255,255,255,0.06);transition: all var(--transition)}.header-inner{display: flex;align-items: center;justify-content: space-between;height: var(--header-height);max-width: var(--max-width);margin: 0 auto;padding: 0 24px}.logo{font-family: "Anton","Impact",sans-serif;font-size: 1.6rem;text-transform: uppercase;letter-spacing: 0.02em;color: var(--text-primary);position: relative}.logo-accent{color: var(--accent)}.logo-sub{display: block;font-family: var(--font-body);font-size: 0.55rem;font-weight: 500;letter-spacing: 0.2em;color: var(--text-muted);margin-top: -2px}.nav-list{display: flex;align-items: center;gap: 32px}.nav-link{font-family: var(--font-body);font-size: 0.8rem;font-weight: 500;text-transform: uppercase;letter-spacing: 0.1em;color: var(--text-secondary);position: relative;padding: 4px 0;transition: color var(--transition)}.nav-link::after{content: "";position: absolute;bottom: -2px;left: 0;width: 0;height: 2px;background: var(--accent);transition: width var(--transition)}.hamburger{display: none;flex-direction: column;gap: 5px;cursor: pointer;padding: 4px;background: none;border: none}.hamburger span{display: block;width: 24px;height: 2px;background: var(--text-primary);transition: all var(--transition);border-radius: 2px}.hero{position: relative;min-height: 100vh;min-height: 100svh;display: flex;align-items: center;justify-content: center;overflow: hidden;padding-top: var(--header-height)}.hero-bg{position: absolute;inset: 0;z-index: 0}.hero-gradient{position: absolute;inset: 0;background: radial-gradient(ellipse 70% 50% at 50% 100%,rgba(200,16,46,0.12) 0%,transparent 70%),linear-gradient(180deg,rgba(7,7,10,0.55) 0%,rgba(7,7,10,0.25) 40%,rgba(7,7,10,0.7) 75%,#07070a 100%);z-index: 1}.hero-vignette{position: absolute;inset: 0;box-shadow: inset 0 0 200px rgba(0,0,0,0.7);z-index: 2}.hero-content{position: relative;z-index: 5;text-align: center;padding: 0 24px;max-width: 800px}.hero-title{font-family: "Anton","Impact",sans-serif;font-size: clamp(4rem,12vw,9rem);line-height: 0.95;text-transform: uppercase;letter-spacing: 0.01em;margin-bottom: 8px;animation: hero-rise 400ms ease-out both;text-shadow: 0 4px 40px rgba(0,0,0,0.6)}.hero-title .text-accent{display: block;font-size: clamp(5rem,15vw,11rem)}.hero-subtitle{font-family: var(--font-body);font-size: clamp(1rem,2vw,1.2rem);color: var(--text-primary);margin-bottom: 36px;letter-spacing: 0.22em;text-transform: uppercase;font-weight: 300;animation: hero-rise 400ms 60ms ease-out both}.hero-actions{display: flex;align-items: center;justify-content: center;gap: 16px;flex-wrap: wrap;animation: hero-rise 400ms 120ms ease-out both}.hero-scroll-indicator{position: absolute;bottom: 40px;left: 50%;transform: translateX(-50%);z-index: 5;display: flex;flex-direction: column;align-items: center;gap: 8px;color: var(--text-muted);font-size: 0.65rem;letter-spacing: 0.15em;text-transform: uppercase}.scroll-line{width: 1px;height: 40px;background: linear-gradient(180deg,var(--text-muted),transparent)}@media (max-width: 768px){.nav-list{display: none}.hamburger{display: flex}.nav-link{font-size: 1rem;padding: 10px 0;min-height: 44px;display: flex;align-items: center}.btn,.btn-primary{min-height: 44px}.hero{min-height: 92vh;min-height: 92svh}.hero-subtitle{font-size: 0.85rem;letter-spacing: 0.08em}.hero-actions{flex-direction: column;width: 100%;max-width: 320px;margin: 0 auto}.hero-actions .btn{width: 100%;justify-content: center;padding: 16px 24px}.hero-content{padding: 0 20px}.hero-scroll-indicator{bottom: 20px}.container{padding: 0 16px}.header-inner{padding: 0 calc(16px + env(safe-area-inset-right,0px)) 0 calc(16px + env(safe-area-inset-left,0px))}.container{padding-left: calc(16px + env(safe-area-inset-left,0px));padding-right: calc(16px + env(safe-area-inset-right,0px))}}@media (max-width: 480px){.hero-subtitle{font-size: 0.75rem}.hero{min-height: 90vh;min-height: 90svh}.container{padding: 0 12px}.btn{padding: 12px 24px;font-size: 0.8rem}}@media (max-width: 380px){.hero-subtitle{font-size: 0.75rem;letter-spacing: 0.06em}.hero-actions .btn{padding: 14px 18px;font-size: 0.75rem}.container{padding: 0 10px}}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration: 0.01ms !important;transition-duration: 0.01ms !important}html{scroll-behavior: auto}}h1,.hero-title{font-family: var(--font-heading)}.hero{min-height: 100vh;min-height: 100svh}.hero-media,.hero-media img{position: absolute;inset: 0;width: 100%;height: 100%;z-index: 0}.hero-media img{object-fit: cover;object-position: center 25%;opacity: 0.45}.hero-bg::after{content: "";position: absolute;inset: 0;z-index: 3;pointer-events: none;opacity: 0.18;background-image: repeating-radial-gradient(circle at 17% 32%,rgba(255,255,255,0.10) 0 1px,transparent 1px 3px),repeating-radial-gradient(circle at 83% 71%,rgba(0,0,0,0.35) 0 1px,transparent 1px 4px);mix-blend-mode: overlay}.hero-actions{display: flex;flex-wrap: wrap;gap: 12px;justify-content: center}.text-accent{color: var(--accent-text)}.hero-title .text-accent{color: var(--accent)}.hamburger{width: 44px;height: 44px;align-items: center;justify-content: center;padding: 10px}@media (max-width: 768px){.hero{min-height: 100svh;padding-bottom: 24px}.hero-content{padding-top: 12px}.hero-subtitle{margin-bottom: 18px}.hero-actions .btn{padding: 14px 24px}.hero-scroll-indicator{display: none}}.hero-gradient{background: radial-gradient(120% 60% at 50% 100%,rgba(200,16,46,.10),transparent 70%),linear-gradient(180deg,rgba(7,7,10,.55) 0%,rgba(7,7,10,.15) 45%,rgba(7,7,10,.85) 82%,var(--bg-primary) 100%)}.hero-title{font-size: clamp(4rem,14vw,11rem);line-height: .88}.hero-title .text-accent{font-size: inherit}.hero .hero-subtitle{font-family: "Inter",var(--font-body);font-weight: 500;text-transform: uppercase;letter-spacing: .12em;font-size: clamp(0.875rem,2vw,1.125rem);color: rgba(237,235,230,.8);margin: 12px 0 24px}.btn-stream{min-height: 52px;border-radius: 2px;font-weight: 700;letter-spacing: .1em;text-transform: uppercase;box-shadow: none}@media (max-width: 767px){.hero-actions{max-width: none}.hero-actions .btn-stream{width: 100%}}.album-sticky .btn{min-height: 44px;padding: 0 20px;border-radius: 2px}html{scroll-behavior: auto}.hero-media img{opacity: 1 !important;transform: none !important;transition: none !important;animation: none !important}.scroll-line{animation: none !important}.hero-scroll-indicator{animation: none !important}.btn{transition: background-color var(--dur-2) var(--ease-out),color var(--dur-2) var(--ease-out),border-color var(--dur-2) var(--ease-out),transform var(--dur-1) var(--ease-out);box-shadow: none}@media (prefers-reduced-motion: reduce){.btn{transform: none !important;transition: none !important}}@media (prefers-reduced-motion: no-preference){html{scroll-behavior: smooth}}.header{padding-top: env(safe-area-inset-top,0px);padding-left: env(safe-area-inset-left,0px);padding-right: env(safe-area-inset-right,0px)}.nav-link.active{color:var(--text-primary)}.nav-link.active::after{width:100%;background:var(--accent)}@keyframes hero-rise{from{transform: translateY(16px)}to{transform: none}}@media (prefers-reduced-motion: reduce){.hero-title,.hero-subtitle,.hero-actions{animation: none !important}}</style>
+  <style id="critical-css">@font-face{font-family: "Anton";font-style: normal;font-weight: 400;font-display: swap;src: url("fonts/anton-latin.woff2") format("woff2");unicode-range: U+0-FF,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family: "Inter";font-style: normal;font-weight: 400 700;font-display: swap;src: url("fonts/inter-latin-var.woff2") format("woff2");unicode-range: U+0-FF,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}:root{--bg-primary: #131417;--bg-secondary: #131417;--bg-card: #1C1E22;--bg-card-hover: #1C1E22;--bg-elevated: #1C1E22;--accent: #79C043;--accent-dark: #79C043;--accent-hover: #8bd052;--accent-pressed: #6aab39;--accent-text: #79C043;--accent-glow: transparent;--accent-subtle: rgba(121,192,67,0.12);--signal: #79C043;--gold: #79C043;--text-primary: #ECE8E1;--on-accent: #131417;--text-secondary: #8D9099;--text-muted: #8D9099;--border-color: rgba(236,232,225,0.15);--border-accent: #79C043;--font-heading: "Anton","Impact",sans-serif;--font-subheading: "Anton","Impact",sans-serif;--font-body: "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--transition: 0.4s cubic-bezier(0.22,1,0.36,1);--shadow-card: none;--shadow-lift: none;--shadow-glow: none;--radius: 8px;--radius-sm: 8px;--max-width: 1280px;--header-height: 76px;--dur-1: 120ms;--dur-2: 200ms;--dur-3: 400ms;--dur-4: 600ms;--ease-out: cubic-bezier(.2,.7,.2,1);--ease-in-out: cubic-bezier(.65,0,.35,1)}*,*::before,*::after{margin: 0;padding: 0;box-sizing: border-box}html{scroll-behavior: smooth;scroll-padding-top: var(--header-height)}body{font-family: var(--font-body);background-color: var(--bg-primary);color: var(--text-primary);line-height: 1.6;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;overflow-x: hidden;-webkit-tap-highlight-color: rgba(121,192,67,0.3);overscroll-behavior: none;background: var(--bg-primary);letter-spacing: -0.01em}img{max-width: 100%;display: block}a{color: inherit;text-decoration: none;transition: color var(--transition)}ul{list-style: none}.container{width: 100%;max-width: var(--max-width);margin: 0 auto;padding: 0 24px}h1{font-family: var(--font-heading);letter-spacing: 0.04em;text-transform: uppercase;line-height: 1.1}.text-accent{color: var(--accent)}.btn{display: inline-flex;align-items: center;gap: 10px;font-family: var(--font-body);font-size: 0.875rem;font-weight: 600;text-transform: uppercase;letter-spacing: 0.1em;padding: 15px 32px;border: none;border-radius: 8px;cursor: pointer;transition: all var(--transition);position: relative;overflow: hidden;min-height: 48px;justify-content: center}.btn-primary{background: var(--accent);color: var(--on-accent);border: 1px solid var(--accent);box-shadow: none}.header{position: fixed;top: 0;left: 0;width: 100%;z-index: 1000;background: rgba(19,20,23,0.72);border-bottom: 1px solid rgba(255,255,255,0.06);transition: all var(--transition)}.header-inner{display: flex;align-items: center;justify-content: space-between;height: var(--header-height);max-width: var(--max-width);margin: 0 auto;padding: 0 24px}.logo{font-family: "Anton","Impact",sans-serif;font-size: 1.6rem;text-transform: uppercase;letter-spacing: 0.02em;color: var(--text-primary);position: relative}.logo-accent{color: var(--accent)}.logo-sub{display: block;font-family: var(--font-body);font-size: 0.55rem;font-weight: 500;letter-spacing: 0.2em;color: var(--text-muted);margin-top: -2px}.nav-list{display: flex;align-items: center;gap: 32px}.nav-link{font-family: var(--font-body);font-size: 0.8rem;font-weight: 500;text-transform: uppercase;letter-spacing: 0.1em;color: var(--text-secondary);position: relative;padding: 4px 0;transition: color var(--transition)}.nav-link::after{content: "";position: absolute;bottom: -2px;left: 0;width: 0;height: 2px;background: var(--accent);transition: width var(--transition)}.hamburger{display: none;flex-direction: column;gap: 5px;cursor: pointer;padding: 4px;background: none;border: none}.hamburger span{display: block;width: 24px;height: 2px;background: var(--text-primary);transition: all var(--transition);border-radius: 8px}.hero{position: relative;min-height: 640px;display: flex;align-items: center;justify-content: center;overflow: hidden;padding-top: var(--header-height)}.hero-bg{position: absolute;inset: 0;z-index: 0}.hero-vignette{position: absolute;inset: 0;box-shadow: none;z-index: 2}.hero-content{position: relative;z-index: 5;text-align: center;padding: 0 24px;max-width: 800px}.hero-title{font-family: "Anton","Impact",sans-serif;font-size: clamp(4rem,12vw,9rem);line-height: 0.95;text-transform: uppercase;letter-spacing: 0.01em;margin-bottom: 8px;animation: hero-rise 400ms ease-out both;text-shadow: none}.hero-title .text-accent{display: block;font-size: clamp(5rem,15vw,11rem)}.hero-subtitle{font-family: var(--font-body);font-size: clamp(1rem,2vw,1.2rem);color: var(--text-primary);margin-bottom: 36px;letter-spacing: 0.22em;text-transform: uppercase;font-weight: 300;animation: hero-rise 400ms 60ms ease-out both}.hero-actions{display: flex;align-items: center;justify-content: center;gap: 16px;flex-wrap: wrap;animation: hero-rise 400ms 120ms ease-out both}.hero-scroll-indicator{position: absolute;bottom: 40px;left: 50%;transform: translateX(-50%);z-index: 5;display: flex;flex-direction: column;align-items: center;gap: 8px;color: var(--text-muted);font-size: 0.65rem;letter-spacing: 0.15em;text-transform: uppercase}.scroll-line{width: 1px;height: 40px;background: none}@media (max-width: 768px){.nav-list{display: none}.hamburger{display: flex}.nav-link{font-size: 1rem;padding: 10px 0;min-height: 44px;display: flex;align-items: center}.btn,.btn-primary{min-height: 44px}.hero{min-height: 560px;}.hero-subtitle{font-size: 0.85rem;letter-spacing: 0.08em}.hero-actions{flex-direction: column;width: 100%;max-width: 320px;margin: 0 auto}.hero-actions .btn{width: 100%;justify-content: center;padding: 16px 24px}.hero-content{padding: 0 20px}.hero-scroll-indicator{bottom: 20px}.container{padding: 0 16px}.header-inner{padding: 0 calc(16px + env(safe-area-inset-right,0px)) 0 calc(16px + env(safe-area-inset-left,0px))}.container{padding-left: calc(16px + env(safe-area-inset-left,0px));padding-right: calc(16px + env(safe-area-inset-right,0px))}}@media (max-width: 480px){.hero-subtitle{font-size: 0.75rem}.hero{min-height: 560px;}.container{padding: 0 12px}.btn{padding: 12px 24px;font-size: 0.8rem}}@media (max-width: 380px){.hero-subtitle{font-size: 0.75rem;letter-spacing: 0.06em}.hero-actions .btn{padding: 14px 18px;font-size: 0.75rem}.container{padding: 0 10px}}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration: 0.01ms !important;transition-duration: 0.01ms !important}html{scroll-behavior: auto}}h1,.hero-title{font-family: var(--font-heading)}.hero{min-height: 640px;}.hero-media,.hero-media img{position: absolute;inset: 0;width: 100%;height: 100%;z-index: 0}.hero-media img{object-fit: cover;object-position: center 25%;opacity: 0.45}.hero-bg::after{content: "";position: absolute;inset: 0;z-index: 3;pointer-events: none;opacity: 0.18;background-image: none;mix-blend-mode: overlay}.hero-actions{display: flex;flex-wrap: wrap;gap: 12px;justify-content: center}.text-accent{color: var(--accent-text)}.hero-title .text-accent{color: var(--accent)}.hamburger{width: 44px;height: 44px;align-items: center;justify-content: center;padding: 10px}@media (max-width: 768px){.hero{min-height: 640px;padding-bottom: 24px}.hero-content{padding-top: 12px}.hero-subtitle{margin-bottom: 18px}.hero-actions .btn{padding: 14px 24px}.hero-scroll-indicator{display: none}}.hero-title{font-size: clamp(4rem,14vw,11rem);line-height: .88}.hero-title .text-accent{font-size: inherit}.hero .hero-subtitle{font-family: "Inter",var(--font-body);font-weight: 500;text-transform: uppercase;letter-spacing: .12em;font-size: clamp(0.875rem,2vw,1.125rem);color: rgba(237,235,230,.8);margin: 12px 0 24px}.btn-stream{min-height: 52px;border-radius: 8px;font-weight: 700;letter-spacing: .1em;text-transform: uppercase;box-shadow: none}@media (max-width: 767px){.hero-actions{max-width: none}.hero-actions .btn-stream{width: 100%}}.album-sticky .btn{min-height: 44px;padding: 0 20px;border-radius: 8px}html{scroll-behavior: auto}.hero-media img{opacity: 1 !important;transform: none !important;transition: none !important;animation: none !important}.scroll-line{animation: none !important}.hero-scroll-indicator{animation: none !important}.btn{transition: background-color var(--dur-2) var(--ease-out),color var(--dur-2) var(--ease-out),border-color var(--dur-2) var(--ease-out),transform var(--dur-1) var(--ease-out);box-shadow: none}@media (prefers-reduced-motion: reduce){.btn{transform: none !important;transition: none !important}}@media (prefers-reduced-motion: no-preference){html{scroll-behavior: smooth}}.header{padding-top: env(safe-area-inset-top,0px);padding-left: env(safe-area-inset-left,0px);padding-right: env(safe-area-inset-right,0px)}.nav-link.active{color:var(--text-primary)}.nav-link.active::after{width:100%;background:var(--accent)}@keyframes hero-rise{from{transform: translateY(16px)}to{transform: none}}@media (prefers-reduced-motion: reduce){.hero-title,.hero-subtitle,.hero-actions{animation: none !important}}@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/ibm-plex-mono-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/ibm-plex-mono-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}:root{--ink:#131417;--paper:#ECE8E1;--surface:#1C1E22;--muted:#8D9099;--line:rgba(236,232,225,0.15);--bg-primary:#131417;--bg-secondary:#131417;--bg-card:#1C1E22;--bg-card-hover:#1C1E22;--bg-elevated:#1C1E22;--accent:#79C043;--accent-dark:#79C043;--accent-hover:#8bd052;--accent-pressed:#6aab39;--accent-text:#79C043;--accent-glow:transparent;--accent-subtle:rgba(121,192,67,0.12);--signal:#79C043;--gold:#79C043;--text-primary:#ECE8E1;--on-accent:#131417;--text-secondary:#8D9099;--text-muted:#8D9099;--border-color:rgba(236,232,225,0.15);--border-accent:#79C043;--font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--shadow-card:none;--shadow-lift:none;--shadow-glow:none;--radius:8px;--radius-sm:8px;--panel-radius:24px;--header-height:70px;--ease-nf:cubic-bezier(.22,1,.36,1);}html,body{background:var(--ink);color:var(--paper)}body{font-family:var(--font-body);font-weight:400}*,*::before,*::after{box-shadow:none !important;text-shadow:none !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}a{color:inherit}.text-accent,.logo-accent{color:var(--accent) !important}.hero-vignette,.hero-bg::after,.hero-scroll-indicator{display:none !important}.header{height:70px;background:transparent !important;border-bottom:1px solid transparent;transition:background .3s var(--ease-nf),border-color .3s var(--ease-nf)}.header.scrolled{background:var(--ink) !important;border-bottom-color:var(--line)}.header-inner{height:70px}.nav-link{font-family:var(--font-mono) !important;font-size:11px !important;letter-spacing:.06em;text-transform:uppercase;color:var(--paper)}.nav-link::after{background:var(--accent) !important}.nav-link.active,.nav-link:hover{color:var(--accent)}.logo{font-family:var(--font-heading);color:var(--paper)}.logo-sub{font-family:var(--font-mono);color:var(--muted)}.hamburger span{background:var(--paper)}.btn{border-radius:999px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;background-image:none !important}.btn-primary{background:var(--accent) !important;color:var(--on-accent) !important;border:1px solid var(--accent) !important}.btn-primary:hover{background:var(--accent-hover) !important}.btn-outline{background:transparent !important;color:var(--paper) !important;border:1px solid var(--line) !important}.btn-outline:hover{border-color:var(--paper) !important}.nf-pill{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 6px 0 18px;border-radius:999px;background:var(--accent);color:var(--on-accent) !important;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap;margin-left:24px}.nf-pill i{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--accent);font-style:normal;font-size:14px}.section-label,.nf-label,.nf-meta{font-family:var(--font-mono) !important;font-size:11px !important;font-weight:400 !important;letter-spacing:.06em !important;text-transform:uppercase;color:var(--muted) !important;background:none !important;border:0 !important;padding:0 !important}.section-label::before,.section-label::after{display:none !important}.section-title,h1,h2{font-family:var(--font-heading);text-transform:uppercase;letter-spacing:-0.01em;line-height:.95}.feature-card,.press-card,.album-card,.newsletter-inner,.blog-card,.post-card,.card{background-image:none !important;background-color:var(--surface) !important;border:1px solid var(--line) !important;border-radius:var(--radius) !important}.newsletter-inner{background:var(--accent) !important;color:var(--on-accent);border:0 !important;border-radius:var(--panel-radius) !important}.newsletter-inner *{color:var(--on-accent) !important}.newsletter-inner input{background:transparent !important;border:1px solid rgba(19,20,23,.4) !important;color:var(--on-accent) !important}.newsletter-inner .btn-primary{background:var(--ink) !important;color:var(--paper) !important;border-color:var(--ink) !important}.footer{background:var(--ink) !important;border-top:1px solid var(--line)}input,textarea,select{background:var(--surface);color:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}.nf-wrap{max-width:1280px;margin:0 auto;padding:0 40px}.nf-sec{padding:120px 0;border-top:1px solid var(--line)}.nf-sec.nf-surface{background:var(--surface)}.nf-hero{position:relative;min-height:clamp(560px,80svh,860px);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ink)}.nf-hero-media{position:absolute;inset:0;z-index:0}.nf-hero-media img{width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.55;animation:nfSettle 1.3s var(--ease-nf) both}.nf-hero-line{position:absolute;top:110px;left:40px;z-index:1;max-width:380px;font-size:16px;line-height:1.6;color:var(--paper);margin:0}.nf-hero-meta{position:absolute;top:110px;right:40px;z-index:1;text-align:right}.nf-hero-foot{position:relative;z-index:1;padding:0 24px}.nf-wordmark{font-family:var(--font-heading);text-transform:uppercase;line-height:.82;letter-spacing:-0.02em;color:var(--paper);margin:0;font-size:clamp(52px,15.4vw,236px);white-space:nowrap;display:flex;justify-content:space-between;animation:nfRise 1s var(--ease-nf) both}.nf-wordmark span{display:block}.nf-wordmark .y{color:var(--paper)}.nf-wordmark .h{color:var(--accent)}.nf-hero-actions{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:20px 0 24px;flex-wrap:wrap}@keyframes nfRise{from{transform:translateY(24px)}to{transform:none}}@keyframes nfSettle{from{transform:scale(1.04)}to{transform:none}}.walker-track{position:relative;height:48px;overflow:hidden;border-bottom:1px solid var(--line)}.walker{position:absolute;left:0;bottom:0;width:48px;height:48px;animation:nfTravel 40s steps(160) infinite}.px-sprite{position:absolute;inset:0;display:grid;grid-template-columns:repeat(16,3px);grid-template-rows:repeat(16,3px)}.px-sprite i{display:block;width:3px;height:3px}.px-sprite .b{background:var(--paper)}.px-sprite .g{background:var(--accent)}.px-sprite .k{background:var(--ink)}.walker .frame{animation:nfCycleA .5s steps(1) infinite}.walker .frame.fb{animation-name:nfCycleB}@keyframes nfTravel{from{transform:translateX(-48px)}to{transform:translateX(100vw)}}@keyframes nfCycleA{0%{opacity:1}50%{opacity:0}}@keyframes nfCycleB{0%{opacity:0}50%{opacity:1}}.walker-rest{position:relative;height:48px;border-bottom:1px solid var(--line)}.walker-rest .px-sprite{left:auto;right:0;width:48px}@media (max-width:1023px){.nf-index{grid-template-columns:1.3fr 1fr}.nf-look{grid-template-columns:repeat(3,1fr)}.nf-footer-grid{grid-template-columns:1fr 1fr}}@media (max-width:767px){.nf-wrap{padding:0 20px}.nf-sec{padding:80px 0}.nf-pill{display:none}.nf-hero-line{left:20px;top:96px;right:20px;font-size:15px}.nf-hero-meta{display:none}.nf-hero-foot{padding:0 20px}.nf-wordmark{font-size:52px;flex-direction:column;line-height:.9}.nf-wordmark{font-size:clamp(52px,22vw,96px)}.walker{animation-duration:80s}.walker .frame{animation-duration:1s}.nf-head,.nf-statement,.nf-video,.nf-panel{grid-template-columns:1fr;gap:20px}.nf-index{grid-template-columns:1fr}.nf-art{display:none}.nf-index a.nf-row{grid-template-columns:56px 1fr;padding:16px 0}.nf-index a.nf-row .nf-meta{grid-column:2}.nf-thumb{display:block;width:56px;height:56px;border-radius:var(--radius);object-fit:cover;grid-row:span 2}.nf-index a.nf-row .n{display:none}.nf-ruled li{grid-template-columns:1fr;gap:6px;padding:20px 0}.nf-rows li{grid-template-columns:40px 1fr;gap:12px}.nf-rows li p{grid-column:2}.nf-look{grid-template-columns:repeat(2,1fr)}.nf-panel{padding:48px 24px}.nf-footer-grid{grid-template-columns:1fr}.nf-footer-bottom{flex-direction:column}.nf-footer-bottom a{margin:0 16px 0 0}}@media (prefers-reduced-motion:reduce){.walker,.walker .frame{animation:none !important}.walker{transform:none}.walker .frame.fb{opacity:0}.nf-wordmark,.nf-hero-media img{animation:none !important}}@media (max-width:768px){.header-inner>.hamburger{margin-left:auto}}</style>
   <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all';this.onload=null">
   <noscript><link rel="stylesheet" href="css/style.css"></noscript>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎧</text></svg>">
@@ -202,7 +202,7 @@
         "name": "How can I book Young Hadene for a show or feature?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Email contact@younghadene.ca with your project details, budget, and timeline."
+          "text": "Use the contact page with your project details, budget, and timeline."
         }
       }
     ]
@@ -235,57 +235,60 @@
           <li><a href="/admin" class="nav-link" style="color:var(--text-muted);font-size:0.7rem;">Admin</a></li>
         </ul>
       </nav>
+      <a class="nf-pill" href="/contact">Book a show <i aria-hidden="true">&#8594;</i></a>
     </div>
   </header>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="hero-bg">
-      <picture class="hero-media">
+  <!-- ===== HERO (Ninefold) ===== -->
+  <section class="nf-hero" aria-label="Young Hadene">
+    <div class="nf-hero-media">
+      <picture>
         <source media="(min-width: 768px)" srcset="images/hero-poster2-1440x810.webp" type="image/webp">
         <img src="images/hero-poster2-640.webp" width="640" height="529" alt="" fetchpriority="high" decoding="async">
       </picture>
-      <div class="hero-gradient"></div>
-      <div class="hero-vignette"></div>
-
     </div>
-
-    <div class="hero-content">
-      <h1 class="hero-title">
-        YOUNG
-        <span class="text-accent">HADENE</span>
-      </h1>
-      <p class="hero-subtitle">Haitian-Toronto drill and dark trap artist</p>
-      <div class="hero-actions">
+    <p class="nf-hero-line">Haitian-Toronto drill and dark trap artist. Hard street stories, melodic hooks, released independently.</p>
+    <p class="nf-meta nf-hero-meta">HAITI. TORONTO. THE 6IX.<br>NEW ALBUM OUT NOW.</p>
+    <div class="nf-hero-foot">
+      <h1 class="nf-wordmark"><span class="y">YOUNG</span> <span class="h">HADENE</span></h1>
+      <div class="nf-hero-actions">
+        <span class="nf-meta">000/ DRILL. DARK TRAP. TORONTO.</span>
         <a href="#releases" class="btn btn-primary btn-stream">Stream Now</a>
       </div>
     </div>
-
-    <div class="hero-scroll-indicator">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
   </section>
+  <!-- pixel walker on the hairline under the hero -->
+  <div class="walker-track" aria-hidden="true"><div class="walker"><div class="px-sprite frame fa"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="k"></i><i class="b"></i><i class="b"></i><i class="k"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="px-sprite frame fb"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="k"></i><i class="b"></i><i class="b"></i><i class="k"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
 
-  <!-- ===== RELEASES ===== -->
-  <section class="releases section" id="releases">
-    <div class="container">
-      <ul class="streaming-row releases-stream" aria-label="Stream Young Hadene">
+  <!-- ===== MUSIC: index swap ===== -->
+  <section class="nf-sec" id="releases" style="border-top:0">
+    <div class="nf-wrap">
+      <div class="nf-head">
+        <span class="nf-label">001/ Discography</span>
+        <h2 class="nf-h2">Latest <span class="text-accent">Releases</span></h2>
+      </div>
+      <div class="nf-index" data-nf-index>
+        <div>
+          <ol>
+            <li class="is-on"><a class="nf-row" href="/music/they-took-me-down" data-art="0"><span class="nf-meta n">01</span><img class="nf-thumb" src="img/covers/they-took-me-down.svg" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="t">They Took Me Down</span><span class="nf-meta">ALBUM. 11 TRACKS. NEW.</span></a></li>
+            <li><a class="nf-row" href="/music/sacrifices-and-success" data-art="1"><span class="nf-meta n">02</span><img class="nf-thumb" src="img/covers/sacrifices-and-success.svg" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="t">Sacrifices &amp; Success</span><span class="nf-meta">RELEASE. STREAMING NOW.</span></a></li>
+            <li><a class="nf-row" href="/videos" data-art="2"><span class="nf-meta n">03</span><img class="nf-thumb" src="images/poster2-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="t">Music Videos</span><span class="nf-meta">YOUTUBE. OFFICIAL VIDEOS.</span></a></li>
+          </ol>
+          <ul class="nf-stream" aria-label="Stream Young Hadene">
           <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener" aria-label="Listen to Young Hadene on Spotify"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.85-1.74-6.45-2.14-10.68-1.17a.75.75 0 1 1-.33-1.46c4.63-1.06 8.6-.6 11.77 1.34.36.22.47.68.25 1.04zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.26-2-8.24-2.59-12.1-1.42a.94.94 0 1 1-.54-1.8c4.4-1.33 9.88-.68 13.62 1.62.44.27.58.85.31 1.29zm.13-3.4C15.2 8.3 8.76 8.08 5.03 9.21a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 11.4-1.05 15.9 1.62a1.12 1.12 0 1 1-1.15 1.93z"/></svg></a></li>
           <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener" aria-label="Listen to Young Hadene on Apple Music"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 2.5v13.2a3.3 3.3 0 1 1-2-3V6.9L9 9v8.7a3.3 3.3 0 1 1-2-3V4.6z"/></svg></a></li>
           <li><a href="https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg" target="_blank" rel="noopener" aria-label="Listen to Young Hadene on YouTube"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg></a></li>
           <li><a href="https://soundcloud.com/young_hadene" target="_blank" rel="noopener" aria-label="Listen to Young Hadene on SoundCloud"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1 14.5l.4-2.2L1 10c0-.1-.1-.2-.2-.2s-.2.1-.2.2l-.3 2.3.3 2.2c0 .1.1.2.2.2s.2-.1.2-.2zm2.1 1.2l.5-3.4-.5-5.3c0-.1-.1-.2-.3-.2-.1 0-.2.1-.2.2l-.4 5.3.4 3.4c0 .1.1.2.2.2.2 0 .3-.1.3-.2zm2.2.1l.4-3.5-.4-6.5c0-.2-.2-.3-.3-.3-.2 0-.3.1-.3.3l-.4 6.5.4 3.5c0 .2.1.3.3.3.1 0 .3-.1.3-.3zm2.2 0l.4-3.5-.4-7.4c0-.2-.2-.4-.4-.4s-.4.2-.4.4l-.3 7.4.3 3.5c0 .2.2.4.4.4s.4-.2.4-.4zm2.3 0l.3-3.5-.3-7.6c0-.3-.2-.5-.5-.5s-.4.2-.5.5l-.3 7.6.3 3.5c0 .3.2.5.5.5s.5-.2.5-.5zm10.9.4A3.3 3.3 0 0 0 24 12.9a3.3 3.3 0 0 0-4.6-3 6 6 0 0 0-6-5.5c-.7 0-1.4.1-2 .4-.3.1-.3.2-.3.4v11c0 .3.2.5.4.5z"/></svg></a></li>
       </ul>
-      <div class="section-header fade-in">
-        <span class="section-label">Discography</span>
-        <h2 class="section-title">Latest <span class="text-accent">Releases</span></h2>
-        <p class="section-subtitle">Heavy cuts from the vault.</p>
+        </div>
+        <div class="nf-art">
+            <img src="img/covers/they-took-me-down.svg" width="600" height="600" loading="lazy" decoding="async" alt="They Took Me Down album cover – Young Hadene" class="is-on">
+            <img src="img/covers/sacrifices-and-success.svg" width="600" height="600" loading="lazy" decoding="async" alt="Sacrifices &amp; Success album cover – Young Hadene">
+            <img src="images/poster2-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Young Hadene Toronto drill promotional poster — city nightscape with hooded figure">
+          <span class="nf-meta nf-art-meta" data-nf-meta>ALBUM. 11 TRACKS. NEW.</span>
+        </div>
       </div>
-      <ul class="album-cards">
-        <li><a class="album-card" href="/music/they-took-me-down"><span class="album-card-new">New</span><img src="img/covers/they-took-me-down.svg" width="600" height="600" loading="lazy" decoding="async" alt="They Took Me Down album cover – Young Hadene"><span class="album-card-title">They Took Me Down</span></a></li>
-        <li><a class="album-card" href="/music/sacrifices-and-success"><img src="img/covers/sacrifices-and-success.svg" width="600" height="600" loading="lazy" decoding="async" alt="Sacrifices &amp; Success album cover – Young Hadene"><span class="album-card-title">Sacrifices &amp; Success</span></a></li>
-      </ul>
-      <div class="releases-embed fade-in">
+      <div class="releases-embed" style="margin-top:56px">
         <iframe data-testid="embed-iframe" title="Young Hadene on Spotify" style="border-radius:2px;background:var(--bg-card)" data-src="https://open.spotify.com/embed/artist/4MYeewqn16CCiuIgmpIaGA?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         <noscript><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" class="btn btn-outline">Listen on Spotify</a></noscript>
       </div>
@@ -293,306 +296,173 @@
   </section>
 
   <!-- ===== VIDEOS ===== -->
-  <section class="section" id="videos">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="section-label">Videos</span>
-        <h2 class="section-title">Music <span class="text-accent">Videos</span></h2>
-        <p class="section-subtitle">Watch the Young Hadene video playlist.</p>
+  <section class="nf-sec" id="videos">
+    <div class="nf-wrap">
+      <div class="nf-head">
+        <span class="nf-label">002/ Videos</span>
+        <h2 class="nf-h2">Music <span class="text-accent">Videos</span></h2>
       </div>
-      <div class="releases-embed fade-in" style="max-width:800px;margin:0 auto;">
-        <button type="button" class="yt-facade" data-yt-src="https://www.youtube.com/embed/videoseries?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U&amp;autoplay=1" data-yt-title="Young Hadene Music Videos" aria-label="Play Young Hadene music videos playlist">
-          <img src="https://i.ytimg.com/vi/VFVC_1pI8vM/hqdefault.jpg" width="480" height="360" alt="" loading="lazy" decoding="async">
-          <span class="yt-play" aria-hidden="true"></span>
-        </button>
-        <p class="video-title">Young Hadene – Official Music Videos</p>
-        <ul class="video-list">
-          <li>Young hadene - broken (Music Video)</li>
-          <li>Young Hadene ft. Yung Dragonuv – Next Level Shit (Official Music Video)</li>
-          <li>Young Hadene – Creeping (Official Music Video)</li>
-          <li>Young Hadene – 10 Feet (Official Music Video)</li>
-          <li>Young Hadene – Are You Dumb (Official Music Video)</li>
-        </ul>
-        <div style="text-align:center;margin-top:16px;">
-          <a href="https://www.youtube.com/playlist?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" target="_blank" rel="noopener" class="btn btn-outline">View Full Playlist on YouTube</a>
-        </div>
+      <div class="nfv-bill"><div class="nfv-bill-media" data-id="VFVC_1pI8vM"><img src="https://i.ytimg.com/vi/VFVC_1pI8vM/sddefault.jpg" srcset="https://i.ytimg.com/vi/VFVC_1pI8vM/sddefault.jpg 640w, https://i.ytimg.com/vi/VFVC_1pI8vM/maxresdefault.jpg 1280w" sizes="(max-width: 767px) 360px, 1200px" alt="Still from the Young Hadene Broken music video" width="1280" height="720" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/VFVC_1pI8vM/hqdefault.jpg'"></div><div class="nfv-bill-panel"><p class="nf-meta">Featured video</p><h3 class="nfv-bill-title">Broken</h3><p class="nf-meta nfv-bill-meta">OFFICIAL MUSIC VIDEO. STR8HITSRECORDS. TORONTO.</p><div class="nfv-bill-actions"><button type="button" class="nfv-btn nfv-btn-play" data-id="VFVC_1pI8vM" aria-label="Play Broken"><span aria-hidden="true">&#9654;</span> Play</button><a class="nfv-btn nfv-btn-ghost" href="/videos">More videos</a></div></div></div><section class="nfv-row" aria-label="Music videos"><div class="nfv-row-head"><h2 class="nfv-h2">Music videos</h2><div class="nfv-arrows"><button type="button" class="nfv-arrow" data-dir="-1" aria-label="Scroll Music videos left">&#8592;</button><button type="button" class="nfv-arrow" data-dir="1" aria-label="Scroll Music videos right">&#8594;</button></div></div><ul class="nfv-track"><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=VFVC_1pI8vM" data-id="VFVC_1pI8vM"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/VFVC_1pI8vM/hqdefault.jpg" alt="Thumbnail for Young Hadene – Broken" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Broken</span></a><h3 class="nfv-h3">Broken</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=5BQxm5k-amA" data-id="5BQxm5k-amA"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/5BQxm5k-amA/hqdefault.jpg" alt="Thumbnail for Young Hadene – That Dark Drill Sound" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – That Dark Drill Sound</span></a><h3 class="nfv-h3">That Dark Drill Sound</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=GjIte_QdLCA" data-id="GjIte_QdLCA"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/GjIte_QdLCA/hqdefault.jpg" alt="Thumbnail for Young Hadene – Loud Pack" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Loud Pack</span></a><h3 class="nfv-h3">Loud Pack</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=CeZ7K_xGYzI" data-id="CeZ7K_xGYzI"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/CeZ7K_xGYzI/hqdefault.jpg" alt="Thumbnail for Young Hadene – Pyramids" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Pyramids</span></a><h3 class="nfv-h3">Pyramids</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=6X7iv5592Gg" data-id="6X7iv5592Gg"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/6X7iv5592Gg/hqdefault.jpg" alt="Thumbnail for Young Hadene ft Yung Tory" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene ft Yung Tory</span></a><h3 class="nfv-h3">Young Hadene ft Yung Tory</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=myDi_ieaaTg" data-id="myDi_ieaaTg"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/myDi_ieaaTg/hqdefault.jpg" alt="Thumbnail for Young Hadene – They Took Me Down album trailer" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – They Took Me Down album trailer</span></a><h3 class="nfv-h3">They Took Me Down album trailer</h3></li></ul></section><section class="nfv-row" aria-label="Latest"><div class="nfv-row-head"><h2 class="nfv-h2">Latest</h2><div class="nfv-arrows"><button type="button" class="nfv-arrow" data-dir="-1" aria-label="Scroll Latest left">&#8592;</button><button type="button" class="nfv-arrow" data-dir="1" aria-label="Scroll Latest right">&#8594;</button></div></div><ul class="nfv-track"><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=1HtsLfo8-oQ" data-id="1HtsLfo8-oQ"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/1HtsLfo8-oQ/hqdefault.jpg" alt="Thumbnail for Young Hadene – Taking Over the Six (Chess & Checkers)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Taking Over the Six (Chess &amp; Checkers)</span></a><h3 class="nfv-h3">Taking Over the Six (Chess & Checkers)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=6lAjOwZ414Y" data-id="6lAjOwZ414Y"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/6lAjOwZ414Y/hqdefault.jpg" alt="Thumbnail for Young Hadene – 10 Toes (Get It Up)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – 10 Toes (Get It Up)</span></a><h3 class="nfv-h3">10 Toes (Get It Up)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=I2sZD2YehdI" data-id="I2sZD2YehdI"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/I2sZD2YehdI/hqdefault.jpg" alt="Thumbnail for Young Hadene – Cash Cow (Brand New Patek)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Cash Cow (Brand New Patek)</span></a><h3 class="nfv-h3">Cash Cow (Brand New Patek)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=elzHwyXRQBs" data-id="elzHwyXRQBs"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/elzHwyXRQBs/hqdefault.jpg" alt="Thumbnail for Young Hadene – No Days Off" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – No Days Off</span></a><h3 class="nfv-h3">No Days Off</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=eQgwNg-JvaE" data-id="eQgwNg-JvaE"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/eQgwNg-JvaE/hqdefault.jpg" alt="Thumbnail for Young Hadene – Turn Gold (Haters to Listeners)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Turn Gold (Haters to Listeners)</span></a><h3 class="nfv-h3">Turn Gold (Haters to Listeners)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=Wxnm-AU6B_s" data-id="Wxnm-AU6B_s"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/Wxnm-AU6B_s/hqdefault.jpg" alt="Thumbnail for Young Hadene – Pressure & Diamonds (52 States)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Pressure &amp; Diamonds (52 States)</span></a><h3 class="nfv-h3">Pressure & Diamonds (52 States)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=_Y1mdYPa69U" data-id="_Y1mdYPa69U"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/_Y1mdYPa69U/hqdefault.jpg" alt="Thumbnail for Young Hadene – Mad Chances (Straight Records)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Mad Chances (Straight Records)</span></a><h3 class="nfv-h3">Mad Chances (Straight Records)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=vk9WbLCLhFg" data-id="vk9WbLCLhFg"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/vk9WbLCLhFg/hqdefault.jpg" alt="Thumbnail for Young Hadene – Living Right (My Opps Broke)" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Living Right (My Opps Broke)</span></a><h3 class="nfv-h3">Living Right (My Opps Broke)</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=aKOE6EudlNc" data-id="aKOE6EudlNc"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/aKOE6EudlNc/hqdefault.jpg" alt="Thumbnail for Young Hadene – Balling Like Kobe" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Balling Like Kobe</span></a><h3 class="nfv-h3">Balling Like Kobe</h3></li><li class="nfv-item"><a class="nfv-card" href="https://www.youtube.com/watch?v=0nCoxtPiVuk" data-id="0nCoxtPiVuk"><span class="nfv-thumb"><img src="https://i.ytimg.com/vi/0nCoxtPiVuk/hqdefault.jpg" alt="Thumbnail for Young Hadene – Too Bless" loading="lazy" decoding="async" width="480" height="360"></span><span class="nfv-title">Young Hadene – Too Bless</span></a><h3 class="nfv-h3">Too Bless</h3></li></ul></section><p style="margin-top:24px"><a class="nfv-btn nfv-btn-ghost" href="https://www.youtube.com/playlist?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" target="_blank" rel="noopener">View Full Playlist on YouTube</a></p>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT: statement ===== -->
+  <section class="nf-sec nf-surface">
+    <div class="nf-wrap nf-statement">
+      <div>
+        <span class="nf-label">003/ About</span>
+        <h2 class="nf-h2" style="margin-top:16px;font-size:clamp(32px,4vw,56px)">Who Is <span class="text-accent">Young Hadene?</span></h2>
+      </div>
+      <div>
+        <p class="big">Haitian-born and Toronto-based, Young Hadene makes drill and dark trap in the 6ix — hard-hitting street narratives with melodic hooks, released independently.</p>
+        <p><a href="/about">Read the full story</a> — from Haiti to Toronto, the sound, and the independent path behind the music.</p>
+        <p class="nf-meta" style="margin-top:24px">11-TRACK ALBUM OUT NOW. 15+ TRACKS RELEASED. TORONTO, THE 6IX.</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== ABOUT ===== -->
-  <section class="about section">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-image fade-in">
-          <img src="images/poster1-640.webp" srcset="images/poster1-640.webp 640w, images/poster1-960.webp 960w, images/poster1.webp 1088w" sizes="(max-width: 768px) 100vw, 50vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene dark trap Toronto promotional poster — cinematic city aesthetic with red neon lighting" style="width:100%;height:100%;object-fit:cover;">
-          <div class="about-image-overlay">
-            <span>Toronto • 6ix</span>
-          </div>
-        </div>
-        <div class="about-content fade-in">
-          <span class="section-label">About</span>
-          <h2 class="section-title">Who Is<br><span class="text-accent">Young Hadene?</span></h2>
-          <p>
-            Haitian-born and Toronto-based, Young Hadene makes drill and dark trap in the 6ix —
-            hard-hitting street narratives with melodic hooks, released independently.
-          </p>
-          <p>
-            <a href="/about">Read the full story</a> — from Haiti to Toronto, the sound,
-            and the independent path behind the music.
-          </p>
-          <div class="about-stats">
-            <div class="stat-item">
-              <div class="stat-number">11-Track</div>
-              <div class="stat-label">Album Out Now</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">15+</div>
-              <div class="stat-label">Tracks Released</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">Toronto</div>
-              <div class="stat-label">The 6ix</div>
-            </div>
-          </div>
-        </div>
+  <!-- ===== THE MOVEMENT: numbered rows ===== -->
+  <section class="nf-sec">
+    <div class="nf-wrap">
+      <div class="nf-head">
+        <span class="nf-label">004/ What We Stand For</span>
+        <h2 class="nf-h2">The <span class="text-accent">Movement</span></h2>
       </div>
+      <ol class="nf-rows">
+        <li><h3>Toronto Made</h3><p>Every bar, every beat — it's stamped with the energy of the 6ix. From the underground to the main stage, we carry the city with us.</p></li>
+        <li><h3>Real Content</h3><p>No fabricated stories, no industry polish. Just raw, unfiltered narratives that hit hard and speak truth to power.</p></li>
+        <li><h3>Dark Trap Sound</h3><p>Heavy 808s, cinematic atmospheres, and haunting melodies — the signature sound that defines Young Hadene's aesthetic.</p></li>
+      </ol>
     </div>
   </section>
 
-  <!-- ===== FEATURES ===== -->
-  <section class="features section">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="section-label">What We Stand For</span>
-        <h2 class="section-title">The <span class="text-accent">Movement</span></h2>
+  <!-- ===== THE LOOK ===== -->
+  <section class="nf-sec" id="the-look">
+    <div class="nf-wrap">
+      <div class="nf-head">
+        <span class="nf-label">005/ Visuals</span>
+        <h2 class="nf-h2">The <span class="text-accent">Look</span></h2>
       </div>
-      <div class="features-grid">
-        <div class="feature-card fade-in" style="position:relative;overflow:hidden;">
-          <div style="position:absolute;inset:0;background:url('images/poster4-640.webp') center center/cover;opacity:0.07;pointer-events:none;"></div>
-          <div style="position:relative;z-index:1;">
-            <div class="feature-icon">&#x1F3D4;</div>
-            <h3>Toronto Made</h3>
-            <p>Every bar, every beat — it's stamped with the energy of the 6ix. From the underground to the main stage, we carry the city with us.</p>
-          </div>
-        </div>
-        <div class="feature-card fade-in" style="position:relative;overflow:hidden;">
-          <div style="position:absolute;inset:0;background:url('images/poster5-640.webp') center center/cover;opacity:0.07;pointer-events:none;"></div>
-          <div style="position:relative;z-index:1;">
-            <div class="feature-icon">&#x1F3AC;</div>
-            <h3>Real Content</h3>
-            <p>No fabricated stories, no industry polish. Just raw, unfiltered narratives that hit hard and speak truth to power.</p>
-          </div>
-        </div>
-        <div class="feature-card fade-in" style="position:relative;overflow:hidden;">
-          <div style="position:absolute;inset:0;background:url('images/poster3-640.webp') center center/cover;opacity:0.07;pointer-events:none;"></div>
-          <div style="position:relative;z-index:1;">
-            <div class="feature-icon">&#x1F525;</div>
-            <h3>Dark Trap Sound</h3>
-            <p>Heavy 808s, cinematic atmospheres, and haunting melodies — the signature sound that defines Young Hadene's aesthetic.</p>
-          </div>
-        </div>
-      </div>
+      <ul class="nf-look" aria-label="Young Hadene visuals">
+        <li><img src="images/poster1-640.webp" srcset="images/poster1-640.webp 640w, images/poster1-960.webp 960w, images/poster1.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene poster — Toronto dark trap artist visual with atmospheric night city vibe"></li>
+        <li><img src="images/poster3-640.webp" srcset="images/poster3-640.webp 640w, images/poster3-960.webp 960w, images/poster3.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene promo artwork — dark trap music visual with Toronto drill aesthetic"></li>
+        <li><img src="images/poster5-640.webp" srcset="images/poster5-640.webp 640w, images/poster5-960.webp 960w, images/poster5.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene dark trap poster — cinematic Toronto music visual with red neon glow"></li>
+        <li><img src="images/poster2-640.webp" srcset="images/poster2-640.webp 640w, images/poster2-960.webp 960w, images/poster2.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene Toronto drill promotional poster — city nightscape with hooded figure"></li>
+        <li><img src="images/poster4-640.webp" srcset="images/poster4-640.webp 640w, images/poster4-960.webp 960w, images/poster4.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene music visual — dark trap Toronto aesthetic poster with cinematic red tones"></li>
+      </ul>
     </div>
   </section>
 
-  <!-- ===== THE LOOK (batch 2 full-bleed strip) ===== -->
-  <section class="the-look" id="the-look">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="section-label">Visuals</span>
-        <h2 class="section-title">The <span class="text-accent">Look</span></h2>
-        <p class="section-intro">Cinematic visuals that define the Young Hadene aesthetic.</p>
+  <!-- ===== PRESS: ruled list ===== -->
+  <section class="nf-sec">
+    <div class="nf-wrap">
+      <div class="nf-head">
+        <span class="nf-label">006/ Coverage</span>
+        <h2 class="nf-h2">Press, Interviews <span class="text-accent">&amp; Features</span></h2>
       </div>
-    </div>
-    <ul class="look-rail" aria-label="Young Hadene visuals">
-        <li class="fade-in"><div class="poster-tile"><img src="images/poster1-640.webp" srcset="images/poster1-640.webp 640w, images/poster1-960.webp 960w, images/poster1.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene poster — Toronto dark trap artist visual with atmospheric night city vibe"></div></li>
-        <li class="fade-in"><div class="poster-tile"><img src="images/poster3-640.webp" srcset="images/poster3-640.webp 640w, images/poster3-960.webp 960w, images/poster3.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene promo artwork — dark trap music visual with Toronto drill aesthetic"></div></li>
-        <li class="fade-in"><div class="poster-tile"><img src="images/poster5-640.webp" srcset="images/poster5-640.webp 640w, images/poster5-960.webp 960w, images/poster5.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene dark trap poster — cinematic Toronto music visual with red neon glow"></div></li>
-        <li class="fade-in"><div class="poster-tile"><img src="images/poster2-640.webp" srcset="images/poster2-640.webp 640w, images/poster2-960.webp 960w, images/poster2.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene Toronto drill promotional poster — city nightscape with hooded figure"></div></li>
-        <li class="fade-in"><div class="poster-tile"><img src="images/poster4-640.webp" srcset="images/poster4-640.webp 640w, images/poster4-960.webp 960w, images/poster4.webp 1088w" sizes="(min-width: 768px) 20vw, 82vw" width="1088" height="1360" loading="lazy" decoding="async" alt="Young Hadene music visual — dark trap Toronto aesthetic poster with cinematic red tones"></div></li>
-    </ul>
-  </section>
-
-  <!-- ===== PRESS ===== -->
-  <section class="section" style="background:var(--bg-primary);padding:60px 0;">
-    <div class="container" style="max-width:960px;">
-      <div class="section-header fade-in">
-        <span class="section-label">Coverage</span>
-        <h2 class="section-title">Press, Interviews <span class="text-accent">&amp; Features</span></h2>
-        <p class="section-subtitle">What publications are saying — linked to the originals.</p>
-      </div>
-      <div class="press-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;">
-        <div class="press-card fade-in" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;">
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;">Exposed Vocals</div>
-          <h3 style="font-size:1.1rem;margin-bottom:8px;">Young Hadene on Setbacks, Identity and Building Through They Took Me Down</h3>
-          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:14px;">An in-depth interview on the album, the Haiti-to-Toronto journey, and building independently.</p>
-          <a href="https://exposedvocals.com/young-hadene-they-took-me-down-interview/" target="_blank" rel="noopener" class="btn btn-outline">Read Article</a>
-        </div>
-        <div class="press-card fade-in" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;">
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;">The Clout Magazine</div>
-          <h3 style="font-size:1.1rem;margin-bottom:8px;">Interview: Young Hadene on Independence</h3>
-          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:14px;">A Q&amp;A on recording, mastering, and shooting everything himself.</p>
-          <a href="https://thecloutmagazine.com/interview-young-hadene-on-independence/" target="_blank" rel="noopener" class="btn btn-outline">Read Article</a>
-        </div>
-        <div class="press-card fade-in" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;">
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;">24Hip-Hop</div>
-          <h3 style="font-size:1.1rem;margin-bottom:8px;">Toronto's Young Hadene Is Ready For The States</h3>
-          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:14px;">A feature on the Haitian-roots-meets-Toronto sound and the self-made grind.</p>
-          <a href="https://24hip-hop.com/torontos-young-hadene-is-ready-for-the-states/" target="_blank" rel="noopener" class="btn btn-outline">Read Article</a>
-        </div>
-        <div class="press-card fade-in" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;">
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;">Rolling Hype</div>
-          <h3 style="font-size:1.1rem;margin-bottom:8px;">Young Hadene Is Setting The Bar</h3>
-          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:14px;">A short Q&amp;A on his Toronto sound and the message behind the music.</p>
-          <a href="https://rollinghype.com/young-hadene-is-setting-the-bar/" target="_blank" rel="noopener" class="btn btn-outline">Read Article</a>
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:24px;">
-        <a href="/press" class="btn btn-outline">View All Press &amp; Features</a>
-      </div>
+      <ul class="nf-ruled">
+        <li><span class="pub">Exposed Vocals</span><a href="https://exposedvocals.com/young-hadene-they-took-me-down-interview/" target="_blank" rel="noopener"><span class="q">Young Hadene on Setbacks, Identity and Building Through They Took Me Down</span></a><span class="nf-meta">Interview</span></li>
+        <li><span class="pub">The Clout Magazine</span><a href="https://thecloutmagazine.com/interview-young-hadene-on-independence/" target="_blank" rel="noopener"><span class="q">Interview: Young Hadene on Independence</span></a><span class="nf-meta">Q&amp;A</span></li>
+        <li><span class="pub">24Hip-Hop</span><a href="https://24hip-hop.com/torontos-young-hadene-is-ready-for-the-states/" target="_blank" rel="noopener"><span class="q">Toronto's Young Hadene Is Ready For The States</span></a><span class="nf-meta">Feature</span></li>
+        <li><span class="pub">Rolling Hype</span><a href="https://rollinghype.com/young-hadene-is-setting-the-bar/" target="_blank" rel="noopener"><span class="q">Young Hadene Is Setting The Bar</span></a><span class="nf-meta">Q&amp;A</span></li>
+      </ul>
+      <a href="/press" class="btn btn-outline nf-more">View All Press &amp; Features</a>
     </div>
   </section>
 
-  <!-- ===== FAQ ===== -->
-  <section class="features section" style="background:var(--bg-secondary);">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="section-label">Questions</span>
-        <h2 class="section-title">Who Is <span class="text-accent">Young Hadene?</span></h2>
-        <p class="section-subtitle">Everything you need to know about the Haitian-Toronto drill and dark trap artist.</p>
-      </div>
-
-      <div class="features-grid" style="grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Who is Young Hadene, the Haitian-Toronto drill artist?</h3>
-          <p class="faq-a">Young Hadene is a Haitian-Toronto drill and dark trap artist. Haitian-born and Toronto-based, he blends hard-hitting street narratives with emotional undertones, focusing on loyalty, ambition, struggle, and personal growth.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What is Young Hadene's story from Haiti to Toronto?</h3>
-          <p class="faq-a">Born in Haiti, partly raised in Florida, and now based in Toronto, Young Hadene brings both worlds into his music. His sound fuses Haitian influences with the raw energy of Toronto's drill and trap scene, creating a unique voice in Canadian hip hop.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What kind of music does Young Hadene make?</h3>
-          <p class="faq-a">Dark trap and drill-influenced hip hop with structured cadence shifts, space-driven delivery, aggressive energy, and melodic hooks. He represents the modern Toronto rap wave combining drill rhythm, trap intensity, and melodic storytelling.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What makes Young Hadene different from other Toronto rappers?</h3>
-          <p class="faq-a">Young Hadene's Haitian-Toronto perspective sets him apart. He blends Caribbean and Haitian influences with dark trap production, creating a sound that bridges the 6ix underground with his heritage. His structured cadence shifts and space-driven delivery create a distinct balance between aggression and melody.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What are Young Hadene's biggest musical influences?</h3>
-          <p class="faq-a">Young Hadene draws from Toronto's rich hip hop lineage — from K-OS and Jazz Cartier to Sean Leon and 88GLAM — while incorporating Haitian musical elements and the heavy 808-driven sound of drill and trap. His sound is built on the artists who defined the 2005-2018 Toronto scene.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Is Young Hadene an independent artist?</h3>
-          <p class="faq-a">Yes, Young Hadene is an independent artist operating out of Toronto, Ontario. He manages his own releases, visual branding, and distribution across Spotify, Apple Music, YouTube, and all major streaming platforms.</p>
-        </div>
-      </div>
-
-      <div class="section-header fade-in" style="margin-top:48px;">
-        <h2 class="section-title" style="font-size:clamp(1.6rem,4vw,2.2rem);">Location & <span class="text-accent">Identity</span></h2>
-        <p class="section-subtitle">The Haitian-Toronto drill sound — where heritage meets the 6ix.</p>
-      </div>
-
-      <div class="features-grid" style="grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Who is a Haitian drill rapper from Toronto?</h3>
-          <p class="faq-a">Young Hadene is a Haitian drill rapper from Toronto. Haitian-born and raised in the 6ix, he represents the intersection of Caribbean heritage and Toronto's hard-hitting drill and trap scene.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Which Toronto drill artists blend Caribbean and Haitian influences?</h3>
-          <p class="faq-a">Young Hadene is one of the Toronto drill artists blending Caribbean and Haitian influences with dark trap production. His music fuses Haitian rhythmic elements with the heavy 808 sound of Toronto drill — hear the details in <a href="/haitian-canadian-drill">this breakdown of the sound</a>.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What is the Haitian-Toronto drill sound?</h3>
-          <p class="faq-a">The Haitian-Toronto drill sound is a fusion of dark trap production, drill rhythm patterns, and Haitian musical influences. Young Hadene works in this blend — combining heavy 808s, cinematic atmospheres, and melodic hooks rooted in his heritage. Read more in <a href="/haitian-canadian-drill">Haitian-Canadian music and Toronto drill</a>.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Who represents the real 6ix in dark trap and drill?</h3>
-          <p class="faq-a">Young Hadene represents the real 6ix in dark trap and drill. From the underground venues of Toronto to the global streaming platforms, his music carries the authentic energy of Toronto's nightlife and street culture.</p>
-        </div>
-      </div>
-
-      <div class="section-header fade-in" style="margin-top:48px;">
-        <h2 class="section-title" style="font-size:clamp(1.6rem,4vw,2.2rem);">The <span class="text-accent">Movement</span></h2>
-        <p class="section-subtitle">What Young Hadene stands for — the vision behind the music.</p>
-      </div>
-
-      <div class="features-grid" style="grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What is the Young Hadene movement?</h3>
-          <p class="faq-a">The Young Hadene movement is about authenticity, Haitian-Toronto representation, and dark trap innovation. It's built on real stories from the 6ix, consistent releases, and a commitment to pushing Toronto drill forward without compromising the sound.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What does 'Built Different — Dark Trap — 6ix Side' mean?</h3>
-          <p class="faq-a">'Built Different' represents Young Hadene's unique approach to music — a Haitian-Toronto perspective you won't find anywhere else. 'Dark Trap' defines the cinematic, heavy 808 sound. '6ix Side' is a tribute to Toronto, the city that shaped the artist.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Why is Young Hadene an artist to watch in 2026?</h3>
-          <p class="faq-a">Young Hadene is an artist to watch in 2026 because of his consistent output, unique Haitian-Toronto sound, growing streaming numbers, and strong visual branding. He represents the new wave of Canadian hip hop blending drill, trap, and Caribbean influences.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">What themes does Young Hadene rap about?</h3>
-          <p class="faq-a">Young Hadene's music covers loyalty, ambition, struggle, personal growth, Toronto street life, and the journey from Haiti to the 6ix. His lyrics blend hard-hitting street narratives with emotional undertones and melodic storytelling.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">Is Young Hadene among the best Toronto rappers?</h3>
-          <p class="faq-a">That depends on the criteria — commercial success, lyricism, or underground impact all give different answers. This site's <a href="/blog/best-toronto-rappers-2026-top-toronto-hip-hop-artists-ranked">2026 Toronto rap roundup</a> lays out its selection approach openly, including the disclosure that the site is associated with Young Hadene. Compare the music there and decide for yourself.</p>
-        </div>
-        <div class="feature-card fade-in" style="padding:24px;">
-          <h3 class="faq-q">How does Young Hadene fit among Canadian rappers?</h3>
-          <p class="faq-a">He is part of the country's independent wave — a Toronto-based artist releasing drill and dark trap on his own terms, alongside both mainstream names and underground peers across Canada. Start with the <a href="/music">music page</a> to hear where he fits.</p>
-        </div>
-      </div>
-
+  <!-- ===== ONE QUOTE ===== -->
+  <section class="nf-sec">
+    <div class="nf-wrap nf-quote">
+      <blockquote>Toronto's Young Hadene Is Ready For The States.</blockquote>
+      <a class="nf-meta" href="https://24hip-hop.com/torontos-young-hadene-is-ready-for-the-states/" target="_blank" rel="noopener">24HIP-HOP, FEATURE</a>
     </div>
   </section>
 
-  <!-- ===== GOOGLE CARD ===== -->
-  <section class="section" style="background:var(--bg-secondary);padding:60px 0;">
-    <div class="container">
-      <div class="fade-in" style="max-width:700px;margin:0 auto;text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:40px 32px;">
-        <div style="width:56px;height:56px;margin:0 auto 16px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;font-family:var(--font-body);"><span style="color:#4285F4;">G</span></div>
-        <span class="section-label">Official Profile</span>
-        <h2 class="section-title" style="margin-bottom:12px;">Find Young Hadene <span class="text-accent">on Google</span></h2>
-        <p class="section-subtitle" style="margin-bottom:24px;">Follow, get updates & leave a review — help the 6ix movement show up first when people search.</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <a href="https://share.google/HesREN5rtFGRek6bi" target="_blank" rel="noopener" class="btn btn-primary">★ View Google Profile</a>
+  <!-- ===== FAQ: numbered rows ===== -->
+  <section class="nf-sec">
+    <div class="nf-wrap">
+      <div class="nf-head">
+        <span class="nf-label">007/ Questions</span>
+        <div>
+          <h2 class="nf-h2">Who Is <span class="text-accent">Young Hadene?</span></h2>
+          <p style="color:var(--muted);margin:16px 0 0">Everything you need to know about the Haitian-Toronto drill and dark trap artist.</p>
+        </div>
+      </div>
+        <ol class="nf-rows">
+          <li><h3 class="faq-q">Who is Young Hadene, the Haitian-Toronto drill artist?</h3><p class="faq-a">Young Hadene is a Haitian-Toronto drill and dark trap artist. Haitian-born and Toronto-based, he blends hard-hitting street narratives with emotional undertones, focusing on loyalty, ambition, struggle, and personal growth.</p></li>
+          <li><h3 class="faq-q">What is Young Hadene's story from Haiti to Toronto?</h3><p class="faq-a">Born in Haiti, partly raised in Florida, and now based in Toronto, Young Hadene brings both worlds into his music. His sound fuses Haitian influences with the raw energy of Toronto's drill and trap scene, creating a unique voice in Canadian hip hop.</p></li>
+          <li><h3 class="faq-q">What kind of music does Young Hadene make?</h3><p class="faq-a">Dark trap and drill-influenced hip hop with structured cadence shifts, space-driven delivery, aggressive energy, and melodic hooks. He represents the modern Toronto rap wave combining drill rhythm, trap intensity, and melodic storytelling.</p></li>
+          <li><h3 class="faq-q">What makes Young Hadene different from other Toronto rappers?</h3><p class="faq-a">Young Hadene's Haitian-Toronto perspective sets him apart. He blends Caribbean and Haitian influences with dark trap production, creating a sound that bridges the 6ix underground with his heritage.</p></li>
+          <li><h3 class="faq-q">What are Young Hadene's biggest musical influences?</h3><p class="faq-a">Young Hadene draws from Toronto's rich hip hop lineage from K-OS and Jazz Cartier to Sean Leon and 88GLAM, while incorporating Haitian musical elements and heavy 808-driven drill and trap.</p></li>
+          <li><h3 class="faq-q">Is Young Hadene an independent artist?</h3><p class="faq-a">Yes, Young Hadene is an independent artist operating out of Toronto, Ontario. He manages his own releases, visual branding, and distribution.</p></li>
+          <li><h3 class="faq-q">Where can I listen to Young Hadene's music?</h3><p class="faq-a">Young Hadene's music is available on all major streaming platforms including Spotify, Apple Music, YouTube, and SoundCloud.</p></li>
+          <li><h3 class="faq-q">What are the best Young Hadene songs to start with?</h3><p class="faq-a">New listeners should start with No Sleep, 6ix Side, Pressure, and After Dark. These tracks showcase the full range of his dark trap and drill sound.</p></li>
+          <li><h3 class="faq-q">How can I book Young Hadene for a show or feature?</h3><p class="faq-a">Use the <a href="/contact">contact page</a> with your project details, budget, and timeline.</p></li>
+        </ol>
+      <div class="nf-head nf-subhead">
+        <span class="nf-label">008/ Location &amp; Identity</span>
+        <h2 class="nf-h2" style="font-size:clamp(28px,4vw,48px)">Location &amp; <span class="text-accent">Identity</span></h2>
+      </div>
+        <ol class="nf-rows">
+          <li><h3 class="faq-q">Who is a Haitian drill rapper from Toronto?</h3><p class="faq-a">Young Hadene is a Haitian drill rapper from Toronto. Haitian-born and raised in the 6ix, he represents the intersection of Caribbean heritage and Toronto's hard-hitting drill and trap scene.</p></li>
+          <li><h3 class="faq-q">Which Toronto drill artists blend Caribbean and Haitian influences?</h3><p class="faq-a">Young Hadene is one of the Toronto drill artists blending Caribbean and Haitian influences with dark trap production. His music fuses Haitian rhythmic elements with the heavy 808 sound of Toronto drill — hear the details in <a href="/haitian-canadian-drill">this breakdown of the sound</a>.</p></li>
+          <li><h3 class="faq-q">What is the Haitian-Toronto drill sound?</h3><p class="faq-a">The Haitian-Toronto drill sound is a fusion of dark trap production, drill rhythm patterns, and Haitian musical influences. Young Hadene works in this blend of heavy 808s, cinematic atmospheres, and melodic hooks.</p></li>
+          <li><h3 class="faq-q">Who represents the real 6ix in dark trap and drill?</h3><p class="faq-a">Young Hadene represents the real 6ix in dark trap and drill. From the underground venues of Toronto to the global streaming platforms, his music carries the authentic energy of Toronto's nightlife and street culture.</p></li>
+        </ol>
+      <div class="nf-head nf-subhead">
+        <span class="nf-label">009/ The Movement</span>
+        <h2 class="nf-h2" style="font-size:clamp(28px,4vw,48px)">The <span class="text-accent">Movement</span></h2>
+      </div>
+        <ol class="nf-rows">
+          <li><h3 class="faq-q">What is the Young Hadene movement?</h3><p class="faq-a">The Young Hadene movement is about authenticity, Haitian-Toronto representation, and dark trap innovation. It's built on real stories from the 6ix, consistent releases, and a commitment to pushing Toronto drill forward without compromising the sound.</p></li>
+          <li><h3 class="faq-q">What does 'Built Different — Dark Trap — 6ix Side' mean?</h3><p class="faq-a">Built Different represents Young Hadene's unique Haitian-Toronto perspective. Dark Trap defines the cinematic, heavy 808 sound. 6ix Side is a tribute to Toronto, the city that shaped the artist.</p></li>
+          <li><h3 class="faq-q">Why is Young Hadene an artist to watch in 2026?</h3><p class="faq-a">Young Hadene is an artist to watch in 2026 because of his consistent output, unique Haitian-Toronto sound, growing streaming numbers, and strong visual branding. He represents the new wave of Canadian hip hop blending drill, trap, and Caribbean influences.</p></li>
+          <li><h3 class="faq-q">What themes does Young Hadene rap about?</h3><p class="faq-a">Young Hadene's music covers loyalty, ambition, struggle, personal growth, Toronto street life, and the journey from Haiti to the 6ix.</p></li>
+          <li><h3 class="faq-q">Is Young Hadene among the best Toronto rappers?</h3><p class="faq-a">That depends on the criteria — commercial success, lyricism, or underground impact all give different answers. This site's <a href="/blog/best-toronto-rappers-2026-top-toronto-hip-hop-artists-ranked">2026 Toronto rap roundup</a> lays out its selection approach openly, including the disclosure that the site is associated with Young Hadene. Compare the music there and decide for yourself.</p></li>
+          <li><h3 class="faq-q">How does Young Hadene fit among Canadian rappers?</h3><p class="faq-a">He is part of the country's independent wave — a Toronto-based artist releasing drill and dark trap on his own terms, alongside both mainstream names and underground peers across Canada. Start with the <a href="/music">music page</a> to hear where he fits.</p></li>
+        </ol>
+    </div>
+  </section>
+
+  <!-- ===== GOOGLE PROFILE ===== -->
+  <section class="nf-sec nf-surface">
+    <div class="nf-wrap nf-statement">
+      <span class="nf-label">010/ Official Profile</span>
+      <div>
+        <h2 class="nf-h2" style="font-size:clamp(32px,4vw,56px);margin-bottom:16px">Find Young Hadene <span class="text-accent">on Google</span></h2>
+        <p style="color:var(--muted);margin:0 0 24px">Follow, get updates & leave a review — help the 6ix movement show up first when people search.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="https://share.google/HesREN5rtFGRek6bi" target="_blank" rel="noopener" class="btn btn-primary">View Google Profile</a>
           <a href="https://share.google/HesREN5rtFGRek6bi" target="_blank" rel="noopener" class="btn btn-outline">Leave a Review</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== NEWSLETTER ===== -->
-  <section class="newsletter section" id="join-the-6ix">
-    <div class="container">
-      <div class="newsletter-inner fade-in" style="background-image:linear-gradient(rgba(7,7,10,0.88),rgba(7,7,10,0.88)),url('images/poster1-960.webp');background-size:cover;background-position:center;">
-        <div class="newsletter-content">
-          <span class="section-label">Stay Connected</span>
-          <h2 class="section-title">Join The <span class="text-accent">6ix</span></h2>
-          <p>Get exclusive drops, early access, and behind-the-scenes content.</p>
-        </div>
-        <div class="newsletter-form-wrap">
-          <form class="newsletter-form">
-            <input type="email" name="email" placeholder="Enter your email" required aria-label="Email address" autocomplete="email" inputmode="email">
-            <button type="submit" class="btn btn-primary">Subscribe</button>
-          </form>
-        </div>
+  <!-- ===== NEWSLETTER / BOOKING: accent panel ===== -->
+  <section class="nf-panel-wrap" id="join-the-6ix">
+    <div class="nf-panel">
+      <div>
+        <span class="nf-meta">011/ Stay Connected</span>
+        <h2>Join The 6ix</h2>
+        <p>Get exclusive drops, early access, and behind-the-scenes content.</p>
+      </div>
+      <div>
+        <form class="newsletter-form">
+          <input type="email" name="email" placeholder="Enter your email" required aria-label="Email address" autocomplete="email" inputmode="email">
+          <button type="submit" class="btn-ink">Subscribe</button>
+        </form>
+        <div class="nf-actions"><a class="btn-line" href="/contact">Booking &amp; features</a></div>
+        <p class="nf-meta" style="margin-top:18px">TORONTO, ONTARIO. CONTACT@YOUNGHADENE.CA</p>
       </div>
     </div>
   </section>
 
   <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <a href="/" class="logo">
-            YOUNG<span class="logo-accent">HADENE</span>
-            <span class="logo-sub">Toronto • Dark Trap</span>
-          </a>
+  <footer class="nf-footer">
+    <div class="nf-wrap">
+      <div class="nf-footer-grid">
+        <div>
           <p>Heavy 808s from the 6ix. Built different. Representing Toronto's underground sound worldwide.</p>
           <div class="footer-social">
             <a href="https://www.instagram.com/YOUNGHADENE" target="_blank" rel="noopener" aria-label="Young Hadene on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7C8.3 24 8.7 24 12 24s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg></a>
@@ -604,7 +474,7 @@
           </div>
         </div>
         <div>
-          <h2 class="footer-heading">Navigate</h2>
+          <h2>Navigate</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/music">Music</a></li>
@@ -615,7 +485,7 @@
           </ul>
         </div>
         <div>
-          <h2 class="footer-heading">Music</h2>
+          <h2>Music</h2>
           <ul>
             <li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener">Spotify</a></li>
             <li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></li>
@@ -624,7 +494,7 @@
           </ul>
         </div>
         <div>
-          <h2 class="footer-heading">Contact</h2>
+          <h2>Contact</h2>
           <ul>
             <li><a href="mailto:contact@younghadene.ca">Email</a></li>
             <li><a href="/contact">Bookings</a></li>
@@ -633,14 +503,13 @@
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 Young Hadene. All rights reserved. Toronto. 6ix.</p>
-        <div class="footer-bottom-links">
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-        </div>
+      <div class="walker-rest" aria-hidden="true"><div class="px-sprite "><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="k"></i><i class="b"></i><i class="b"></i><i class="k"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="g"></i><i class="g"></i><i class="g"></i><i class="g"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="nf-footer-bottom">
+        <p class="nf-meta" style="margin:0">&copy; 2026 Young Hadene. All rights reserved. Toronto. 6ix.</p>
+        <div class="nf-meta"><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
       </div>
     </div>
+    <p class="nf-giant" aria-hidden="true">YOUNG HADENE</p>
   </footer>
 
   <script src="js/main.js"></script>

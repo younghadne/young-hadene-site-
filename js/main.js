@@ -106,6 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
   });
 
+
+  // ---- Netflix-style videos: tap-to-load facade + row arrows ----
+  const nfvFrame = (id, title) => { const f = document.createElement('iframe'); f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0'; f.title = title || 'YouTube video'; f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'; f.allowFullscreen = true; return f; };
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('a.nfv-card');
+    if (card && card.dataset.id) { e.preventDefault(); const t = card.querySelector('.nfv-thumb'); if (t && !t.querySelector('iframe')) { const f = nfvFrame(card.dataset.id, card.textContent.trim()); t.replaceChildren(f); f.focus(); } return; }
+    const play = e.target.closest('.nfv-btn-play');
+    if (play) { const bill = play.closest('.nfv-bill'); const m = bill && bill.querySelector('.nfv-bill-media'); if (m && !m.querySelector('iframe')) { const f = nfvFrame(play.dataset.id, play.getAttribute('aria-label')); m.replaceChildren(f); bill.classList.add('playing'); f.focus(); } return; }
+    const arrow = e.target.closest('.nfv-arrow');
+    if (arrow) { const tr = arrow.closest('.nfv-row').querySelector('.nfv-track'); const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; tr.scrollBy({ left: Number(arrow.dataset.dir) * tr.clientWidth * 0.9, behavior: rm ? 'auto' : 'smooth' }); }
+  });
+
   // ---- Header scroll effect ----
   const header = document.querySelector('.header');
   let lastScroll = 0;
@@ -221,4 +233,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (on) bar.removeAttribute('aria-hidden'); else bar.setAttribute('aria-hidden', 'true');
   });
   io.observe(row); if (end) io.observe(end);
+})();
+
+// ---- Ninefold index swap: hovering/focusing a title swaps the cover art ----
+(function () {
+  var root = document.querySelector('[data-nf-index]');
+  if (!root) return;
+  var rows = root.querySelectorAll('a.nf-row'), arts = root.querySelectorAll('.nf-art img'), meta = root.querySelector('[data-nf-meta]');
+  function on(i) {
+    rows.forEach(function (r, j) { r.parentElement.classList.toggle('is-on', j === i); });
+    arts.forEach(function (a, j) { a.classList.toggle('is-on', j === i); });
+    if (meta) meta.textContent = rows[i].querySelector('.nf-meta:not(.n)').textContent;
+  }
+  rows.forEach(function (r, i) { r.addEventListener('mouseenter', function () { on(i); }); r.addEventListener('focus', function () { on(i); }); });
 })();
