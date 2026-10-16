@@ -1758,3 +1758,7 @@ html { scroll-behavior: auto; }
 /* iPhone (viewport-fit=cover): keep the fixed header clear of the notch / Dynamic Island and rounded corners */
 .header { padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 .album-page > .section { padding-top: calc(120px + env(safe-area-inset-top, 0px)) !important; }
+
+/* Section headline accent words use the full accent (large type >= 24px) — beats .text-accent (--accent-text) */
+.section-title .text-accent { color: var(--accent); }
+
