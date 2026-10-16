@@ -378,6 +378,7 @@ h1, h2, h3, h4, h5, h6 {
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1720,7 +1721,7 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 .album-end a { display: flex; align-items: center; justify-content: space-between; min-height: 72px; padding: 0 20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 2px; font-family: var(--font-heading); font-size: 20px; text-transform: uppercase; color: var(--text-primary); transition: border-color var(--dur-2) var(--ease-out); }
 .album-end a:hover, .album-end a:focus-visible { border-color: var(--accent); }
 @media (max-width: 359px) { .album-end { grid-template-columns: 1fr; } }
-.album-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; display: flex; align-items: center; gap: 12px; height: calc(64px + env(safe-area-inset-bottom)); padding: 0 16px env(safe-area-inset-bottom); background: rgba(7,7,10,.92); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-top: 1px solid var(--border-color); transform: translateY(100%); visibility: hidden; transition: transform var(--dur-3) var(--ease-out), visibility 0s var(--dur-3); }
+.album-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; display: flex; align-items: center; gap: 12px; height: calc(64px + env(safe-area-inset-bottom, 0px)); padding: 0 calc(16px + env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) calc(16px + env(safe-area-inset-left, 0px)); background: rgba(7,7,10,.92); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-top: 1px solid var(--border-color); transform: translateY(100%); visibility: hidden; transition: transform var(--dur-3) var(--ease-out), visibility 0s var(--dur-3); }
 .album-sticky.is-shown { transform: none; visibility: visible; transition: transform var(--dur-3) var(--ease-out); }
 .album-sticky img { width: 40px; height: 40px; object-fit: cover; }
 .album-sticky span { flex: 1; min-width: 0; font: 600 14px var(--font-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1802,3 +1803,7 @@ html { scroll-behavior: auto; }
 /* WebKit 390px overflow fix: long unbroken footnote URLs (S&S Apple Music source) pushed the page 6px wide */
 .album-page .article-wrap p, .album-page .footnote li, .album-page .album-credits dd { overflow-wrap: anywhere; }
 .album-page > .section { overflow-x: clip; }
+
+/* iPhone (viewport-fit=cover): keep the fixed header clear of the notch / Dynamic Island and rounded corners */
+.header { padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.album-page > .section { padding-top: calc(120px + env(safe-area-inset-top, 0px)) !important; }
