@@ -87,10 +87,19 @@ console.log(`sitemap.xml regenerated: blog ${posts.length} posts + news ${newsFi
 // ── 2. Google News sitemap (only /news/ articles from the last 2 days) ──
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
 const now = Date.now();
-const fresh = newsFiles.filter((f) => {
+// Publication time comes from the article's NewsArticle datePublished (NOT
+// file mtime: a fresh checkout on the build server makes every file "new").
+function newsPubMs(full) {
   try {
-    return now - fs.statSync(path.join(newsDir, f)).mtimeMs < TWO_DAYS_MS;
-  } catch { return false; }
+    const html = fs.readFileSync(full, 'utf8');
+    const m = html.match(/"datePublished"\s*:\s*"([^"]+)"/);
+    const ms = m ? Date.parse(m[1]) : NaN;
+    return Number.isFinite(ms) ? ms : NaN;
+  } catch { return NaN; }
+}
+const fresh = newsFiles.filter((f) => {
+  const ms = newsPubMs(path.join(newsDir, f));
+  return Number.isFinite(ms) && ms <= now && now - ms <= TWO_DAYS_MS;
 });
 
 let news = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -100,9 +109,9 @@ for (const f of fresh) {
   const full = path.join(newsDir, f);
   const html = fs.readFileSync(full, 'utf8');
   const title = extractTitle(html).split('—')[0].split('|')[0].trim() || f;
-  const pubDate = new Date(fs.statSync(full).mtime).toISOString();
+  const pubDate = new Date(newsPubMs(full)).toISOString();
   news += '  <url>\n';
-  news += `    <loc>${SITE_URL}/news/${esc(f)}</loc>\n`;
+  news += `    <loc>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</loc>\n`;
   news += '    <news:news>\n';
   news += '      <news:publication>\n';
   news += '        <news:name>Young Hadene</news:name>\n';

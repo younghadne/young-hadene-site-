@@ -8,6 +8,7 @@
 //
 // Allows both /news/<slug> and /news/<slug>.html
 import { NEWS_NOINDEX } from '../_news-noindex.js';
+import { NEWS_AUTHOR, PUBLISHER_ID } from '../_news-config.js';
 
 const SITE_URL = 'https://younghadene.ca';
 
@@ -132,15 +133,20 @@ function buildNewsHtml(d, related) {
   const ogDesc = d.ogDesc || desc;
   const ogImage = d.ogImage || (SITE_URL + '/images/poster1.png');
   const canon = String(d.canonical || (SITE_URL + '/news/' + d.slug)).replace(/^https?:\/\/(www\.)?younghadene\.ca/i, SITE_URL).replace(/\.html$/i, '');
-  const author = d.author || 'Young Hadene';
-  const schema = JSON.stringify({
+  // Byline comes from the single shared constant (see functions/_news-config.js).
+  const author = NEWS_AUTHOR;
+  const modStamp = modIso !== iso ? fmtStamp(Date.parse(modIso)) : stamp;
+  const schemaObj = {
     '@context': 'https://schema.org', '@type': 'NewsArticle',
-    headline: d.title || '', description: desc, image: d.image || (SITE_URL + '/images/poster1.png'),
+    headline: String(d.title || '').substring(0, 110), description: desc,
     datePublished: iso, dateModified: modIso,
-    author: { '@type': 'Person', '@id': SITE_URL + '/about#person', name: author, jobTitle: 'Editor', url: SITE_URL + '/about' },
-    publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
+    author: { '@type': 'Organization', name: author, url: SITE_URL + '/about' },
+    publisher: { '@type': 'Organization', '@id': PUBLISHER_ID, name: 'Young Hadene', logo: { '@type': 'ImageObject', url: SITE_URL + '/images/poster1.png' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
-  });
+  };
+  const img = d.image || d.ogImage || '';
+  if (img) schemaObj.image = [String(img)];
+  const schema = JSON.stringify(schemaObj).replace(/</g, '\\u003c');
   const hero = d.image
     ? `<img src="${escHtml(d.image)}" alt="${escHtml(d.imageAlt || d.title)}" loading="lazy" style="max-width:100%;border-radius:12px;margin:0 0 24px;">`
     : '';
@@ -157,7 +163,8 @@ function buildNewsHtml(d, related) {
     `<meta property="og:image" content="${escHtml(ogImage)}">` +
     `<meta property="og:url" content="${escHtml(canon)}">` +
     `<meta property="og:type" content="article">` +
-    `<meta property="article:published_time" content="${iso.substring(0, 10)}">` +
+    `<meta property="article:published_time" content="${iso}">` +
+    `<meta property="article:modified_time" content="${modIso}">` +
     `<meta name="twitter:card" content="summary_large_image">` +
     `<meta name="twitter:title" content="${escHtml(ogTitle)}">` +
     `<meta name="twitter:description" content="${escHtml(ogDesc)}">` +
@@ -170,7 +177,7 @@ function buildNewsHtml(d, related) {
     `<header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music" class="nav-link">Music</a></li><li><a href="/blog" class="nav-link">Blog</a></li><li><a href="/news" class="nav-link active">News</a></li><li><a href="/contact" class="nav-link">Contact</a></li></ul></nav></div></header>` +
     `<section class="section" style="padding-top:120px;"><div class="container"><a href="/news" class="back-link">&#8592; Back to News</a><div class="article-wrap">` +
     crumbs +
-    `<div class="meta">${escHtml(stamp)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about" rel="author" style="color:inherit">${escHtml(author)}</a></div>` +
+    `<div class="meta"><span class="byline">By <a href="/about" rel="author" style="color:inherit">${escHtml(author)}</a></span> &middot; <span>${escHtml(d.category || 'News')}</span><br>Published <time class="published" datetime="${iso}">${escHtml(stamp)}</time> &middot; Updated <time class="updated" datetime="${modIso}">${escHtml(modStamp)}</time></div>` +
     `<h1>${escHtml(d.title)}</h1>` + hero + `<div>${renderArticleBody(d)}</div>${relBox}` +
     `<p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin:32px 0 0;">Young Hadene News is the artist's official newsroom. Read our <a href="/editorial-policy" style="color:var(--text-muted);text-decoration:underline;">editorial policy</a> and <a href="/corrections-policy" style="color:var(--text-muted);text-decoration:underline;">corrections policy</a>.</p>` +
     `</div></div></section>` +
