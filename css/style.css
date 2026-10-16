@@ -157,7 +157,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-accent { color: var(--accent); }
-.text-muted { color: var(--text-muted); }
+
 
 /* ----- Buttons ----- */
 .btn {
@@ -417,23 +417,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 800px;
 }
 
-.hero-badge {
-  display: inline-block;
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text-primary);
-  border: 1px solid rgba(200, 16, 46, 0.5);
-  padding: 6px 16px;
-  border-radius: 2px;
-  margin-bottom: 24px;
-  animation: fade-in-down 0.8s ease-out forwards;
-  opacity: 0;
-  background: rgba(7, 7, 10, 0.6);
-  box-shadow: none;
-}
+
 
 .hero-title {
   font-family: 'Anton', 'Impact', sans-serif;
@@ -549,37 +533,11 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
-.about-image-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(ellipse at 30% 50%, rgba(200, 16, 46, 0.08), transparent),
-    linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
-  position: relative;
-  overflow: hidden;
-}
 
-.about-image-placeholder .cn-tower-mini {
-  width: 6px;
-  height: 60%;
-  background: linear-gradient(180deg, transparent, rgba(38, 38, 46, 0.15));
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-.about-image-placeholder .cn-tower-mini::after {
-  content: '';
-  width: 16px;
-  height: 4px;
-  background: rgba(200, 16, 46, 0.4);
-  border-radius: 2px;
-  margin-top: 30%;
-}
+
+
+
 
 .about-image-overlay {
   position: absolute;
@@ -1427,7 +1385,7 @@ h1, h2, h3, h4, h5, h6 {
   .hero-subtitle { font-size: 0.85rem; letter-spacing: 0.08em; }
   .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
   .hero-actions .btn { width: 100%; justify-content: center; padding: 16px 24px; }
-  .hero-badge { font-size: 0.75rem; padding: 5px 12px; }
+  
   .hero-content { padding: 0 20px; }
   .hero-scroll-indicator { bottom: 20px; }
 
@@ -1439,14 +1397,14 @@ h1, h2, h3, h4, h5, h6 {
   .features-grid { grid-template-columns: 1fr; }
   .feature-card { padding: 28px 24px; }
 
-  .gallery-grid { display: grid; gap: 20px; }
-  .gallery-grid-3 { grid-template-columns: repeat(3, 1fr); }
-  .gallery-grid-2 { grid-template-columns: repeat(2, 1fr); margin-top: 20px; }
-  .gallery-card { padding: 0 !important; overflow: hidden; }
-  .gallery-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
-  .gallery-card:hover img { transform: scale(1.05); }
-  .gallery-card { aspect-ratio: 3/4; }
-  .gallery-card-wide { aspect-ratio: 16/9; }
+  
+  
+  
+  
+  
+  
+  
+  
 
   .blog-grid { grid-template-columns: 1fr; }
   .services-grid { grid-template-columns: 1fr; }
@@ -1499,13 +1457,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Small phones */
 @media (max-width: 480px) {
   .hero-subtitle { font-size: 0.75rem; }
-  .hero-badge { font-size: 0.75rem; }
+  
   .hero { min-height: 90vh; min-height: 90svh; }
 
   .about-stats { grid-template-columns: 1fr; gap: 8px; }
 
-  .gallery-grid-3 { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .gallery-grid-2 { grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+  
+  
 
   .section-title { font-size: clamp(1.6rem, 7vw, 2.4rem); }
   .section { padding: 40px 0; }
@@ -1540,7 +1498,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Tiny screens (iPhone SE, etc.) */
 @media (max-width: 380px) {
   .hero-subtitle { font-size: 0.75rem; letter-spacing: 0.06em; }
-  .hero-badge { font-size: 0.75rem; padding: 4px 10px; }
+  
   .hero-actions .btn { padding: 14px 18px; font-size: 0.75rem; }
 
   .section-title { font-size: 1.4rem; }
@@ -1604,9 +1562,9 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
   mix-blend-mode: overlay;
 }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-.hero-links { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center; margin-top: 18px; }
-.hero-links a { color: var(--text-primary); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px; min-height: 44px; display: inline-flex; align-items: center; }
-.hero-links a:hover { color: var(--accent-text); }
+
+
+
 
 /* Streaming buttons */
 .streaming-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px; list-style: none; padding: 0; }
@@ -1644,7 +1602,7 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
   .nav-list.open { max-height: calc(100dvh - var(--header-height)); overflow-y: auto; overscroll-behavior: contain; background: rgba(7, 7, 10, 0.98); }
   .hero { min-height: 100svh; padding-bottom: 24px; }
   .hero-content { padding-top: 12px; }
-  .hero-badge { margin-bottom: 12px; }
+  
   .hero-subtitle { margin-bottom: 18px; }
   .hero-actions .btn { padding: 14px 24px; }
   .hero-scroll-indicator { display: none; }
@@ -1659,7 +1617,7 @@ h1, h2, h3, .section-title, .hero-title { font-family: var(--font-heading); }
 /* ============================
    BATCH 2 — cinematic hero (visual-spec-batch2 §1)
    ============================ */
-.hero-links, .hero-badge { display: none !important; }
+
 .hero-gradient {
   background:
     radial-gradient(120% 60% at 50% 100%, rgba(200,16,46,.10), transparent 70%),
@@ -1785,7 +1743,7 @@ html { scroll-behavior: auto; }
 .album-card-title { display: block; margin-top: 10px; font-family: 'Anton', 'Impact', sans-serif; font-size: clamp(1rem, 3.5vw, 1.35rem); text-transform: uppercase; letter-spacing: .02em; line-height: 1.1; }
 .album-card-new { position: absolute; top: 8px; left: 8px; z-index: 1; background: var(--accent); color: var(--on-accent); font: 700 11px/1 'Inter', var(--font-body); text-transform: uppercase; letter-spacing: .08em; padding: 5px 7px; border-radius: 2px; }
 @media (max-width: 767px) { .album-page .back-link { margin-bottom: 20px; } }
-.pagination-gap { min-width: 20px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); }
+
 .pagination a { flex: 0 0 44px; border-radius: 2px; }
 
 /* Hero Option A: Stream Now jumps to #releases; streaming row leads that section */
