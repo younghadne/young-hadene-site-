@@ -30,6 +30,7 @@ export const BLOG_REDIRECTS = {
   "free-toronto-type-beats-for-rappers-2026-guide": "/blog/toronto-drill-type-beats-production",
   "french-creole-hip-hop-toronto-fusion-2026-guide": "/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation",
   "haitian-creole-in-rap-lyrics-toronto-2026-guide": "/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation",
+  "haitian-rappers-in-toronto-new-generation": "/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation",
   "haitian-rappers-in-toronto-new-generation-2026-guide": "/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation",
   "hard-drill-beats-toronto-style-2026-guide": "/blog/toronto-drill-type-beats-production",
   "hip-hop-curators-canada-to-submit-music-2026-guide": "/blog/how-to-promote-rap-music-in-toronto",
