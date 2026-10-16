@@ -39,8 +39,9 @@ const pages = [['videos.html', '/videos.html'], ['videos/shorts.html', '/videos/
     html = html.replace(/\n?<style id="critical-css">[\s\S]*?<\/style>/, '');
     const blocking = '<link rel="stylesheet" href="/css/style.css">';
     const asyncTags = '<style id="critical-css">' + out + '</style>\n<link rel="stylesheet" href="/css/style.css" media="print" onload="this.media=\'all\';this.onload=null">\n<noscript><link rel="stylesheet" href="/css/style.css"></noscript>';
-    if (html.includes(blocking)) html = html.replace(blocking, asyncTags);
-    else html = html.replace(/<link rel="stylesheet" href="\/css\/style.css" media="print"/, '<style id="critical-css">' + out + '</style>\n$&');
+    // Re-runs: the async link already exists (and the blocking tag also sits inside <noscript>), so insert before it.
+    if (/<link rel="stylesheet" href="\/css\/style.css" media="print"/.test(html)) html = html.replace(/<link rel="stylesheet" href="\/css\/style.css" media="print"/, '<style id="critical-css">' + out + '</style>\n$&');
+    else html = html.replace(blocking, asyncTags);
     fs.writeFileSync(file, html);
     console.log(file, out.length);
   }
