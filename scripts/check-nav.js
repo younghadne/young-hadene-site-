@@ -54,6 +54,20 @@ for (const file of files) {
     console.log(`NAV-CHECK FAIL ${rel}: missing tab(s): ${missing.join(', ')}`);
     failures++;
   }
+  // Order + nesting: one <li> per tab, in NAV_ITEMS order, no <li> holding more than one nav link.
+  const lis = [...nav.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => m[1]);
+  const perLi = lis.map((li) => [...li.matchAll(/<a\b[^>]*class="[^"]*\bnav-link\b[^"]*"[^>]*>([^<]*)<\/a>/g)].map((m) => m[1].trim()));
+  const crowded = perLi.filter((labels) => labels.length > 1);
+  if (crowded.length) {
+    console.log(`NAV-CHECK FAIL ${rel}: <li> holds more than one nav link: ${crowded.map((l) => l.join('+')).join(', ')}`);
+    failures++;
+  }
+  const order = perLi.flat();
+  const want = REQUIRED.map((t) => t.label);
+  if (order.join('|') !== want.join('|')) {
+    console.log(`NAV-CHECK FAIL ${rel}: nav order/items ${order.join(', ')} != NAV_ITEMS ${want.join(', ')}`);
+    failures++;
+  }
 }
 
 // The runtime single source of truth must define the same labels.
@@ -61,6 +75,11 @@ try {
   const main = fs.readFileSync(path.join(ROOT, 'js', 'main.js'), 'utf8');
   const navSrc = (main.match(/const NAV_ITEMS = \[([\s\S]*?)\];/) || [])[1] || '';
   const absent = REQUIRED.filter((t) => !navSrc.includes(`label: '${t.label}'`)).map((t) => t.label);
+  const srcOrder = [...navSrc.matchAll(/label: '([^']+)'/g)].map((m) => m[1]);
+  if (srcOrder.join('|') !== REQUIRED.map((t) => t.label).join('|')) {
+    console.log(`NAV-CHECK FAIL js/main.js NAV_ITEMS order ${srcOrder.join(', ')} != expected ${REQUIRED.map((t) => t.label).join(', ')}`);
+    failures++;
+  }
   if (absent.length) {
     console.log(`NAV-CHECK FAIL js/main.js NAV_ITEMS missing: ${absent.join(', ')}`);
     failures++;
@@ -74,4 +93,4 @@ if (failures) {
   console.log(`\nNAV-CHECK: ${failures} problem(s) in ${files.length} pages — fix the nav, do not patch one tab.`);
   process.exit(1);
 }
-console.log(`NAV-CHECK OK: ${files.length} pages, all ${REQUIRED.length} tabs present + NAV_ITEMS in sync.`);
+console.log(`NAV-CHECK OK: ${files.length} pages, all ${REQUIRED.length} tabs present, one <li> each, in NAV_ITEMS order.`);
