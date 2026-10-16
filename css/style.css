@@ -1781,3 +1781,11 @@ html { scroll-behavior: auto; }
 @media (hover: hover) and (pointer: fine) { .look-rail .poster-tile:hover img { filter: none; } }
 @media (min-width: 768px) { .look-rail { overflow: visible; } .look-rail li { flex: 1 1 0; } }
 
+
+/* Batch 2: homepage album cards */
+.album-cards { list-style: none; padding: 0; margin: 0 0 32px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 720px; margin-inline: auto; }
+.album-card { position: relative; display: block; color: var(--text-primary); }
+.album-card img { display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: 2px; border: 1px solid #2A2A2A; transition: border-color var(--dur-2) var(--ease-out); }
+.album-card:hover img, .album-card:focus-visible img, .album-card:active img { border-color: #C8102E; }
+.album-card-title { display: block; margin-top: 10px; font-family: 'Anton', 'Impact', sans-serif; font-size: clamp(1rem, 3.5vw, 1.35rem); text-transform: uppercase; letter-spacing: .02em; line-height: 1.1; }
+.album-card-new { position: absolute; top: 8px; left: 8px; z-index: 1; background: #C8102E; color: #fff; font: 700 11px/1 'Inter', var(--font-body); text-transform: uppercase; letter-spacing: .08em; padding: 5px 7px; border-radius: 2px; }
