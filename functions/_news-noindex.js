@@ -2,6 +2,8 @@
 // Kept live (not deleted) but served noindex,follow and excluded from sitemaps.
 // Snapshot of KV news:index taken 2026-10-15; new off-topic posts must be added here.
 export const NEWS_NOINDEX = new Set([
+  // HELD for review (unsourced net-worth figures) — remove once verified.
+  "young-hadene-net-worth-in-2026-music-career-income-sources-and-rise-in-toronto-hip-hop",
   "13-year-old-figure-skaters-face-vile-abuse-skating-fights-back",
   "5-grocery-staples-exploded-in-price-here-s-the-real-reason",
   "60-rye-bread-in-new-york-genius-or-daylight-robbery",

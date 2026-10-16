@@ -1,5 +1,7 @@
 // GET /news-rss.xml — dynamic news RSS from KV (latest 20), unioned with
 // the static file so nothing is lost. New items appear instantly, no rebuild.
+import { NEWS_NOINDEX } from './_news-noindex.js';
+
 const SITE_URL = 'https://younghadene.ca';
 
 function esc(s) {
@@ -29,7 +31,7 @@ export async function onRequestGet(context) {
       } catch { arr = []; }
       arr.sort((a, b) => (Number(b.dateNum) || 0) - (Number(a.dateNum) || 0));
       for (const p of arr) {
-        if (count >= 20 || !p || !p.slug) continue;
+        if (count >= 20 || !p || !p.slug || NEWS_NOINDEX.has(p.slug)) continue;
         const vis = p.status === 'published' || !p.status ||
           (p.status === 'scheduled' && p.scheduledFor && Number(p.scheduledFor) <= now);
         if (!vis) continue;
@@ -49,7 +51,8 @@ export async function onRequestGet(context) {
           let m;
           while ((m = re.exec(text)) !== null && count < 20) {
             const linkM = m[1].match(/<link>([^<]*)<\/link>/);
-            if (linkM && !seen.has(linkM[1])) {
+            const sm = linkM && linkM[1].match(/\/news\/([^/?#]+?)(?:\.html)?$/);
+            if (linkM && !seen.has(linkM[1]) && !(sm && NEWS_NOINDEX.has(sm[1]))) {
               seen.add(linkM[1]);
               items += `  <item>${m[1]}</item>\n`;
               count++;
