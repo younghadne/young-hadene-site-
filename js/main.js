@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hamburger.classList.toggle('active', open);
       navList.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      // Move focus into the menu when it opens (mobile overlay only).
+      if (open) {
+        const firstLink = navList.querySelector('a[href]');
+        if (firstLink) firstLink.focus();
+      }
     };
 
     hamburger.addEventListener('click', () => {
@@ -69,12 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.closest('a')) setMenu(false);
     });
 
-    // Close menu on Escape and return focus to the toggle
+    // Escape closes and returns focus to the toggle; Tab is trapped inside the
+    // open overlay (hamburger + its links) so focus cannot leave the menu.
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navList.classList.contains('open')) {
-        setMenu(false);
-        hamburger.focus();
-      }
+      if (!navList.classList.contains('open')) return;
+      if (e.key === 'Escape') { setMenu(false); hamburger.focus(); return; }
+      if (e.key !== 'Tab') return;
+      const items = [hamburger].concat(
+        Array.prototype.slice.call(navList.querySelectorAll('a[href], button:not([disabled])'))
+      ).filter((el) => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
   }
 
@@ -106,6 +119,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
   });
 
+
+  // ---- Netflix-style videos: tap-to-load facade + row arrows ----
+  const nfvFrame = (id, title) => { const f = document.createElement('iframe'); f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0'; f.title = title || 'YouTube video'; f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'; f.allowFullscreen = true; return f; };
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('a.nfv-card');
+    if (card && card.dataset.id) { e.preventDefault(); const t = card.querySelector('.nfv-thumb'); if (t && !t.querySelector('iframe')) { const f = nfvFrame(card.dataset.id, card.textContent.trim()); t.replaceChildren(f); f.focus(); } return; }
+    const play = e.target.closest('.nfv-btn-play');
+    if (play) { const bill = play.closest('.nfv-bill'); const m = bill && bill.querySelector('.nfv-bill-media'); if (m && !m.querySelector('iframe')) { const f = nfvFrame(play.dataset.id, play.getAttribute('aria-label')); m.replaceChildren(f); bill.classList.add('playing'); f.focus(); } return; }
+    const arrow = e.target.closest('.nfv-arrow');
+    if (arrow) { const tr = arrow.closest('.nfv-row').querySelector('.nfv-track'); const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; tr.scrollBy({ left: Number(arrow.dataset.dir) * tr.clientWidth * 0.9, behavior: rm ? 'auto' : 'smooth' }); }
+  });
+
   // ---- Header scroll effect ----
   const header = document.querySelector('.header');
   let lastScroll = 0;
@@ -130,16 +155,22 @@ document.addEventListener('DOMContentLoaded', () => {
     rootMargin: '0px 0px -50px 0px'
   };
 
+  // Content is visible by default (no-JS safe). The first IO callback (runs after the browser's own
+  // layout, so no forced reflow) marks on-screen items visible, then html.reveal-ready enables hiding.
+  let firstPass = true;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting || (firstPass && entry.boundingClientRect.top < window.innerHeight)) {
         entry.target.classList.add('visible');
         observer.unobserve(entry.target);
       }
     });
+    if (firstPass) { firstPass = false; document.documentElement.classList.add('reveal-ready'); }
   }, observerOptions);
 
-  fadeElements.forEach(el => observer.observe(el));
+  // stagger siblings via --i (capped at 6 in CSS)
+  fadeElements.forEach(el => { if (!el.style.getPropertyValue('--i') && el.parentElement) { const sib = [...el.parentElement.children].filter(c => c.classList.contains('fade-in')); if (sib.length > 1) el.style.setProperty('--i', sib.indexOf(el)); } observer.observe(el); });
+  if (!fadeElements.length) document.documentElement.classList.add('reveal-ready');
 
   // ---- Play button handler ----
   document.querySelectorAll('.btn-play').forEach(btn => {
@@ -198,3 +229,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+// ---- Batch 2: album sticky Stream bar (shown once the deep-link row scrolls away, hidden at the end row) ----
+(function () {
+  var bar = document.querySelector('.album-sticky'), row = document.getElementById('album-links'), end = document.querySelector('.album-end');
+  if (!bar || !row || !('IntersectionObserver' in window)) return;
+  var a = bar.querySelector('a'), past = false, atEnd = false;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.target === row) past = !e.isIntersecting && e.boundingClientRect.top < 0;
+      else atEnd = e.isIntersecting;
+    });
+    var on = past && !atEnd;
+    bar.classList.toggle('is-shown', on);
+    bar.inert = !on;
+    if (on) bar.removeAttribute('aria-hidden'); else bar.setAttribute('aria-hidden', 'true');
+  });
+  io.observe(row); if (end) io.observe(end);
+})();
+
+// ---- Ninefold index swap: hovering/focusing a title swaps the cover art ----
+(function () {
+  var root = document.querySelector('[data-nf-index]');
+  if (!root) return;
+  var rows = root.querySelectorAll('a.nf-row'), arts = root.querySelectorAll('.nf-art img'), meta = root.querySelector('[data-nf-meta]');
+  function on(i) {
+    rows.forEach(function (r, j) { r.parentElement.classList.toggle('is-on', j === i); });
+    arts.forEach(function (a, j) { a.classList.toggle('is-on', j === i); });
+    if (meta) meta.textContent = rows[i].querySelector('.nf-meta:not(.n)').textContent;
+  }
+  rows.forEach(function (r, i) { r.addEventListener('mouseenter', function () { on(i); }); r.addEventListener('focus', function () { on(i); }); });
+})();

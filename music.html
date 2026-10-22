@@ -25,16 +25,24 @@
     else window.addEventListener('load', later, {once: true});
   })();
 </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Music — Young Hadene | Haitian-Toronto Drill Discography</title>
   <meta name="description" content="Stream Young Hadene's music — dark trap and drill releases from the Haitian-Toronto artist. Listen on Spotify, Apple Music, YouTube, and all platforms.">
   <link rel="canonical" href="https://younghadene.ca/music">
   <meta property="og:title" content="Music — Young Hadene | Haitian-Toronto Drill & Dark Trap">
   <meta property="og:description" content="Stream Young Hadene's latest releases. Haitian-Toronto drill and dark trap music on all platforms.">
-  <meta property="og:image" content="https://younghadene.ca/images/poster1.png">
+  <meta property="og:image" content="https://younghadene.ca/img/og/young-hadene.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://younghadene.ca/img/og/young-hadene.jpg">
+<meta property="og:image:alt" content="Young Hadene, Haitian-Toronto drill and dark trap artist">
   <meta property="og:url" content="https://younghadene.ca/music">
   <meta property="og:type" content="music.album">
+  <meta property="og:locale" content="en_CA">
+  <meta property="og:site_name" content="Young Hadene">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:description" content="Stream Young Hadene's latest releases. Haitian-Toronto drill and dark trap music on all platforms.">
+  <meta name="twitter:title" content="Music — Young Hadene | Haitian-Toronto Drill & Dark Trap">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎵</text></svg>">
   <script type="application/ld+json">
@@ -98,12 +106,12 @@
     .platform-links a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
     .music-faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
     .music-faq-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 24px; transition: border-color var(--transition); }
-    .music-faq-card:hover { border-color: rgba(220,38,38,0.3); }
+    .music-faq-card:hover { border-color: var(--accent-border); }
     .music-faq-card h3 { font-size: 1rem; margin-bottom: 8px; font-family: var(--font-heading); letter-spacing: 0.04em; }
     .music-faq-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; margin: 0; }
     .music-faq-card p a { color: var(--accent); }
     .embed-wrap { max-width: 600px; margin: 40px auto 0; }
-    .embed-wrap iframe { display: block; border-radius: 12px; box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(220,38,38,0.06); }
+    .embed-wrap iframe { display: block; border-radius: 12px; box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 40px var(--accent-tint); }
     @media (max-width: 768px) { .music-faq-grid { grid-template-columns: 1fr; } .platform-links { flex-direction: column; align-items: stretch; } .platform-links a { justify-content: center; } }
   </style>
 </head>
@@ -115,8 +123,8 @@
       <nav>
         <ul class="nav-list">
           <li><a href="/" class="nav-link">Home</a></li>
-          <li><a href="/music" class="nav-link active">Music</a>
-<a href="/videos" class="nav-link">Videos</a></li>
+          <li><a href="/music" class="nav-link active">Music</a></li>
+          <li><a href="/videos" class="nav-link">Videos</a></li>
           <li><a href="/blog" class="nav-link">Blog</a></li>
           <li><a href="/news" class="nav-link">News</a></li>
           <li><a href="/about" class="nav-link">About</a></li>
@@ -127,117 +135,99 @@
     </div>
   </header>
 
-  <section class="page-hero">
-    <div class="container">
-      <span class="section-label">Discography</span>
-      <h1 class="section-title">The <span class="text-accent">Music</span></h1>
-      <p class="section-subtitle">Dark trap and drill from the Haitian-Toronto artist. Stream all releases below.</p>
-      <div class="platform-links fade-in">
-        <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">♫ Spotify</a>
-        <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank">🎵 Apple Music</a>
-        <a href="https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg" target="_blank">▶ YouTube</a>
-        <a href="https://soundcloud.com/young_hadene" target="_blank">☁ SoundCloud</a>
-      </div>
+  <section class="nfp-hero">
+    <div class="nf-wrap">
+      <span class="nf-label">001/ Discography</span>
+      <h1 class="nfp-h1"><span class="nfp-h1-pre">Young Hadene</span> The <span class="text-accent">Music</span></h1>
+      <p class="nfp-sub">Dark trap and drill from the Haitian-Toronto artist. Stream all releases below.</p>
+      <ul class="nfp-plat"><li><a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank" rel="noopener">Spotify</a></li><li><a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></li><li><a href="https://www.youtube.com/channel/UCSJd-7T-_K3MCve3GY4k8mg" target="_blank" rel="noopener">YouTube</a></li><li><a href="https://soundcloud.com/young_hadene" target="_blank" rel="noopener">SoundCloud</a></li></ul>
     </div>
   </section>
-
   <!-- Catalog -->
-  <section class="section" style="padding-top:0;">
-    <div class="container" style="max-width:960px;">
-      <div class="section-header fade-in">
-        <span class="section-label">Catalog</span>
-        <h2 class="section-title">Selected <span class="text-accent">Releases</span></h2>
-        <p class="section-subtitle">Verified releases — titles, years, and labels as listed on Apple Music and in press coverage.</p>
-      </div>
-      <div class="music-faq-grid">
-        <div class="music-faq-card fade-in"><h3><a href="/music/they-took-me-down">They Took Me Down (2026)</a></h3><p>Eleven-track project released October 2, 2026 via Str8hitsRecords. <a href="https://music.apple.com/ca/album/they-took-me-down/6816007984" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3><a href="/music/sacrifices-and-success">Sacrifices &amp; Success (2025)</a></h3><p>Album, 9 songs, released January 10, 2025 on str8hitsrecords. <a href="https://music.apple.com/ca/album/sacrifices-success/1796372657" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Ten Toes Heavy (2025)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Snake in The Grass (2024)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Different Breed (2024)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>The 6 (2024)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>lean (2023)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Markham Road (2024)</h3><p>Album, 11 songs, released March 11, 2024 on Str8HitsRecords. <a href="https://music.apple.com/ca/album/markham-road/1735602911" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Underground Pulse (2024)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Savage Rhythms (2024)</h3><p>Release listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>The Light — Single (2023)</h3><p>Single released November 13, 2023 on str8hitsrecords. <a href="https://music.apple.com/ca/album/the-light-single/1716342965" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Drilling In the Rain — Single (2023)</h3><p>Single listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Sitting in the Trap House — Single (2025)</h3><p>Single listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>don't be foolish — Single (2025)</h3><p>Single listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
-        <div class="music-faq-card fade-in"><h3>Jackpot — Single (2021)</h3><p>Single listed on the official Apple Music catalog. <a href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener">Apple Music</a></p></div>
+  <section class="nf-sec">
+    <div class="nf-wrap">
+      <div class="nf-head"><span class="nf-label">002/ Catalog</span><h2 class="nf-h2">Selected <span class="text-accent">Releases</span></h2></div>
+      <p class="nfp-note">Verified releases — titles, years, and labels as listed on Apple Music and in press coverage. For how his catalog stacks up against the city, see <a href="/blog/top-toronto-rappers">where Young Hadene ranks among Toronto rappers</a>.</p>
+      <div class="nf-index nfp-index" data-nf-index>
+        <div>
+          <ol>
+            <li class="is-on"><a class="nf-row" href="/music/they-took-me-down"><span class="nf-meta n">01</span><img class="nf-thumb" src="img/covers/they-took-me-down.svg" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">They Took Me Down <span class="nfp-yr">(2026)</span></h3><span class="nfp-d">Eleven-track project released October 2, 2026 via Str8hitsRecords.</span></span><span class="nf-meta">2026. ALBUM. APPLE MUSIC</span></a><a class="nfp-alt nf-meta" href="https://music.apple.com/ca/album/they-took-me-down/6816007984" target="_blank" rel="noopener">Apple Music</a></li>
+            <li><a class="nf-row" href="/music/sacrifices-and-success"><span class="nf-meta n">02</span><img class="nf-thumb" src="img/covers/sacrifices-and-success.svg" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Sacrifices &amp; Success <span class="nfp-yr">(2025)</span></h3><span class="nfp-d">Album, 9 songs, released January 10, 2025 on str8hitsrecords.</span></span><span class="nf-meta">2025. ALBUM. APPLE MUSIC</span></a><a class="nfp-alt nf-meta" href="https://music.apple.com/ca/album/sacrifices-success/1796372657" target="_blank" rel="noopener">Apple Music</a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">03</span><img class="nf-thumb" src="images/poster3-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Ten Toes Heavy <span class="nfp-yr">(2025)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2025. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">04</span><img class="nf-thumb" src="images/poster4-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Snake in The Grass <span class="nfp-yr">(2024)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2024. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">05</span><img class="nf-thumb" src="images/poster5-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Different Breed <span class="nfp-yr">(2024)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2024. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">06</span><img class="nf-thumb" src="images/poster1-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">The 6 <span class="nfp-yr">(2024)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2024. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">07</span><img class="nf-thumb" src="images/poster2-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">lean <span class="nfp-yr">(2023)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2023. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/album/markham-road/1735602911" target="_blank" rel="noopener"><span class="nf-meta n">08</span><img class="nf-thumb" src="images/poster3-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Markham Road <span class="nfp-yr">(2024)</span></h3><span class="nfp-d">Album, 11 songs, released March 11, 2024 on Str8HitsRecords.</span></span><span class="nf-meta">2024. ALBUM. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">09</span><img class="nf-thumb" src="images/poster4-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Underground Pulse <span class="nfp-yr">(2024)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2024. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">10</span><img class="nf-thumb" src="images/poster5-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Savage Rhythms <span class="nfp-yr">(2024)</span></h3><span class="nfp-d">Release listed on the official Apple Music catalog.</span></span><span class="nf-meta">2024. RELEASE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/album/the-light-single/1716342965" target="_blank" rel="noopener"><span class="nf-meta n">11</span><img class="nf-thumb" src="images/poster1-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">The Light <span class="nfp-yr">(2023)</span></h3><span class="nfp-d">Single released November 13, 2023 on str8hitsrecords.</span></span><span class="nf-meta">2023. SINGLE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">12</span><img class="nf-thumb" src="images/poster2-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Drilling In the Rain <span class="nfp-yr">(2023)</span></h3><span class="nfp-d">Single listed on the official Apple Music catalog.</span></span><span class="nf-meta">2023. SINGLE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">13</span><img class="nf-thumb" src="images/poster3-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Sitting in the Trap House <span class="nfp-yr">(2025)</span></h3><span class="nfp-d">Single listed on the official Apple Music catalog.</span></span><span class="nf-meta">2025. SINGLE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">14</span><img class="nf-thumb" src="images/poster4-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">don't be foolish <span class="nfp-yr">(2025)</span></h3><span class="nfp-d">Single listed on the official Apple Music catalog.</span></span><span class="nf-meta">2025. SINGLE. APPLE MUSIC</span></a></li>
+            <li><a class="nf-row" href="https://music.apple.com/ca/artist/young-hadene/1080604782" target="_blank" rel="noopener"><span class="nf-meta n">15</span><img class="nf-thumb" src="images/poster5-640.webp" width="56" height="56" loading="lazy" decoding="async" alt=""><span class="nfp-rt"><h3 class="t">Jackpot <span class="nfp-yr">(2021)</span></h3><span class="nfp-d">Single listed on the official Apple Music catalog.</span></span><span class="nf-meta">2021. SINGLE. APPLE MUSIC</span></a></li>
+          </ol>
+        </div>
+        <div class="nf-art">
+            <img src="img/covers/they-took-me-down.svg" width="600" height="600" loading="lazy" decoding="async" alt="They Took Me Down cover – Young Hadene" class="is-on">
+            <img src="img/covers/sacrifices-and-success.svg" width="600" height="600" loading="lazy" decoding="async" alt="Sacrifices &amp; Success cover – Young Hadene">
+            <img src="images/poster3-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Ten Toes Heavy cover – Young Hadene">
+            <img src="images/poster4-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Snake in The Grass cover – Young Hadene">
+            <img src="images/poster5-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Different Breed cover – Young Hadene">
+            <img src="images/poster1-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="The 6 cover – Young Hadene">
+            <img src="images/poster2-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="lean cover – Young Hadene">
+            <img src="images/poster3-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Markham Road cover – Young Hadene">
+            <img src="images/poster4-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Underground Pulse cover – Young Hadene">
+            <img src="images/poster5-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Savage Rhythms cover – Young Hadene">
+            <img src="images/poster1-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="The Light cover – Young Hadene">
+            <img src="images/poster2-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Drilling In the Rain cover – Young Hadene">
+            <img src="images/poster3-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Sitting in the Trap House cover – Young Hadene">
+            <img src="images/poster4-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="don&#x27;t be foolish cover – Young Hadene">
+            <img src="images/poster5-640.webp" width="600" height="600" loading="lazy" decoding="async" alt="Jackpot cover – Young Hadene">
+          <span class="nf-meta nf-art-meta" data-nf-meta>2026. ALBUM. APPLE MUSIC</span>
+        </div>
       </div>
     </div>
   </section>
-
   <!-- Spotify embed -->
-  <section class="section" style="padding-top:0;">
-    <div class="container">
-      <div class="music-faq-card fade-in" style="max-width:600px;margin:0 auto 40px;text-align:center;">
-        <h3>Latest Project: <em>They Took Me Down</em></h3>
-        <p>Eleven tracks, released October 2, 2026 via Str8hitsRecords — covered by <a href="https://exposedvocals.com/press-room/young-hadene-releases-new-album-they-took-me-down/" target="_blank" rel="noopener">Exposed Vocals</a>. Also on Apple Music: the <em>Markham Road</em> album (March 2024) and <em>The Light</em> single (2023). See <a href="/press">all press &amp; features</a>.</p>
+  <section class="nf-sec nf-surface">
+    <div class="nf-wrap nfp-split">
+      <div>
+        <span class="nf-label">003/ Latest Project</span>
+        <h2 class="nf-h2 nfp-h2s">They Took Me <span class="text-accent">Down</span></h2>
+        <p class="nfp-copy">Eleven tracks, released October 2, 2026 via Str8hitsRecords — covered by <a href="https://exposedvocals.com/press-room/young-hadene-releases-new-album-they-took-me-down/" target="_blank" rel="noopener">Exposed Vocals</a>. Also on Apple Music: the <em>Markham Road</em> album (March 2024) and <em>The Light</em> single (2023). See <a href="/press">all press &amp; features</a>.</p>
       </div>
-      <div class="embed-wrap fade-in">
+      <div class="nfp-embed">
         <iframe src="https://open.spotify.com/embed/artist/4MYeewqn16CCiuIgmpIaGA?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </div>
   </section>
-
   <!-- YouTube playlist embed -->
-  <section class="section" style="padding-top:0;">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="section-label">Videos</span>
-        <h2 class="section-title">Music <span class="text-accent">Videos</span></h2>
-        <p class="section-subtitle">Watch the Young Hadene video playlist.</p>
+  <section class="nf-sec">
+    <div class="nf-wrap">
+      <div class="nf-head"><span class="nf-label">004/ Videos</span><h2 class="nf-h2">Music <span class="text-accent">Videos</span></h2></div>
+      <p class="nfp-note">Watch the Young Hadene video playlist, or browse the full <a href="/videos">music video gallery</a> and <a href="/videos/shorts">shorts</a>.</p>
+      <div class="nfp-video">
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Young Hadene Music Videos"></iframe>
       </div>
-      <div class="embed-wrap fade-in" style="max-width:800px;">
-        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;box-shadow:0 4px 30px rgba(0,0,0,0.5), 0 0 40px rgba(220,38,38,0.06);">
-          <iframe src="https://www.youtube.com/embed/videoseries?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Young Hadene Music Videos"></iframe>
-        </div>
-        <div style="text-align:center;margin-top:16px;">
-          <a href="https://www.youtube.com/playlist?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" target="_blank" rel="noopener" class="btn btn-outline">View Full Playlist on YouTube</a>
-        </div>
-      </div>
+      <p class="nfp-cta"><a href="https://www.youtube.com/playlist?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" target="_blank" rel="noopener" class="btn btn-outline">View Full Playlist on YouTube</a></p>
     </div>
   </section>
-
   <!-- Music FAQ -->
-  <section class="section" style="padding-top:0;">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="section-label">Questions</span>
-        <h2 class="section-title">Music & <span class="text-accent">Streaming</span></h2>
-        <p class="section-subtitle">Everything about Young Hadene's discography, releases, and where to listen.</p>
-      </div>
-      <div class="music-faq-grid">
-        <div class="music-faq-card fade-in">
-          <h3>Where can I listen to Young Hadene's music?</h3>
-          <p>Young Hadene's music is available on all major streaming platforms including <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a>, Apple Music, YouTube, and SoundCloud. Stream the full discography above.</p>
-        </div>
-        <div class="music-faq-card fade-in">
-          <h3>What are the best Young Hadene songs to start with?</h3>
-          <p>New listeners should start with "No Sleep" (2026), "6ix Side" (2025), "Pressure" (2025), and "After Dark" (2024). These tracks showcase the full range of his dark trap and drill sound.</p>
-        </div>
-        <div class="music-faq-card fade-in">
-          <h3>What is Young Hadene's latest project?</h3>
-          <p>Young Hadene's latest releases are available on <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a>. Check the embedded player above for the most recent tracks and projects.</p>
-        </div>
-        <div class="music-faq-card fade-in">
-          <h3>Which platforms stream Young Hadene?</h3>
-          <p>Young Hadene is available on Spotify, Apple Music, YouTube Music, Amazon Music, SoundCloud, and all major digital streaming platforms worldwide.</p>
-        </div>
-        <div class="music-faq-card fade-in">
-          <h3>What is 'Trap Blueprints' by Young Hadene about?</h3>
-          <p>'Trap Blueprints' represents Young Hadene's signature dark trap sound — a blueprint of his Haitian-Toronto drill style, heavy 808s, and cinematic storytelling. The project defines his musical identity.</p>
-        </div>
-        <div class="music-faq-card fade-in">
-          <h3>What is the tracklist for Young Hadene's releases?</h3>
-          <p>Young Hadene's catalog includes tracks like "No Sleep", "6ix Side", "Pressure", and "After Dark". Stream the full discography on <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a> for complete tracklists.</p>
-        </div>
-      </div>
+  <section class="nf-sec">
+    <div class="nf-wrap">
+      <div class="nf-head"><span class="nf-label">005/ Questions</span><h2 class="nf-h2">Music &amp; <span class="text-accent">Streaming</span></h2></div>
+      <p class="nfp-note">Everything about Young Hadene's discography, releases, and where to listen.</p>
+      <ol class="nf-rows nfp-faq">
+          <li><h3>Where can I listen to Young Hadene's music?</h3><p>Young Hadene's music is available on all major streaming platforms including <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a>, Apple Music, YouTube, and SoundCloud. Stream the full discography above.</p></li>
+          <li><h3>What are the best Young Hadene songs to start with?</h3><p>New listeners should start with "No Sleep" (2026), "6ix Side" (2025), "Pressure" (2025), and "After Dark" (2024). These tracks showcase the full range of his dark trap and drill sound.</p></li>
+          <li><h3>What is Young Hadene's latest project?</h3><p>Young Hadene's latest releases are available on <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a>. Check the embedded player above for the most recent tracks and projects.</p></li>
+          <li><h3>Which platforms stream Young Hadene?</h3><p>Young Hadene is available on Spotify, Apple Music, YouTube Music, Amazon Music, SoundCloud, and all major digital streaming platforms worldwide.</p></li>
+          <li><h3>What is 'Trap Blueprints' by Young Hadene about?</h3><p>'Trap Blueprints' represents Young Hadene's signature dark trap sound — a blueprint of his Haitian-Toronto drill style, heavy 808s, and cinematic storytelling. The project defines his musical identity.</p></li>
+          <li><h3>What is the tracklist for Young Hadene's releases?</h3><p>Young Hadene's catalog includes tracks like "No Sleep", "6ix Side", "Pressure", and "After Dark". Stream the full discography on <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" target="_blank">Spotify</a> for complete tracklists.</p></li>
+      </ol>
     </div>
   </section>
-
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">

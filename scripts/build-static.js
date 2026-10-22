@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Build step for GitHub Pages / static hosts.
-// Regenerates sitemap.xml from the actual files on disk so new blog
+// Regenerates sitemap.xml (via scripts/sitemap.js) so new blog
 // posts are always included. Also generates:
-//   - news-sitemap.xml (Google News: only /news/ articles from last 2 days)
+//   - news-sitemap.xml (Google News: /news/ articles from the last FRESH_WINDOW_DAYS days)
 //   - news-rss.xml (static RSS for the /news/ section, for Publisher Center)
 // Safe to run repeatedly (idempotent).
 const fs = require('fs');
@@ -10,20 +10,6 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const SITE_URL = process.env.SITE_URL || 'https://younghadene.ca';
-
-const staticPages = [
-  { loc: '/', priority: '1.0', changefreq: 'monthly' },
-  { loc: '/music.html', priority: '0.9', changefreq: 'monthly' },
-  { loc: '/blog.html', priority: '0.9', changefreq: 'weekly' },
-  { loc: '/news.html', priority: '0.9', changefreq: 'daily' },
-  { loc: '/about.html', priority: '0.8', changefreq: 'monthly' },
-  { loc: '/press.html', priority: '0.8', changefreq: 'monthly' },
-  { loc: '/haitian-canadian-drill.html', priority: '0.7', changefreq: 'monthly' },
-  { loc: '/contact.html', priority: '0.7', changefreq: 'monthly' },
-  { loc: '/services.html', priority: '0.7', changefreq: 'monthly' },
-  { loc: '/editorial-policy.html', priority: '0.5', changefreq: 'yearly' },
-  { loc: '/corrections-policy.html', priority: '0.5', changefreq: 'yearly' },
-];
 
 // Files that exist on disk but must never appear in sitemaps
 // (listing duplicates, stubs, tests).
@@ -48,10 +34,19 @@ function mtimeISODate(full) {
   } catch { return ''; }
 }
 
+function decodeEntities(s) {
+  return String(s)
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
 function extractMeta(html, name) {
   const m = html.match(new RegExp(`<meta\\s+name="${name}"\\s+content="([^"]*)"`, 'i')) ||
             html.match(new RegExp(`<meta\\s+content="([^"]*)"\\s+name="${name}"`, 'i'));
-  return m ? m[1] : '';
+  return m ? decodeEntities(m[1]) : '';
 }
 
 function extractTitle(html) {
@@ -59,36 +54,35 @@ function extractTitle(html) {
   return m ? m[1].trim() : '';
 }
 
+// Prefer the article's real publish date (JSON-LD datePublished, then
+// article:published_time) over filesystem mtime. mtime is reset by git
+// checkout, which otherwise collapses every article onto one meaningless
+// timestamp and breaks the Google News 2-day freshness window.
+function publishedMs(html, fallbackMs) {
+  const m = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) ||
+            html.match(/article:published_time"\s+content="([^"]+)"/i);
+  const t = m ? Date.parse(m[1]) : NaN;
+  return Number.isFinite(t) ? t : fallbackMs;
+}
+
 // ── 1. Main sitemap.xml ──
-const blogDir = path.join(ROOT, 'blog');
-const posts = listHtml(blogDir);
+// Delegated to scripts/sitemap.js (single source of truth): clean URLs that
+// match each page's canonical, no redirect sources, no admin/noindex pages.
+// The old generator here wrote /page.html URLs that 308-redirect.
+require('child_process').execFileSync(process.execPath, [path.join(__dirname, 'sitemap.js')], { stdio: 'inherit' });
 const newsDir = path.join(ROOT, 'news');
 const newsFiles = listHtml(newsDir);
 
-let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-for (const p of staticPages) {
-  const file = p.loc === '/' ? 'index.html' : p.loc.replace(/^\//, '');
-  if (!fs.existsSync(path.join(ROOT, file))) continue; // only list pages that exist
-  xml += `  <url><loc>${SITE_URL}${p.loc}</loc><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>\n`;
-}
-for (const f of posts) {
-  const lastmod = mtimeISODate(path.join(blogDir, f));
-  xml += `  <url><loc>${SITE_URL}/blog/${esc(f)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}<changefreq>monthly</changefreq><priority>0.8</priority></url>\n`;
-}
-for (const f of newsFiles) {
-  const lastmod = mtimeISODate(path.join(newsDir, f));
-  xml += `  <url><loc>${SITE_URL}/news/${esc(f)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}<changefreq>weekly</changefreq><priority>0.9</priority></url>\n`;
-}
-xml += '</urlset>\n';
-fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml);
-console.log(`sitemap.xml regenerated: blog ${posts.length} posts + news ${newsFiles.length} items`);
-
-// ── 2. Google News sitemap (only /news/ articles from the last 2 days) ──
-const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+// ── 2. Google News sitemap ──
+// Window widened (owner decision) from Google's recommended 2 days to
+// FRESH_WINDOW_DAYS so recent articles stay listed. Dates come from each
+// article's real publish time, never mtime.
+const FRESH_WINDOW_DAYS = 7;
+const FRESH_WINDOW_MS = FRESH_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 const now = Date.now();
-// Publication time comes from the article's NewsArticle datePublished (NOT
-// file mtime: a fresh checkout on the build server makes every file "new").
+// Publication time comes ONLY from the article's NewsArticle datePublished
+// (no file-mtime fallback: a fresh checkout on the build server makes every
+// file "new"). Future-dated or undated articles are skipped.
 function newsPubMs(full) {
   try {
     const html = fs.readFileSync(full, 'utf8');
@@ -97,19 +91,19 @@ function newsPubMs(full) {
     return Number.isFinite(ms) ? ms : NaN;
   } catch { return NaN; }
 }
-const fresh = newsFiles.filter((f) => {
-  const ms = newsPubMs(path.join(newsDir, f));
-  return Number.isFinite(ms) && ms <= now && now - ms <= TWO_DAYS_MS;
-});
+const fresh = newsFiles
+  .map((f) => ({ f, ms: newsPubMs(path.join(newsDir, f)) }))
+  .filter((x) => Number.isFinite(x.ms) && x.ms <= now && now - x.ms < FRESH_WINDOW_MS)
+  .sort((a, b) => b.ms - a.ms);
 
 let news = '<?xml version="1.0" encoding="UTF-8"?>\n';
 news += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n';
 news += '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n';
-for (const f of fresh) {
+for (const { f, ms } of fresh) {
   const full = path.join(newsDir, f);
   const html = fs.readFileSync(full, 'utf8');
   const title = extractTitle(html).split('—')[0].split('|')[0].trim() || f;
-  const pubDate = new Date(newsPubMs(full)).toISOString();
+  const pubDate = new Date(ms).toISOString();
   news += '  <url>\n';
   news += `    <loc>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</loc>\n`;
   news += '    <news:news>\n';
@@ -128,25 +122,32 @@ console.log(`news-sitemap.xml regenerated: ${fresh.length} fresh articles`);
 
 // ── 3. Static RSS for /news/ (latest 20) ──
 const items = newsFiles
-  .map((f) => ({ f, mtime: fs.statSync(path.join(newsDir, f)).mtimeMs }))
-  .sort((a, b) => b.mtime - a.mtime)
+  .map((f) => {
+    const full = path.join(newsDir, f);
+    let ms = 0;
+    try { ms = publishedMs(fs.readFileSync(full, 'utf8'), fs.statSync(full).mtimeMs); } catch { ms = 0; }
+    return { f, ms };
+  })
+  .sort((a, b) => b.ms - a.ms)
   .slice(0, 20);
 
 let rss = '<?xml version="1.0" encoding="UTF-8"?>\n';
-rss += '<rss version="2.0">\n<channel>\n';
+rss += '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n';
 rss += '<title>Young Hadene — News</title>\n';
-rss += `<link>${SITE_URL}/news.html</link>\n`;
+rss += `<link>${SITE_URL}/news</link>\n`;
+rss += `<atom:link href="${SITE_URL}/news-rss.xml" rel="self" type="application/rss+xml"/>\n`;
 rss += '<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n';
 rss += '<language>en-ca</language>\n';
-for (const { f, mtime } of items) {
+rss += `<lastBuildDate>${new Date(now).toUTCString()}</lastBuildDate>\n`;
+for (const { f, ms } of items) {
   const html = fs.readFileSync(path.join(newsDir, f), 'utf8');
   const title = extractTitle(html) || f;
   const desc = extractMeta(html, 'description') || title;
   rss += '  <item>\n';
   rss += `    <title>${esc(title)}</title>\n`;
-  rss += `    <link>${SITE_URL}/news/${esc(f)}</link>\n`;
-  rss += `    <guid isPermaLink="true">${SITE_URL}/news/${esc(f)}</guid>\n`;
-  rss += `    <pubDate>${new Date(mtime).toUTCString()}</pubDate>\n`;
+  rss += `    <link>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</link>\n`;
+  rss += `    <guid isPermaLink="true">${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</guid>\n`;
+  rss += `    <pubDate>${new Date(ms).toUTCString()}</pubDate>\n`;
   rss += `    <description>${esc(desc)}</description>\n`;
   rss += '  </item>\n';
 }
