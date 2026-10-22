@@ -113,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
       iframe.title = btn.dataset.ytTitle || 'YouTube video';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
       iframe.allowFullscreen = true;
-      btn.replaceChildren(iframe);
-      btn.removeAttribute('aria-label');
+      // Swap the button out for the player so the iframe isn't nested inside a <button>.
+      btn.replaceWith(iframe);
       iframe.focus();
     }, { once: true });
   });
