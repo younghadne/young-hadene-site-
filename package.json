@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node scripts/check-nav.js && node scripts/sitemap.js --check && node scripts/check-head.mjs && node scripts/check-faq.mjs && node scripts/check-news-urls.mjs && node scripts/check-headings.mjs && node scripts/check-article-schema.mjs",
+    "test": "node scripts/check-nav.js && node scripts/sitemap.js --check && node scripts/check-head.mjs && node scripts/check-faq.mjs && node scripts/check-news-urls.mjs && node scripts/check-headings.mjs && node scripts/check-article-schema.mjs && node scripts/check-news.mjs",
     "generate": "node scripts/generate-post.js",
     "server": "node server.js",
     "start": "node server.js",
