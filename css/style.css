@@ -2309,9 +2309,9 @@ body .article-wrap .meta span{color:#79C043}
   .nf-pill { display: none; }
 }
 
-/* perf-hero CLS: explicit hero H1 line-height (UI spec) and a fixed-height featured card on /blog, so the
+/* perf-hero CLS: explicit hero H1 line-height (.95, same as live) and a fixed-height featured card on /blog, so the
    baked -> JS -> /api/posts-list re-renders of #featuredArticle can't move the grid below it. */
-.page-hero h1{line-height:1.05}
+.page-hero h1{line-height:.95}
 /* Uppercase filter chips: caps-tuned Inter fallback keeps chip widths within the 3px shift threshold on swap. */
 .blog-categories a{font-family:'Inter','Inter Fallback Caps',var(--font-body)}
 .blog-list-view .featured-content h2,.blog-list-view .featured-content p{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;flex:none}
