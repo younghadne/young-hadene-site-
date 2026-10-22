@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hamburger.classList.toggle('active', open);
       navList.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      // Move focus into the menu when it opens (mobile overlay only).
+      if (open) {
+        const firstLink = navList.querySelector('a[href]');
+        if (firstLink) firstLink.focus();
+      }
     };
 
     hamburger.addEventListener('click', () => {
@@ -69,12 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.closest('a')) setMenu(false);
     });
 
-    // Close menu on Escape and return focus to the toggle
+    // Escape closes and returns focus to the toggle; Tab is trapped inside the
+    // open overlay (hamburger + its links) so focus cannot leave the menu.
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navList.classList.contains('open')) {
-        setMenu(false);
-        hamburger.focus();
-      }
+      if (!navList.classList.contains('open')) return;
+      if (e.key === 'Escape') { setMenu(false); hamburger.focus(); return; }
+      if (e.key !== 'Tab') return;
+      const items = [hamburger].concat(
+        Array.prototype.slice.call(navList.querySelectorAll('a[href], button:not([disabled])'))
+      ).filter((el) => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
   }
 
