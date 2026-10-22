@@ -2,7 +2,7 @@
 // Build step for GitHub Pages / static hosts.
 // Regenerates sitemap.xml (via scripts/sitemap.js) so new blog
 // posts are always included. Also generates:
-//   - news-sitemap.xml (Google News: /news/ articles from the last FRESH_WINDOW_DAYS days)
+//   - news-sitemap.xml (Google News: /news/ articles from the last 48h, = NEWS_WINDOW_MS)
 //   - news-rss.xml (static RSS for the /news/ section, for Publisher Center)
 // Safe to run repeatedly (idempotent).
 const fs = require('fs');
@@ -74,11 +74,12 @@ const newsDir = path.join(ROOT, 'news');
 const newsFiles = listHtml(newsDir);
 
 // ── 2. Google News sitemap ──
-// Window widened (owner decision) from Google's recommended 2 days to
-// FRESH_WINDOW_DAYS so recent articles stay listed. Dates come from each
+// 48h window, same as functions/_news-config.js NEWS_WINDOW_MS (the function
+// that serves /news-sitemap.xml re-filters this file with that window anyway).
+// Google News only wants articles from the last 2 days. Dates come from each
 // article's real publish time, never mtime.
-const FRESH_WINDOW_DAYS = 7;
-const FRESH_WINDOW_MS = FRESH_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+const FRESH_WINDOW_HOURS = 48;
+const FRESH_WINDOW_MS = FRESH_WINDOW_HOURS * 60 * 60 * 1000;
 const now = Date.now();
 // Publication time comes ONLY from the article's NewsArticle datePublished
 // (no file-mtime fallback: a fresh checkout on the build server makes every
@@ -93,7 +94,7 @@ function newsPubMs(full) {
 }
 const fresh = newsFiles
   .map((f) => ({ f, ms: newsPubMs(path.join(newsDir, f)) }))
-  .filter((x) => Number.isFinite(x.ms) && x.ms <= now && now - x.ms < FRESH_WINDOW_MS)
+  .filter((x) => Number.isFinite(x.ms) && x.ms <= now && now - x.ms <= FRESH_WINDOW_MS)
   .sort((a, b) => b.ms - a.ms);
 
 let news = '<?xml version="1.0" encoding="UTF-8"?>\n';

@@ -41,6 +41,48 @@ for (const f of fs.readdirSync('news').filter((x) => x.endsWith('.html'))) {
   assert.match(s, /<time class="published" datetime="[^"]+">/, `${f}: published <time>`);
   assert.match(s, /<time class="updated" datetime="[^"]+">/, `${f}: updated <time>`);
 }
+// BreadcrumbList items must be the clean canonical URLs (/news, /news/<slug>),
+// never .html: static pages, the new-news.js template, and KV-rendered pages.
+import { execFileSync } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
+const crumbs = (html, where) => {
+  const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+  const bc = blocks.find((b) => b['@type'] === 'BreadcrumbList');
+  assert.ok(bc, `${where}: BreadcrumbList missing`);
+  const items = bc.itemListElement.map((i) => i.item);
+  for (const u of items) assert.ok(!/\.html(?:$|[?#])/.test(u), `${where}: breadcrumb item has .html: ${u}`);
+  assert.equal(items[1], 'https://younghadene.ca/news', `${where}: News crumb`);
+  const canon = (html.match(/rel="canonical" href="([^"]+)"/) || [])[1];
+  if (canon) assert.equal(items[items.length - 1], canon, `${where}: last crumb must equal canonical`);
+  return items.length;
+};
+for (const f of fs.readdirSync('news').filter((x) => x.endsWith('.html'))) crumbs(fs.readFileSync('news/' + f, 'utf8'), 'news/' + f);
+{ // new-news.js template, run in a scratch copy so the repo is untouched
+  const t = fs.mkdtempSync(path.join(os.tmpdir(), 'yhnews-'));
+  for (const d of ['scripts', 'functions', 'news']) fs.mkdirSync(path.join(t, d));
+  fs.copyFileSync('scripts/new-news.js', path.join(t, 'scripts/new-news.js'));
+  fs.copyFileSync('functions/_news-config.js', path.join(t, 'functions/_news-config.js'));
+  execFileSync(process.execPath, [path.join(t, 'scripts/new-news.js'), '--title', 'Crumb Test', '--slug', 'crumb-test'], { stdio: 'ignore', env: { ...process.env, SITE_URL: 'https://younghadene.ca' } });
+  crumbs(fs.readFileSync(path.join(t, 'news/crumb-test.html'), 'utf8'), 'new-news.js template');
+}
+{ // function-rendered (KV) article, even when the stored canonical ends in .html
+  const { onRequestGet } = await import('../functions/news/[slug].js');
+  const doc = { slug: 'kv-crumb', title: 'KV Crumb', status: 'published', dateNum: now, date: 'October 15, 2026', content: '<p>x</p>', canonical: 'https://younghadene.ca/news/kv-crumb.html' };
+  const store = { get: async (k) => (k === 'news:kv-crumb' ? JSON.stringify(doc) : k === 'news:index' ? JSON.stringify([doc]) : null) };
+  const r = await onRequestGet({ request: new Request('https://younghadene.ca/news/kv-crumb.html'), env: { YH_POSTS: store, ASSETS: { fetch: async () => new Response('', { status: 404 }) } }, params: { slug: 'kv-crumb.html' } });
+  assert.equal(r.status, 200, 'KV news render');
+  crumbs(await r.text(), 'functions/news/[slug].js');
+}
+// Static news sitemap window must equal the function's 48h NEWS_WINDOW_MS.
+{
+  const { NEWS_WINDOW_MS } = await import('../functions/_news-config.js');
+  assert.equal(NEWS_WINDOW_MS, 48 * H, 'NEWS_WINDOW_MS must be 48h');
+  const bs = fs.readFileSync('scripts/build-static.js', 'utf8');
+  const m = bs.match(/const FRESH_WINDOW_HOURS = (\d+);/);
+  assert.ok(m && Number(m[1]) * H === NEWS_WINDOW_MS, 'build-static FRESH_WINDOW must be 48h (= NEWS_WINDOW_MS)');
+  assert.ok(!/FRESH_WINDOW_DAYS/.test(bs), 'build-static must not use a days-based news window');
+}
 assert.match(fs.readFileSync('robots.txt', 'utf8'), /^Sitemap: https:\/\/younghadene\.ca\/news-sitemap\.xml$/m);
 if (/TODO/.test(NEWS_AUTHOR)) console.warn('check-news: WARNING NEWS_AUTHOR is still a placeholder (' + NEWS_AUTHOR + ')');
 console.log('check-news: OK');
