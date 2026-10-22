@@ -124,8 +124,29 @@ export const BLOG_REDIRECTS = {
   "the-rise-of-haitian-toronto-music-fusion-redefining-the-soun": "/blog/the-rise-of-haitian-toronto-music-fusion-redefining-the-sound-of-the-416"
 };
 
-// Slugs whose staged static page (blog/<slug>.html) must win over an older
-// KV doc with the same slug, until the KV copy is updated via the admin.
+// Slugs whose repo page (blog/<slug>.html) must win over the KV doc with the
+// same slug. The KV copies of these posts are an older bulk migration
+// (2026-10-10) that still carries claims removed in the repo (#16); the repo
+// file is the reviewed source of truth until the KV copy is updated via the admin.
 export const BLOG_STATIC_FIRST = new Set([
   'haitian-rappers-in-toronto-young-hadene-and-the-new-generation',
+  'basement-to-stage-first-show',
+  'toronto-after-midnight',
+  'underground-toronto-sound-2026',
+  'inside-young-hadene-an-honest-look',
+  'young-hadene-haitian-toronto-drill-dark-trap-artist-redefining-the-6ix-sound',
+  'young-hadene-one-of-the-top-best-toronto-rappers-redefining-drill-and-trap',
+  'young-hadene-rap-game-takes',
+  'top-10-underground-toronto-tracks-2026',
+  'late-night-lab-no-sleep',
+]);
+
+// Blog posts held for editorial review: still served (no delete, no redirect)
+// but noindex,follow — meta robots in the page, X-Robots-Tag from
+// functions/blog/[slug].js and _headers, and kept out of the sitemaps, the
+// blog listings / posts-list API and related-post links.
+export const BLOG_NOINDEX = new Set([
+  'late-night-lab-no-sleep',
+  'top-10-underground-toronto-tracks-2026',
+  'young-hadene-no-sleep-song-meaning',
 ]);

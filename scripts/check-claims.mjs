@@ -7,6 +7,12 @@
 //     decision from the site owner. Remove a slug from this list once decided.
 // Inside aggregate files (blog.html, blog/index.html, blog/posts.json, yh_blogPosts.json)
 // the post objects for excluded slugs are skipped; everything else is checked.
+//
+// Live mode (not part of npm test):  node scripts/check-claims.mjs --live [baseUrl]
+// Fetches the rendered pages from baseUrl (default https://younghadene.ca): every
+// <loc> in baseUrl/sitemap.xml, the KV-first posts switched to repo-first, and
+// /, /about, /music, /llms.txt, then runs the same checks on the served HTML.
+// Use it against a Pages preview (https://<branch>.<project>.pages.dev) or prod.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -105,14 +111,13 @@ const SINGLES = [
 const ALLOWED_PHRASES = [/Built Different\s*[—-]\s*Dark Trap\s*[—-]\s*6ix Side/g, /6ix Side is a tribute to Toronto/g];
 const BOOSTED_STREAMS = /\b(?:growing|strong|impressive|rising|massive|huge|big)\s+streaming numbers\b/i;
 
+const LIVE = process.argv.includes('--live');
 let bad = 0, scanned = 0;
-const fail = (f, m) => { bad++; if (bad <= 60) console.error(`CLAIMS FAIL: ${f}: ${m}`); };
+const MAX_SHOWN = LIVE ? 400 : 60;
+const fail = (f, m) => { bad++; if (bad <= MAX_SHOWN) console.error(`CLAIMS FAIL: ${f}: ${m}`); };
 
-for (const f of walk('.').sort()) {
-  const slug = fileSlug(f);
-  if (slug && EXCLUDED.has(slug)) continue;
-  scanned++;
-  const t = text(dropExcludedPosts(readFileSync(f, 'utf8')));
+function checkText(f, raw) {
+  const t = text(dropExcludedPosts(raw));
   let tt = t;
   for (const re of ALLOWED_PHRASES) tt = tt.replace(re, ' ');
   for (const [label, re] of SINGLES) {
@@ -133,13 +138,78 @@ for (const f of walk('.').sort()) {
 }
 
 // Page-specific assertions (carried over from PR #14).
-const index = readFileSync('index.html', 'utf8');
-if (/streaming numbers/i.test(index)) fail('index.html', 'still claims "streaming numbers"');
 const FAQ_ANSWER = 'Good starting points are his official uploads on YouTube: Broken, Let the Choir Sing, In the Cut, The Digital Blueprint (a 3D animated video) and Pressure & Diamonds (52 States). You can watch all of them on the Videos page.';
-if (!index.includes(`"text": "${FAQ_ANSWER}"`)) fail('index.html', 'FAQPage answer for "best Young Hadene songs to start with" is not the approved text');
-if (!text(index).includes(FAQ_ANSWER)) fail('index.html', 'visible FAQ answer for "best Young Hadene songs to start with" is not the approved text');
-const about = text(readFileSync('about.html', 'utf8'));
-for (const n of ['Night Lovell', 'Swollen Members']) if (about.includes(n)) fail('about.html', `mentions ${n}`);
+function checkIndex(name, index) {
+  if (/streaming numbers/i.test(index)) fail(name, 'still claims "streaming numbers"');
+  if (!/"text":\s*"Good starting points are his official uploads/.test(index) || !index.includes(`"${FAQ_ANSWER}"`)) fail(name, 'FAQPage answer for "best Young Hadene songs to start with" is not the approved text');
+  if (!text(index).includes(FAQ_ANSWER)) fail(name, 'visible FAQ answer for "best Young Hadene songs to start with" is not the approved text');
+}
+function checkAbout(name, raw) {
+  const about = text(raw);
+  for (const n of ['Night Lovell', 'Swollen Members']) if (about.includes(n)) fail(name, `mentions ${n}`);
+}
+
+// Posts that used to be served from KV first; checked by name in --live mode.
+const REPO_FIRST = [
+  'basement-to-stage-first-show', 'toronto-after-midnight', 'underground-toronto-sound-2026',
+  'inside-young-hadene-an-honest-look',
+  'young-hadene-haitian-toronto-drill-dark-trap-artist-redefining-the-6ix-sound',
+  'young-hadene-one-of-the-top-best-toronto-rappers-redefining-drill-and-trap',
+  'young-hadene-rap-game-takes', 'top-10-underground-toronto-tracks-2026', 'late-night-lab-no-sleep',
+];
+
+async function runLive() {
+  const arg = process.argv[process.argv.indexOf('--live') + 1];
+  const base = (arg && !arg.startsWith('--') ? arg : 'https://younghadene.ca').replace(/\/$/, '');
+  const PROD = 'https://younghadene.ca';
+  const get = async (u) => {
+    for (let i = 0; i < 3; i++) {
+      try {
+        const r = await fetch(u, { redirect: 'follow', headers: { 'User-Agent': 'yh-check-claims/1.0' }, signal: AbortSignal.timeout(30000) });
+        return { status: r.status, url: r.url, body: await r.text() };
+      } catch (e) { if (i === 2) return { status: 0, url: u, body: '', err: e.message }; }
+    }
+  };
+  const sm = await get(base + '/sitemap.xml');
+  if (sm.status !== 200) { console.error(`CLAIMS-LIVE FAIL: ${base}/sitemap.xml -> HTTP ${sm.status} ${sm.err || ''}`); process.exit(1); }
+  const paths = new Set(['/', '/about', '/music', '/llms.txt']);
+  for (const m of sm.body.matchAll(/<loc>([^<]+)<\/loc>/g)) paths.add(m[1].trim().replace(PROD, '').replace(base, '') || '/');
+  for (const s of REPO_FIRST) paths.add('/blog/' + s);
+  const list = [...paths].sort();
+  const skipped = [];
+  const queue = list.slice();
+  const worker = async () => {
+    while (queue.length) {
+      const p = queue.shift();
+      const slug = (p.match(/^\/(?:blog\/)?([^/]+?)(?:\.html)?$/) || [])[1];
+      if (slug && EXCLUDED.has(slug)) { skipped.push(p); continue; }
+      const r = await get(base + p);
+      if (r.status !== 200) { fail(p, `HTTP ${r.status}${r.err ? ' ' + r.err : ''}`); continue; }
+      scanned++;
+      checkText(p, r.body);
+      if (p === '/') checkIndex(p, r.body);
+      if (p === '/about') checkAbout(p, r.body);
+    }
+  };
+  await Promise.all(Array.from({ length: 8 }, worker));
+  if (skipped.length) console.log(`skipped (redirected / editorial review): ${skipped.sort().join(', ')}`);
+  if (bad) { console.error(`CLAIMS-LIVE FAIL (${base}): ${bad} problem(s) in ${scanned} pages`); process.exit(1); }
+  console.log(`CLAIMS-LIVE OK (${base}): ${scanned} pages from sitemap + repo-first posts + /, /about, /music, /llms.txt: no unverified singles, Essential tracks lines approved, no Toronto-labelled Night Lovell/Swollen Members, no streaming-numbers claims; homepage FAQ answer approved.`);
+}
+
+if (LIVE) {
+  await runLive();
+  process.exit(0);
+}
+
+for (const f of walk('.').sort()) {
+  const slug = fileSlug(f);
+  if (slug && EXCLUDED.has(slug)) continue;
+  scanned++;
+  checkText(f, readFileSync(f, 'utf8'));
+}
+checkIndex('index.html', readFileSync('index.html', 'utf8'));
+checkAbout('about.html', readFileSync('about.html', 'utf8'));
 
 if (bad) { console.error(`CLAIMS-CHECK FAIL: ${bad} problem(s) in ${scanned} files`); process.exit(1); }
 console.log(`CLAIMS-CHECK OK: ${scanned} files (${EXCLUDED.size} redirected/editorial-review slugs excluded): no unverified singles, Essential tracks lines approved, no Toronto-labelled Night Lovell/Swollen Members, no streaming-numbers claims; homepage FAQ answer approved.`);

@@ -7,7 +7,8 @@
 // (pre-KV legacy posts), then the site 404.
 //
 // Allows both /blog/<slug> and /blog/<slug>.html
-import { BLOG_REDIRECTS, BLOG_STATIC_FIRST } from '../_blog-redirects.js';
+import { BLOG_REDIRECTS, BLOG_STATIC_FIRST, BLOG_NOINDEX } from '../_blog-redirects.js';
+import { isListable } from '../_listing.js';
 
 const SITE_URL = 'https://younghadene.ca';
 const GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
@@ -93,6 +94,7 @@ function relatedOf(doc, index) {
     const scored = [];
     for (const x of index) {
       if (!x || x.slug === doc.slug || !isVisible(x, Date.now())) continue;
+      if (!isListable(x.slug)) continue;
       let score = 0;
       if (x.category && x.category === doc.category) score += 1;
       const xt = String(x.tags || '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
@@ -214,7 +216,21 @@ async function countView(store, slug) {
   return;
 }
 
+// Slugs in BLOG_NOINDEX are served as usual but every response for them
+// (repo page, KV render, fallback) carries X-Robots-Tag: noindex, follow.
+function slugOf(params) {
+  return slugify(String((params && params.slug) || '').replace(/\.html$/i, ''));
+}
+
 export async function onRequestGet(context) {
+  const res = await handleGet(context);
+  if (!BLOG_NOINDEX.has(slugOf(context.params))) return res;
+  const out = new Response(res.body, res);
+  out.headers.set('X-Robots-Tag', 'noindex, follow');
+  return out;
+}
+
+async function handleGet(context) {
   const { request, env, params } = context;
   try {
     const raw = String((params && params.slug) || '').replace(/\.html$/i, '');

@@ -1,5 +1,5 @@
 import { NEWS_NOINDEX } from './_news-noindex.js';
-import { BLOG_REDIRECTS } from './_blog-redirects.js';
+import { BLOG_REDIRECTS, BLOG_NOINDEX } from './_blog-redirects.js';
 // GET /sitemap.xml — dynamic sitemap: static base pages + every visible
 // KV post (published + past-due scheduled only). New posts are included
 // instantly, no rebuild. Static entries are kept as fallback and KV wins
@@ -46,7 +46,7 @@ function lastmodOf(p) {
 function excluded(loc) {
   const m = String(loc).replace(SITE_URL, '').replace(/\.html$/, '').match(/^\/(blog|news)\/([^/]+)$/);
   if (!m) return false;
-  return m[1] === 'blog' ? Boolean(BLOG_REDIRECTS[m[2]]) : NEWS_NOINDEX.has(m[2]);
+  return m[1] === 'blog' ? Boolean(BLOG_REDIRECTS[m[2]]) || BLOG_NOINDEX.has(m[2]) : NEWS_NOINDEX.has(m[2]);
 }
 
 export async function onRequestGet(context) {
@@ -73,7 +73,7 @@ export async function onRequestGet(context) {
         const pr = section === 'blog' ? '0.8' : '0.9';
         for (const p of arr) {
           if (!p || !p.slug || !isVisible(p, now)) continue;
-          if (section === 'blog' && BLOG_REDIRECTS[p.slug]) continue;
+          if (section === 'blog' && (BLOG_REDIRECTS[p.slug] || BLOG_NOINDEX.has(p.slug))) continue;
           if (section === 'news' && NEWS_NOINDEX.has(p.slug)) continue;
           const loc = `${SITE_URL}/${section}/${p.slug}`;
           if (seen.has(loc)) continue;

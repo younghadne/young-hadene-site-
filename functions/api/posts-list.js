@@ -2,11 +2,20 @@
 // no rebuild, no wait. Requires the YH_POSTS KV binding.
 // Public listing data (same as the blog page itself) — no auth required.
 // Drafts and future-scheduled posts are hidden unless requested via the
-// authenticated POST variant below.
+// authenticated POST variant below. Slugs that 301 (BLOG_REDIRECTS) or are
+// noindexed (BLOG_NOINDEX, NEWS_NOINDEX) are left out of this public listing
+// (see functions/_listing.js); the admin POST still sees them.
+// Posts in BLOG_STATIC_FIRST are served from the repo page, so their listing
+// entry comes from the repo too (blog/posts.json) instead of the KV entry; the
+// response's repoFirst array lets blog.html prefer its baked entry for them,
+// and its unlisted array lets blog.html drop those slugs from its baked list too.
 // Query: ?limit=&offset=&withViews=1
 // POST { password, includeDrafts?, withViews?, limit?, offset?, summary? }
 //   summary=1 -> { ok, summary: { total, published, drafts, scheduled,
 //   totalViews, lastPublish, popular[], recent[] } } (for the manager).
+import { BLOG_STATIC_FIRST } from '../_blog-redirects.js';
+import { isListable, unlistedSlugs } from '../_listing.js';
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -48,6 +57,19 @@ function paginate(posts, limit, offset) {
   return posts.slice(off, off + lim);
 }
 
+// Repo listing entries (blog/posts.json) for BLOG_STATIC_FIRST slugs.
+async function repoEntries(env, request) {
+  const out = new Map();
+  try {
+    if (!env || !env.ASSETS) return out;
+    const r = await env.ASSETS.fetch(new Request(new URL('/blog/posts.json', request.url).toString()));
+    if (!r.ok) return out;
+    const arr = await r.json();
+    if (Array.isArray(arr)) for (const p of arr) if (p && p.slug && BLOG_STATIC_FIRST.has(p.slug)) out.set(p.slug, p);
+  } catch { /* fall back to the KV entry */ }
+  return out;
+}
+
 async function loadAll(store) {
   let index = [];
   try {
@@ -76,11 +98,13 @@ export async function onRequestGet(context) {
     const url = new URL(request.url);
     const now = Date.now();
     const { index } = await loadAll(store);
-    let posts = index.filter((p) => isVisible(p, now));
+    let posts = index.filter((p) => isVisible(p, now) && isListable(p.slug));
+    const repo = await repoEntries(env, request);
+    posts = posts.map((p) => (repo.has(p.slug) ? { ...repo.get(p.slug), status: 'published', source: 'repo' } : p));
     const withViews = url.searchParams.get('withViews') === '1';
     posts = paginate(posts, url.searchParams.get('limit'), url.searchParams.get('offset'));
     if (!withViews) posts = stripViews(posts);
-    return json({ ok: true, posts });
+    return json({ ok: true, posts, repoFirst: [...BLOG_STATIC_FIRST], unlisted: unlistedSlugs() });
   } catch (e) {
     return json({ error: e.message }, 500);
   }
