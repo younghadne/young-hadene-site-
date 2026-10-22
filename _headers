@@ -7,3 +7,27 @@
   X-Robots-Tag: noindex, nofollow
 /admin-email.html
   X-Robots-Tag: noindex, nofollow
+
+# Blog posts held for editorial review (BLOG_NOINDEX in functions/_blog-redirects.js):
+# served but noindex,follow. /blog/<slug> also gets the header from
+# functions/blog/[slug].js; these cover the root-level copies and static fallbacks.
+/late-night-lab-no-sleep
+  X-Robots-Tag: noindex, follow
+/late-night-lab-no-sleep.html
+  X-Robots-Tag: noindex, follow
+/top-10-underground-toronto-tracks-2026
+  X-Robots-Tag: noindex, follow
+/top-10-underground-toronto-tracks-2026.html
+  X-Robots-Tag: noindex, follow
+/blog/late-night-lab-no-sleep
+  X-Robots-Tag: noindex, follow
+/blog/late-night-lab-no-sleep.html
+  X-Robots-Tag: noindex, follow
+/blog/top-10-underground-toronto-tracks-2026
+  X-Robots-Tag: noindex, follow
+/blog/top-10-underground-toronto-tracks-2026.html
+  X-Robots-Tag: noindex, follow
+/blog/young-hadene-no-sleep-song-meaning
+  X-Robots-Tag: noindex, follow
+/blog/young-hadene-no-sleep-song-meaning.html
+  X-Robots-Tag: noindex, follow

@@ -1792,16 +1792,7 @@
     "featured": false,
     "content": "The city's hip-hop scene has shifted. From basement studios in Scarborough to sold-out shows at the Danforth Music Hall, Toronto's underground is louder and more authentic than ever. Here's what changed and who's leading it."
   },
-  {
-    "id": 2,
-    "title": "Late Night in the Lab — Building \"No Sleep\"",
-    "slug": "late-night-lab-no-sleep",
-    "category": "Studio Sessions",
-    "date": "May 20, 2026",
-    "dateNum": 1747785600000,
-    "featured": false,
-    "content": "The making of the heaviest track yet. From 3 AM melodies to 808s that shake the walls. Every great track starts with a late night. This one was no different — pulling inspiration from the empty Toronto streets at 3 AM, the hum of the city that never quite sleeps."
-  },
+  
   {
     "id": 3,
     "title": "Toronto After Midnight — A Dark Trap Diary",
@@ -1822,16 +1813,7 @@
     "featured": false,
     "content": "Behind the scenes of the first live performance. The nerves, the energy, the moments they don't show you. Walking on stage for the first time is something you never forget."
   },
-  {
-    "id": 5,
-    "title": "Top 10 Underground Toronto Tracks (2026)",
-    "slug": "top-10-underground-toronto-tracks-2026",
-    "category": "Music",
-    "date": "Apr 28, 2026",
-    "dateNum": 1745884800000,
-    "featured": false,
-    "content": "The songs that are defining the current wave. Heavy beats, raw lyricism, and real Toronto energy. From Scarborough to Rexdale, these are the tracks that matter right now."
-  },
+  
   {
     "id": 6,
     "title": "The Venues That Built Toronto's Sound",

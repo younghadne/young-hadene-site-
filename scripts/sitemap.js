@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Static sitemap.xml generator + check (run: npm run sitemap / npm test).
 // Includes every .html page whose canonical points to itself, except:
-// noindex pages, /admin*, blog posts in BLOG_REDIRECTS, news in NEWS_NOINDEX,
+// noindex pages, /admin*, blog posts in BLOG_REDIRECTS/BLOG_NOINDEX, news in NEWS_NOINDEX,
 // and EXCLUDE below. lastmod = git date of the page's last commit.
 // KV-only posts are added at request time by functions/sitemap.xml.js.
 // `node scripts/sitemap.js` writes sitemap.xml; `--check` fails if it is stale.
@@ -20,6 +20,7 @@ const load = (f, name) => {
 };
 const REDIRECTS = load('_blog-redirects.js', 'BLOG_REDIRECTS');
 const NOINDEX = load('_news-noindex.js', 'NEWS_NOINDEX');
+const BLOG_NOINDEX = load('_blog-redirects.js', 'BLOG_NOINDEX');
 const PRIORITY = { '/': '1.0', '/music': '0.9', '/blog': '0.9', '/news': '0.9', '/videos': '0.9' };
 
 function walk(dir, out = []) {
@@ -43,7 +44,7 @@ function pages() {
     if (/<meta[^>]+name="robots"[^>]+noindex/i.test(html)) continue;
     if (url.startsWith('/admin') || url === '/404' || EXCLUDE.has(url) || isLegacy(url)) continue;
     const m = url.match(/^\/(blog|news)\/([^/]+)$/);
-    if (m && (m[1] === 'blog' ? REDIRECTS[m[2]] : NOINDEX.has(m[2]))) continue;
+    if (m && (m[1] === 'blog' ? REDIRECTS[m[2]] || BLOG_NOINDEX.has(m[2]) : NOINDEX.has(m[2]))) continue;
     const can = (html.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
     if (can && can.replace(SITE, '').replace(/\/$/, '') !== (url === '/' ? '' : url)) continue;
     if (seen.has(url)) continue; // e.g. blog.html and blog/index.html both = /blog
