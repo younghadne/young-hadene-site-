@@ -62,6 +62,9 @@ function normDoc(p, section, fallbackCat) {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  // Bulk KV seed is a one-time tool: OFF unless the Pages env var ALLOW_MIGRATE=1
+  // is set for the run (gated 2026-10-16 after the Oct 10 bulk news import).
+  if (!env || env.ALLOW_MIGRATE !== '1') return json({ error: 'Migration disabled (set ALLOW_MIGRATE=1 to enable)' }, 403);
   try {
     let body = {};
     try { body = await request.json(); } catch { body = {}; }

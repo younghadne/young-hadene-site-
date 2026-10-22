@@ -105,6 +105,10 @@ function cleanStr(v, max) {
 export async function onRequestPost(context) {
   const { request, env } = context;
   try {
+    // Publishing (create/update) is OFF unless the Pages env var
+    // NEWS_WRITES_ENABLED=1 is set (gated after the Oct 10 bulk import).
+    // ADMIN_PASSWORD is still required. DELETE is not gated by this flag.
+    if (!env || env.NEWS_WRITES_ENABLED !== '1') return json({ error: 'News publishing is disabled (set NEWS_WRITES_ENABLED=1 in Cloudflare Pages env)' }, 403);
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
     const auth = checkAuth(env, body.password);

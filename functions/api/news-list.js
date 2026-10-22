@@ -6,6 +6,8 @@
 // authenticated POST variant below.
 // Query: ?limit=&offset=&withViews=1
 // POST { password, includeDrafts?, withViews?, limit?, offset?, summary? }
+import { NEWS_NOINDEX } from '../_news-noindex.js';
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -90,7 +92,9 @@ export async function onRequestGet(context) {
     const url = new URL(request.url);
     const now = Date.now();
     const { index, removed } = await loadAll(store);
-    let posts = sortNews(index.filter((p) => isVisible(p, now)));
+    // Public index hides NEWS_NOINDEX (off-topic / held) posts; admin passes ?includeNoindex=1.
+    const inclNoindex = url.searchParams.get('includeNoindex') === '1';
+    let posts = sortNews(index.filter((p) => isVisible(p, now) && (inclNoindex || !NEWS_NOINDEX.has(p.slug))));
     const withViews = url.searchParams.get('withViews') === '1';
     posts = paginate(posts, url.searchParams.get('limit'), url.searchParams.get('offset'));
     if (!withViews) posts = stripViews(posts);

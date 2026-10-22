@@ -10,6 +10,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const SITE_URL = process.env.SITE_URL || 'https://younghadene.ca';
+const NEWS_NOINDEX = new Function(fs.readFileSync(path.join(ROOT, 'functions', '_news-noindex.js'), 'utf8').replace(/export const /g, 'const ') + '; return NEWS_NOINDEX;')();
+const newsIndexable = (f) => !NEWS_NOINDEX.has(f.replace(/\.html$/, ''));
 
 // Files that exist on disk but must never appear in sitemaps
 // (listing duplicates, stubs, tests).
@@ -80,7 +82,7 @@ const newsFiles = listHtml(newsDir);
 const FRESH_WINDOW_DAYS = 7;
 const FRESH_WINDOW_MS = FRESH_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 const now = Date.now();
-const fresh = newsFiles
+const fresh = newsFiles.filter(newsIndexable)
   .map((f) => {
     const full = path.join(newsDir, f);
     let ms = 0;
@@ -115,7 +117,7 @@ fs.writeFileSync(path.join(ROOT, 'news-sitemap.xml'), news);
 console.log(`news-sitemap.xml regenerated: ${fresh.length} fresh articles`);
 
 // ── 3. Static RSS for /news/ (latest 20) ──
-const items = newsFiles
+const items = newsFiles.filter(newsIndexable)
   .map((f) => {
     const full = path.join(newsDir, f);
     let ms = 0;
