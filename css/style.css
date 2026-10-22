@@ -1702,13 +1702,6 @@ html { scroll-behavior: auto; }
 .the-look { padding: 80px 0 0; background: var(--bg-secondary); }
 .the-look .section-header { margin-bottom: 24px; }
 .section-intro { font: 400 1rem/1.5 'Inter', var(--font-body); color: var(--text-muted); max-width: 48ch; margin: 8px auto 0; }
-.look-rail { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--bg-primary); }
-.look-rail::-webkit-scrollbar { display: none; }
-.look-rail li { flex: 0 0 82vw; scroll-snap-align: start; }
-.look-rail .poster-tile { aspect-ratio: 4 / 5; }
-.look-rail img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(.35) contrast(1.05); }
-@media (hover: hover) and (pointer: fine) { .look-rail .poster-tile:hover img { filter: none; } }
-@media (min-width: 768px) { .look-rail { overflow: visible; } .look-rail li { flex: 1 1 0; } }
 
 
 /* Batch 2: homepage album cards */
@@ -2051,6 +2044,16 @@ body .article-wrap .meta span{color:#79C043}
 .nfp-video{position:relative;aspect-ratio:16/9;max-width:960px;border-radius:var(--radius);overflow:hidden;background:var(--surface);border:1px solid var(--line)}
 .nfp-video iframe{position:absolute !important;inset:0;width:100% !important;height:100% !important;border:0}
 .nfp-cta{margin-top:24px}
+/* /music: tap-to-load YouTube poster (Broken poster style) + lazy Spotify */
+.nfp-video .nfp-facade{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;padding:0;border:0;background:#1C1E22;cursor:pointer;min-height:44px}
+.nfp-video .nfp-facade img{opacity:.85}
+.nfp-video .nfp-facade .yt-play{width:64px;height:64px;border-radius:50%;background:#79C043;transition:transform var(--dur-1) var(--ease-out),background-color var(--dur-2) var(--ease-out)}
+.nfp-video .nfp-facade .yt-play::before{border-width:12px 0 12px 20px;border-color:transparent transparent transparent #131417;margin-left:5px}
+.nfp-video .nfp-facade:hover .yt-play,.nfp-video .nfp-facade:focus-visible .yt-play{background:#8bd052;transform:translate(-50%,-50%) scale(1.06)}
+.nfp-video .nfp-facade:focus-visible{outline:2px solid #79C043;outline-offset:-2px}
+.nfp-spotify-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;margin:0 0 16px;border-radius:999px;background:#79C043;color:#131417;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
+.nfp-spotify-btn:hover,.nfp-spotify-btn:focus-visible{background:#8bd052;color:#131417}
+.nfp-embed iframe[height="352"]{height:352px;min-height:352px;background:#1C1E22}
 .nf-sec .nf-rows li::before{color:var(--muted)}
 /* about */
 .nfp-story{display:grid;grid-template-columns:1fr 1.2fr;gap:56px;align-items:start}
