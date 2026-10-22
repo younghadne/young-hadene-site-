@@ -505,35 +505,57 @@ const server = http.createServer((req, res) => {
 </style></head><body><header class="header"><div class="header-inner"><a href="/" class="logo">YOUNG<span class="logo-accent">HADENE</span><span class="logo-sub">Toronto • Dark Trap</span></a><button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button><nav><ul class="nav-list"><li><a href="/" class="nav-link">Home</a></li><li><a href="/music.html" class="nav-link">Music</a></li><li><a href="/blog.html" class="nav-link">Blog</a></li><li><a href="/news.html" class="nav-link active">News</a></li><li><a href="/contact.html" class="nav-link">Contact</a></li></ul></nav></div></header><section class="section" style="padding-top:120px;"><div class="container"><a href="/news.html" class="back-link">&#8592; Back to News</a><div class="article-wrap"><div class="meta">${escHtml(d.date)} &middot; <span>${escHtml(d.category || 'News')}</span> &middot; By <a href="/about.html" rel="author">Young Hadene</a>, Editor</div><h1>${escHtml(d.title)}</h1><div>${renderArticleBody(d)}</div><div class="correction-note">Correction notice: none to date. Spotted an error? See our <a href="/corrections-policy.html">Corrections Policy</a> or email <a href="mailto:contact@younghadene.ca">contact@younghadene.ca</a>.</div></div></div></section><footer class="footer"><div class="container"><div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} Young Hadene. All rights reserved. Toronto. 6ix.</p><div class="footer-bottom-links"><a href="/news.html">News</a><a href="/editorial-policy.html">Editorial Policy</a><a href="/privacy.html">Privacy</a></div></div></div></footer><script src="../js/main.js"></script></body></html>`;
   }
   function refreshNewsFeeds() {
-    // Rebuild news-sitemap.xml (fresh 2-day window) + news-rss.xml from /news/*.html mtimes.
+    // Rebuild news-sitemap.xml (widened fresh window) + news-rss.xml using each
+    // article's real publish date (JSON-LD datePublished / article:published_time),
+    // never filesystem mtime (git checkout resets mtime and collapses all dates).
+    function publishedMs(html, fallbackMs) {
+      const m = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) ||
+                html.match(/article:published_time"\s+content="([^"]+)"/i);
+      const t = m ? Date.parse(m[1]) : NaN;
+      return Number.isFinite(t) ? t : fallbackMs;
+    }
+    function decodeHtml(s) {
+      return String(s)
+        .replace(/&#x27;|&#39;/g, "'")
+        .replace(/&quot;/g, '"')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
+    }
+    const NEWS_FRESH_WINDOW_DAYS = 7;
+    const NEWS_FRESH_WINDOW_MS = NEWS_FRESH_WINDOW_DAYS * 24 * 60 * 60 * 1000;
     try {
       const files = fs.existsSync(NEWS_DIR) ? fs.readdirSync(NEWS_DIR).filter(f => f.endsWith('.html')).sort() : [];
       const nowMs = Date.now();
       let ns = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n';
       for (const f of files) {
         const full = path.join(NEWS_DIR, f);
-        let mtime;
-        try { mtime = fs.statSync(full).mtime; } catch { continue; }
-        if (nowMs - mtime.getTime() > 2 * 24 * 60 * 60 * 1000) continue;
+        let ms;
+        try { ms = publishedMs(fs.readFileSync(full, 'utf8'), fs.statSync(full).mtimeMs); } catch { continue; }
+        if (nowMs - ms > NEWS_FRESH_WINDOW_MS) continue;
         let title = f;
         try {
           const m = fs.readFileSync(full, 'utf8').match(/<title>([^<]*)<\/title>/i);
           if (m) title = m[1].split('—')[0].split('|')[0].trim();
         } catch {}
-        ns += `  <url>\n    <loc>${SITE_URL}/news/${f}</loc>\n    <news:news>\n      <news:publication>\n        <news:name>Young Hadene</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${mtime.toISOString()}</news:publication_date>\n      <news:title>${escHtml(title)}</news:title>\n    </news:news>\n  </url>\n`;
+        ns += `  <url>\n    <loc>${SITE_URL}/news/${f.replace(/\.html$/, '')}</loc>\n    <news:news>\n      <news:publication>\n        <news:name>Young Hadene</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${new Date(ms).toISOString()}</news:publication_date>\n      <news:title>${escHtml(title)}</news:title>\n    </news:news>\n  </url>\n`;
       }
       ns += '</urlset>\n';
       fs.writeFileSync(path.join(__dirname, 'news-sitemap.xml'), ns);
-      const latest = files.map(f => ({ f, ms: fs.statSync(path.join(NEWS_DIR, f)).mtimeMs })).sort((a, b) => b.ms - a.ms).slice(0, 20);
-      let rss = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>${SITE_URL}/news.html</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n`;
+      const latest = files.map(f => {
+        let ms = 0;
+        try { ms = publishedMs(fs.readFileSync(path.join(NEWS_DIR, f), 'utf8'), fs.statSync(path.join(NEWS_DIR, f)).mtimeMs); } catch { ms = 0; }
+        return { f, ms };
+      }).sort((a, b) => b.ms - a.ms).slice(0, 20);
+      let rss = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>${SITE_URL}/news</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n`;
       for (const { f, ms } of latest) {
         let title = f, desc = f;
         try {
           const html = fs.readFileSync(path.join(NEWS_DIR, f), 'utf8');
           const tm = html.match(/<title>([^<]*)<\/title>/i); if (tm) title = tm[1].trim();
-          const dm = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i); if (dm) desc = dm[1];
+          const dm = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i); if (dm) desc = decodeHtml(dm[1]);
         } catch {}
-        rss += `  <item>\n    <title>${escHtml(title)}</title>\n    <link>${SITE_URL}/news/${f}</link>\n    <guid isPermaLink="true">${SITE_URL}/news/${f}</guid>\n    <pubDate>${new Date(ms).toUTCString()}</pubDate>\n    <description>${escHtml(desc)}</description>\n  </item>\n`;
+        rss += `  <item>\n    <title>${escHtml(title)}</title>\n    <link>${SITE_URL}/news/${f.replace(/\.html$/, '')}</link>\n    <guid isPermaLink="true">${SITE_URL}/news/${f.replace(/\.html$/, '')}</guid>\n    <pubDate>${new Date(ms).toUTCString()}</pubDate>\n    <description>${escHtml(desc)}</description>\n  </item>\n`;
       }
       rss += '</channel>\n</rss>\n';
       fs.writeFileSync(path.join(__dirname, 'news-rss.xml'), rss);
@@ -730,7 +752,7 @@ const server = http.createServer((req, res) => {
   }
 
   // ── Clean URL support (like Cloudflare Pages auto-redirect) ──
-  const cleanPages = { '/blog': '/blog.html', '/blog/index.html': '/blog.html', '/news': '/news.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html', '/about': '/about.html', '/services': '/services.html', '/privacy': '/privacy.html', '/terms': '/terms.html', '/editorial-policy': '/editorial-policy.html', '/corrections-policy': '/corrections-policy.html' };
+  const cleanPages = { '/blog': '/blog.html', '/blog/index.html': '/blog.html', '/news': '/news.html', '/admin': '/admin.html', '/contact': '/contact.html', '/music': '/music.html', '/videos': '/videos.html', '/videos/': '/videos.html', '/about': '/about.html', '/services': '/services.html', '/privacy': '/privacy.html', '/terms': '/terms.html', '/editorial-policy': '/editorial-policy.html', '/corrections-policy': '/corrections-policy.html' };
   if (cleanPages[url.pathname]) {
     url.pathname = cleanPages[url.pathname];
   }

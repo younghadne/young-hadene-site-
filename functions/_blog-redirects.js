@@ -104,7 +104,24 @@ export const BLOG_REDIRECTS = {
   "young-hadene-no-sleep-song-meaning-2026-guide": "/blog/young-hadene-no-sleep-song-meaning",
   "young-hadene-no-sleep-song-meaning-2026-guide-2": "/blog/young-hadene-no-sleep-song-meaning",
   "young-hadene-vs-toronto-underground-comparison-2026-guide": "/blog/young-hadene-vs-toronto-underground-comparison",
-  "youtube-visuals-for-underground-rap-2026-2026-guide": "/blog/how-to-promote-rap-music-in-toronto"
+  "youtube-visuals-for-underground-rap-2026-2026-guide": "/blog/how-to-promote-rap-music-in-toronto",
+  // Truncated (60-char) slug cleanups — keep-improve rows 1-13, owner-approved.
+  // Old URL 301s to the same article at its full clean slug (self-rename, one hop).
+  "defining-the-haitian-toronto-music-fusion-how-drill-and-dark": "/blog/defining-the-haitian-toronto-music-fusion-how-drill-and-dark-trap-meet-heritage",
+  // NB: slugify() trims a trailing '-', so keys for the two slugs that were cut
+  // mid-hyphen must be the trimmed form, or the lookup never matches.
+  "defining-the-sound-the-rise-of-melodic-drill-rap-artists-in": "/blog/defining-the-sound-the-rise-of-melodic-drill-rap-artists-in-the-modern-landscape",
+  "drill-music-storytelling-techniques-how-toronto-s-finest-pai": "/blog/drill-music-storytelling-techniques-how-toronto-s-finest-paint-real-pictures",
+  "haitian-musicians-in-toronto-the-rise-of-drill-dark-trap-and": "/blog/haitian-musicians-in-toronto-the-rise-of-drill-dark-trap-and-real-street-narratives",
+  "inside-the-toronto-rap-studio-culture-where-dark-trap-meets": "/blog/inside-the-toronto-rap-studio-culture-where-dark-trap-meets-the-6ix",
+  "mastering-underground-rap-visual-branding-why-image-is-every": "/blog/mastering-underground-rap-visual-branding-why-image-is-everything",
+  "navigating-the-dark-trap-music-scene-sound-style-and-identit": "/blog/navigating-the-dark-trap-music-scene-sound-style-and-identity",
+  "rap-artist-branding-tips-2026-build-a-name-that-hits-differe": "/blog/rap-artist-branding-tips-2026-build-a-name-that-hits-different",
+  "spotify-algorithm-for-underground-rappers-explained-2026-gui": "/blog/spotify-algorithm-for-underground-rappers-explained-2026-breakdown",
+  "the-pulse-of-underground-canadian-hip-hop-why-the-streets-ar": "/blog/the-pulse-of-underground-canadian-hip-hop-why-the-streets-are-still-where-the-real-music-lives",
+  "the-rhythmic-bridge-how-the-caribbean-influence-on-drill-mus": "/blog/the-rhythmic-bridge-how-the-caribbean-influence-on-drill-music-reshaped-the-genre",
+  "the-rise-of-haitian-musicians-in-toronto-defining-a-new-soun": "/blog/the-rise-of-haitian-musicians-in-toronto-defining-a-new-sound",
+  "the-rise-of-haitian-toronto-music-fusion-redefining-the-soun": "/blog/the-rise-of-haitian-toronto-music-fusion-redefining-the-sound-of-the-416"
 };
 
 // Slugs whose staged static page (blog/<slug>.html) must win over an older

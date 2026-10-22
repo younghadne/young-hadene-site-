@@ -2108,3 +2108,188 @@ body .article-wrap .meta span{color:#79C043}
 .article-wrap .artist-card .info h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;letter-spacing:.04em;line-height:1.1;text-transform:uppercase;margin:0 0 4px;color:inherit}
 .article-wrap .az-card h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;letter-spacing:.04em;line-height:1.1;text-transform:uppercase;margin:0 0 8px;color:var(--accent)}
 .article-wrap .cta-box h2{font-family:var(--font-heading);font-size:1.15rem;font-weight:700;letter-spacing:.03em;line-height:1.1;text-transform:uppercase;margin:0 0 10px;color:var(--text-primary)}
+
+/* =====================================================================
+   A11Y & UX (contrast + tap targets). Kept additive at the end so it does
+   not disturb the visual-spec v2 token block above. Owner: A11y UX agent.
+   ===================================================================== */
+
+/* WCAG 1.4.3 — lighten --text-muted so small muted text clears 4.5:1.
+   #9a9a9a on #131417 (bg-primary) ≈ 6.5:1; on #1C1E22 (bg-card) ≈ 5.9:1.
+   Previous #8D9099 was ~5.8:1/~5.2:1 — passing but tight. */
+:root { --text-muted: #9a9a9a; }
+
+/* WCAG 2.5.5 / 2.5.8 — footer social icons hit the 44px minimum.
+   Base rule is 44px already; this covers the compact Ninefold footer
+   (.nf-footer .footer-social a) so every render context is >= 44px. */
+.nf-footer .footer-social a { width: 44px; height: 44px; }
+
+/* WCAG 2.4.7 — keep a visible focus ring on the mobile toggle. */
+.hamburger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* =====================================================================
+   VISUAL POLISH (Visual Polish agent) — shared .press-card
+   Promotes .press-card/.press-grid/.profile-list to real shared classes
+   so press.html no longer relies on page-local inline styling, and the
+   cards follow the Ninefold card pattern (.blog-card: surface panel,
+   hairline --line border, radius, mono labels, green accent, hover lift).
+   NOTE: the Ninefold reset disables box-shadow and card gradients
+   globally (* { box-shadow:none !important }, card background-image:none
+   !important), so the premium feel is carried by border + hover lift,
+   matching the existing .blog-card:hover treatment. Degrades safely:
+   fallback flat surface + border, motion removed under reduced motion.
+   ===================================================================== */
+.press-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+.press-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: transform .25s cubic-bezier(.22,1,.36,1), border-color .25s ease;
+}
+.press-card:hover { transform: translateY(-4px); border-color: rgba(121,192,67,.5); }
+.press-card .pub { font-family: var(--font-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-text); margin-bottom: 8px; }
+.press-card h3 { font-family: var(--font-heading); font-size: 1.1rem; letter-spacing: .03em; line-height: 1.3; margin: 0 0 8px; color: var(--paper); }
+.press-card .date { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); margin-bottom: 10px; }
+.press-card p { font-size: .85rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 14px; }
+.press-card .tag { display: inline-block; font-family: var(--font-mono); font-size: .65rem; text-transform: uppercase; letter-spacing: .08em; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; color: var(--muted); margin-bottom: 12px; }
+.profile-list { list-style: none; padding: 0; margin: 24px 0 0; }
+.profile-list li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 12px; font-size: .85rem; color: var(--text-secondary); line-height: 1.7; }
+.profile-list li strong { color: var(--paper); }
+@media (max-width: 768px) { .press-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .press-card { transition: none; } .press-card:hover { transform: none; } }
+
+/* =====================================================================
+   DESIGN TOKENS — consolidated scale (Design Systems agent)
+   Owner: Design Systems. Additive only: declares NEW token names, so it
+   changes no existing rendering. Values follow the Ninefold palette that
+   wins at the end of this file (ground #131417, surface #1C1E22, bone
+   #ECE8E1, muted #8D9099, signal green #79C043, hairline 15% bone).
+   Adoption is a separate, component-by-component step; components that
+   still hard-code values are listed in the Design Systems report.
+   NOTE: literal box-shadows cannot render until the Ninefold global
+   `*{box-shadow:none !important}` reset is lifted; the --shadow-e* ramp
+   below is defined for when that happens.
+   ===================================================================== */
+:root {
+  /* ----- Radius scale ----- */
+  --radius-xs:   4px;    /* chips, tags, tiny controls */
+  --radius-md:  12px;    /* icon tiles, mid cards */
+  --radius-lg:  16px;    /* large panels, mobile nav sheet */
+  --radius-pill:999px;   /* buttons, pills, badges */
+  --radius-full: 50%;    /* circles: play, avatars, icon buttons */
+  /* pre-existing: --radius:8px, --radius-sm:8px, --panel-radius:24px */
+
+  /* ----- Spacing scale (4px rhythm) ----- */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  32px;
+  --space-8:  40px;
+  --space-9:  48px;
+  --space-10: 56px;
+  --space-11: 64px;
+  --space-12: 80px;
+  --space-13: 96px;
+  --space-14:120px;
+  /* semantic aliases */
+  --gutter:      var(--space-6);   /* page gutter (desktop 24px) */
+  --section-pad: var(--space-14);  /* section block padding (120px) */
+  --card-pad:    var(--space-8);   /* card interior (40px) */
+  --panel-pad:   var(--space-13);  /* large panel interior (96px) */
+
+  /* ----- Type scale ----- */
+  --text-2xs: 0.65rem;  /* tags, fine meta */
+  --text-xs:  0.75rem;  /* labels, post-date, mono meta */
+  --text-sm:  0.85rem;  /* card body, FAQ answer */
+  --text-md:  0.95rem;  /* dense body */
+  --text-base:1rem;     /* canonical body, FAQ question */
+  --text-lg:  1.15rem;
+  --text-xl:  1.3rem;
+  --text-2xl: 1.6rem;
+  --text-3xl: 1.8rem;
+  --text-4xl: 2rem;
+  /* fluid display sizes */
+  --display-xl: clamp(4rem, 14vw, 11rem);   /* hero wordmark */
+  --display-lg: clamp(3rem, 9vw, 8rem);     /* page h1 */
+  --display-md: clamp(2.5rem, 6vw, 4.5rem); /* section title */
+  --display-sm: clamp(1.8rem, 3vw, 2.6rem);
+  --display-xs: clamp(1.3rem, 2.6vw, 2.4rem);
+  /* leading + tracking */
+  --lead-tight: 0.95;
+  --lead-snug:  1.1;
+  --lead-body:  1.7;
+  --lead-loose: 1.8;
+  --track-tight:  -0.01em;
+  --track-normal:  0;
+  --track-wide:    0.06em;
+  --track-wider:   0.12em;
+  --track-widest:  0.22em;
+
+  /* ----- Accent alpha tokens (brand tints; replace stray old-red rgba(220,38,38,*)) ----- */
+  --accent-tint:          rgba(121,192,67,0.05);  /* soft fills: .highlight-box bg, .artist-card.featured bg */
+  --accent-hairline:      rgba(121,192,67,0.15);  /* callout + card borders */
+  --accent-border:        rgba(121,192,67,0.30);  /* emphasised card border */
+  --accent-border-strong: rgba(121,192,67,0.40);  /* strongest accent border/glow */
+  /* --accent-subtle (rgba(121,192,67,0.12)) already defined in the Ninefold :root */
+
+  /* ----- Shadow ramp (flat theme keeps none; ramp for future use) ----- */
+  --shadow-e1: 0 2px 8px rgba(0,0,0,0.35);
+  --shadow-e2: 0 8px 30px rgba(0,0,0,0.45);
+  --shadow-e3: 0 20px 60px rgba(0,0,0,0.50);
+}
+
+/* =====================================================================
+   MOTION & INTERACTION (Motion Interaction agent) — unified hover /
+   micro-interaction system. Appended last (per work order) so concurrent
+   editors' sections stay untouched. Scope: .btn, .feature-card,
+   .service-card, .blog-card, .press-card.
+   One container language, matching the .blog-card/.press-card direction:
+   hover/focus = 4px lift + solid accent hairline, animated at --dur-2
+   (200ms) var(--ease-out). Buttons stay flat (surface swap) on the same
+   timing, with a scale(.98) press. Keyboard parity via :focus-within.
+   Ninefold disables box-shadow globally, so the cue is transform + border
+   only. Reduced-motion removes every movement, keeps the border cue and
+   legibility. Overrides the older "no lift" batch-2 rule and the bespoke
+   .25s timings so all four card types behave identically.
+   ===================================================================== */
+.feature-card, .service-card, .blog-card, .press-card {
+  transition: transform var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out) !important;
+}
+.feature-card:hover, .service-card:hover, .blog-card:hover, .press-card:hover,
+.feature-card:focus-within, .service-card:focus-within,
+.blog-card:focus-within, .press-card:focus-within {
+  transform: translateY(-4px) !important;
+  border-color: var(--accent) !important;
+}
+/* Outline button shares the card accent cue (overrides Ninefold's neutral
+   paper hover) so every interactive element uses the same accent on hover. */
+.btn-outline:hover, .btn-outline:focus-visible {
+  border-color: var(--accent) !important;
+  color: var(--accent-text) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .feature-card, .service-card, .blog-card, .press-card, .btn { transition: none !important; }
+  .feature-card:hover, .service-card:hover, .blog-card:hover, .press-card:hover,
+  .feature-card:focus-within, .service-card:focus-within,
+  .blog-card:focus-within, .press-card:focus-within,
+  .btn:active { transform: none !important; }
+}
+
+/* =====================================================================
+   RESPONSIVE FIX (Layout Responsive agent) — homepage header overflow
+   =====================================================================
+   .nf-pill ("Book a show", only in index.html's header) is hidden only
+   below 768px via the nf-* @767 block. Between 768px and ~1023px the
+   full nav (8 links) + logo + pill do not fit: at 768px the pill's right
+   edge reached ~843px (clipped off-screen) and the nav crowded into the
+   logo. Hide the pill on tablet widths; it returns at >=1024px where the
+   header fits. Safe to drop if the CTA must stay — then instead shrink
+   .nav-list gap at this breakpoint.
+   ===================================================================== */
+@media (max-width: 1023px) {
+  .nf-pill { display: none; }
+}
