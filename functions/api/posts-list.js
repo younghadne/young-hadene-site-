@@ -7,6 +7,8 @@
 // POST { password, includeDrafts?, withViews?, limit?, offset?, summary? }
 //   summary=1 -> { ok, summary: { total, published, drafts, scheduled,
 //   totalViews, lastPublish, popular[], recent[] } } (for the manager).
+import { BLOG_REDIRECTS } from '../_blog-redirects.js';
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -76,7 +78,8 @@ export async function onRequestGet(context) {
     const url = new URL(request.url);
     const now = Date.now();
     const { index } = await loadAll(store);
-    let posts = index.filter((p) => isVisible(p, now));
+    // Public listing hides slugs that 301 elsewhere (merged/retired posts).
+    let posts = index.filter((p) => isVisible(p, now) && !BLOG_REDIRECTS[p.slug]);
     const withViews = url.searchParams.get('withViews') === '1';
     posts = paginate(posts, url.searchParams.get('limit'), url.searchParams.get('offset'));
     if (!withViews) posts = stripViews(posts);

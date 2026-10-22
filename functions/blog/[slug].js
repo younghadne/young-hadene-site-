@@ -92,7 +92,7 @@ function relatedOf(doc, index) {
     const tags = String(doc.tags || '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
     const scored = [];
     for (const x of index) {
-      if (!x || x.slug === doc.slug || !isVisible(x, Date.now())) continue;
+      if (!x || x.slug === doc.slug || BLOG_REDIRECTS[x.slug] || !isVisible(x, Date.now())) continue;
       let score = 0;
       if (x.category && x.category === doc.category) score += 1;
       const xt = String(x.tags || '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
