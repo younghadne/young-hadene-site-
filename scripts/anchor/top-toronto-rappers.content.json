@@ -13,7 +13,7 @@
  },
  {
   "t": "p",
-  "x": "This is not a ranking, and there is no number one. \"Best\" depends on what you value, whether that's sales, lyricism, influence or what you play on the way home, and we don't have a fair way to measure that across 40 years of music. Instead, the artists are grouped by era, and every entry answers the same five questions:"
+  "x": "This is not a ranking, and there is no number one. \"Best\" depends on what you value, whether that's sales, lyricism, influence or what you play on the way home, and we don't have a fair way to measure that across 40 years of music. Instead, the artists are grouped by era, and every entry covers the same kinds of facts:"
  },
  {
   "t": "ul",
@@ -249,6 +249,7 @@
   "t": "ul",
   "items": [
    "**From / based:** Based in Toronto (per his official site).[^yh-about]",
+   "**Active since:** At least 2021, the year of the single *Street Lights* on Apple Music.[^yh-apple]",
    "**Releases to know:** *Different Breed* (2024), *Sacrifices & Success* (2025), *They Took Me Down* (2026).[^yh-apple]",
    "**Why they're here:** He makes drill and dark trap,[^yh-about] and Apple Music credits his releases to ℗ str8hitsrecords.[^yh-apple] He's on this list because this is his site, which we've disclosed above.",
    "**Start with:** the [\"Broken\" video](/music/broken), posted to his YouTube channel on September 22, 2026.[^yh-yt]"
@@ -341,86 +342,86 @@
  {
   "t": "fn",
   "k": "maestro",
-  "x": "Wikipedia, \"Maestro Fresh Wes\": https://en.wikipedia.org/wiki/Maestro_Fresh_Wes"
+  "x": "[Wikipedia: Maestro Fresh Wes](https://en.wikipedia.org/wiki/Maestro_Fresh_Wes)"
  },
  {
   "t": "fn",
   "k": "michie",
-  "x": "Wikipedia, \"Michie Mee\": https://en.wikipedia.org/wiki/Michie_Mee"
+  "x": "[Wikipedia: Michie Mee](https://en.wikipedia.org/wiki/Michie_Mee)"
  },
  {
   "t": "fn",
   "k": "kardinal",
-  "x": "Wikipedia, \"Kardinal Offishall\": https://en.wikipedia.org/wiki/Kardinal_Offishall"
+  "x": "[Wikipedia: Kardinal Offishall](https://en.wikipedia.org/wiki/Kardinal_Offishall)"
  },
  {
   "t": "fn",
   "k": "kos",
-  "x": "Wikipedia, \"k-os\": https://en.wikipedia.org/wiki/K-os"
+  "x": "[Wikipedia: k-os](https://en.wikipedia.org/wiki/K-os)"
  },
  {
   "t": "fn",
   "k": "drake",
-  "x": "Wikipedia, \"Drake (musician)\": https://en.wikipedia.org/wiki/Drake_(musician)"
+  "x": "[Wikipedia: Drake (musician)](https://en.wikipedia.org/wiki/Drake_(musician))"
  },
  {
   "t": "fn",
   "k": "jazz",
-  "x": "Wikipedia, \"Jazz Cartier\": https://en.wikipedia.org/wiki/Jazz_Cartier"
+  "x": "[Wikipedia: Jazz Cartier](https://en.wikipedia.org/wiki/Jazz_Cartier)"
  },
  {
   "t": "fn",
   "k": "leon",
-  "x": "Wikipedia, \"Sean Leon\": https://en.wikipedia.org/wiki/Sean_Leon"
+  "x": "[Wikipedia: Sean Leon](https://en.wikipedia.org/wiki/Sean_Leon)"
  },
  {
   "t": "fn",
   "k": "nav",
-  "x": "Wikipedia, \"Nav (rapper)\": https://en.wikipedia.org/wiki/Nav_(rapper)"
+  "x": "[Wikipedia: Nav (rapper)](https://en.wikipedia.org/wiki/Nav_(rapper))"
  },
  {
   "t": "fn",
   "k": "88glam",
-  "x": "Wikipedia, \"88Glam\": https://en.wikipedia.org/wiki/88Glam"
+  "x": "[Wikipedia: 88Glam](https://en.wikipedia.org/wiki/88Glam)"
  },
  {
   "t": "fn",
   "k": "clairmont",
-  "x": "Wikipedia, \"Clairmont the Second\": https://en.wikipedia.org/wiki/Clairmont_the_Second"
+  "x": "[Wikipedia: Clairmont the Second](https://en.wikipedia.org/wiki/Clairmont_the_Second)"
  },
  {
   "t": "fn",
   "k": "pressa",
-  "x": "Wikipedia, \"Pressa (rapper)\": https://en.wikipedia.org/wiki/Pressa_(rapper)"
+  "x": "[Wikipedia: Pressa (rapper)](https://en.wikipedia.org/wiki/Pressa_(rapper))"
  },
  {
   "t": "fn",
   "k": "killy",
-  "x": "Wikipedia, \"Killy (rapper)\": https://en.wikipedia.org/wiki/Killy_(rapper)"
+  "x": "[Wikipedia: Killy (rapper)](https://en.wikipedia.org/wiki/Killy_(rapper))"
  },
  {
   "t": "fn",
   "k": "smiley",
-  "x": "Wikipedia, \"Smiley (rapper)\": https://en.wikipedia.org/wiki/Smiley_(rapper)"
+  "x": "[Wikipedia: Smiley (rapper)](https://en.wikipedia.org/wiki/Smiley_(rapper))"
  },
  {
   "t": "fn",
   "k": "haviah",
-  "x": "Wikipedia, \"Haviah Mighty\": https://en.wikipedia.org/wiki/Haviah_Mighty"
+  "x": "[Wikipedia: Haviah Mighty](https://en.wikipedia.org/wiki/Haviah_Mighty)"
  },
  {
   "t": "fn",
   "k": "yh-about",
-  "x": "Young Hadene official site, About page: https://younghadene.ca/about"
+  "x": "[Young Hadene official site: About](https://younghadene.ca/about)"
  },
  {
   "t": "fn",
   "k": "yh-apple",
-  "x": "Apple Music / iTunes catalogue for Young Hadene (artist 1080604782): https://music.apple.com/ca/artist/young-hadene/1080604782 ; albums: https://music.apple.com/ca/album/different-breed/1732316780 (2024, 9 tracks, ℗ 2024 str8hitsrecords), https://music.apple.com/ca/album/sacrifices-success/1796372657 (Jan 10, 2025), https://music.apple.com/ca/album/they-took-me-down/6816007984 (Oct 2, 2026); all credit ℗ str8hitsrecords"
+  "x": "Apple Music, Young Hadene: [artist page](https://music.apple.com/ca/artist/young-hadene/1080604782), [Street Lights (single, 2021)](https://music.apple.com/ca/album/street-lights-single/1558641457), [Different Breed (2024)](https://music.apple.com/ca/album/different-breed/1732316780), [Sacrifices & Success (2025)](https://music.apple.com/ca/album/sacrifices-success/1796372657), [They Took Me Down (2026)](https://music.apple.com/ca/album/they-took-me-down/6816007984). All credit ℗ str8hitsrecords."
  },
  {
   "t": "fn",
   "k": "yh-yt",
-  "x": "Young Hadene official YouTube channel (@Young_Hadene, UCSJd-7T-_K3MCve3GY4k8mg), \"Young hadene - broken (Music Video)\": https://www.youtube.com/watch?v=VFVC_1pI8vM"
+  "x": "[YouTube, @Young_Hadene: \"broken (Music Video)\"](https://www.youtube.com/watch?v=VFVC_1pI8vM)"
  }
 ]

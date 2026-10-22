@@ -76,6 +76,7 @@
     .artist-card.featured .num { color: #fff; }
     @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
     .artist-card .info ul { margin: 0; padding-left: 18px; font-size: 0.85rem; }
+    .sources, .sources li, .sources a { overflow-wrap: anywhere; }
   </style>
 {{BREADCRUMB}}
 </head>

@@ -19,6 +19,8 @@ const PUBLISHED = '2026-05-31', MODIFIED = '2026-10-22';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 const blocks = JSON.parse(fs.readFileSync(path.join(here, 'anchor', 'top-toronto-rappers.content.json'), 'utf8'));
+// NEAqzPCtt0c (Street Lights video) is private on YouTube: never link it from this page.
+if (/NEAqzPCtt0c/.test(JSON.stringify(blocks))) throw new Error('anchor content links private video NEAqzPCtt0c');
 const template = fs.readFileSync(path.join(here, 'anchor', 'top-toronto-rappers.template.tpl'), 'utf8');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -30,9 +32,8 @@ const inline = (s) => esc(s)
   .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   .replace(/\*([^*]+)\*/g, '<em>$1</em>')
   .replace(/\[\^([^\]]+)\]/g, (_, k) => `<sup><a href="#src-${k}">${fnNum(k)}</a></sup>`)
-  .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => `<a href="${u}">${t}</a>`);
+  .replace(/\[([^\]]+)\]\(((?:[^()\s]|\([^()\s]*\))+)\)/g, (_, t, u) => `<a href="${u}"${/^https?:/.test(u) ? ' rel="noopener"' : ''}>${t}</a>`);
 const plain = (s) => s.replace(/\[\^[^\]]+\]/g, '').replace(/\*\*?([^*]+)\*\*?/g, '$1').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim();
-const linkify = (s) => esc(s).replace(/https?:\/\/(?:[^\s;,()]|\([^\s()]*\))+/g, (u) => `<a href="${u}" rel="noopener">${u}</a>`);
 
 // ---- body ----
 const out = [];
@@ -49,7 +50,7 @@ for (let i = 0; i < blocks.length; i++) {
       // intro line, then numbered list of sources
       const p = blocks[i + 1]; if (p && p.t === 'p') { out.push(`<p>${inline(p.x)}</p>`); i++; }
       out.push('<ol class="sources">');
-      for (const f of blocks.filter((x) => x.t === 'fn')) out.push(`  <li id="src-${f.k}">${linkify(f.x)}</li>`);
+      for (const f of blocks.filter((x) => x.t === 'fn')) out.push(`  <li id="src-${f.k}">${inline(f.x)}</li>`);
       out.push('</ol>');
       i = blocks.length;
     }
@@ -79,6 +80,9 @@ for (let i = 0; i < blocks.length; i++) {
     out.push(`<p${isDisclosure ? ' class="disclosure"' : ''}>${inline(b.x)}</p>`);
     continue;
   }
+}
+for (const [, t] of out.join('\n').matchAll(/<a [^>]*>([^<]*)<\/a>/g)) {
+  if (/^(https?:\/\/|www\.)/i.test(t.trim())) throw new Error('link text is a raw URL: ' + t);
 }
 const words = out.join(' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
 const mins = Math.max(1, Math.round(words / 230));

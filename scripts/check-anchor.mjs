@@ -27,6 +27,7 @@ const one = (s, re) => (s.match(re) || [])[1];
 const BANNED = [
   [/\branked\b/i, '"Ranked"'],
   [/\[(HELD|VERIFY|CONFIRM)\b/i, 'placeholder marker'],
+  [/NEAqzPCtt0c/, 'private video NEAqzPCtt0c (Street Lights)'],
   [/swollen\s+members/i, 'Swollen Members'],
   [/night\s+lovell/i, 'Night Lovell'],
   [/\bSHAD\b/i, 'SHAD'],
@@ -56,6 +57,19 @@ for (const f of OUTPUTS) {
   if (!beforeH2.includes(DISCLOSURE)) bad.push(`${f}: disclosure line is not between the H1 and the first H2`);
 
   for (const [re, label] of BANNED) { const m = raw.match(re); if (m) bad.push(`${f}: contains ${label} ("${m[0]}")`); }
+
+  // Links: no raw-URL link text; Street Lights may only link to Apple Music.
+  for (const [, href, inner] of s.matchAll(/<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)) {
+    const lt = text(inner);
+    if (/^(https?:\/\/|www\.)/i.test(lt)) bad.push(`${f}: link text is a raw URL (${lt})`);
+    if (/street\s*lights/i.test(lt) && !/^https:\/\/music\.apple\.com\//.test(href)) bad.push(`${f}: Street Lights links to ${href} (Apple Music only)`);
+  }
+  // Every artist card has the same five fields, in order.
+  const FIELDS = ['From / based:', 'Active since:', 'Releases to know:', "Why they're here:", 'Start with:'];
+  for (const [, id, card] of s.matchAll(/<div class="artist-card" id="([^"]+)">([\s\S]*?)<\/ul>/g)) {
+    const got = [...card.matchAll(/<li><strong>([^<]+)<\/strong>/g)].map((m) => dec(m[1]));
+    if (got.join('|') !== FIELDS.join('|')) bad.push(`${f}: card #${id} fields [${got.join(', ')}] != [${FIELDS.join(', ')}]`);
+  }
 
   // Schema
   const blocks = [...s.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
