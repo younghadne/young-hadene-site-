@@ -55,7 +55,7 @@ assert.equal(adm.posts.length, 2, 'admin ?includeNoindex=1 keeps everything');
 
 // static build feeds
 const bs = fs.readFileSync(path.join(ROOT, 'scripts/build-static.js'), 'utf8');
-assert.match(bs, /newsFiles\.filter\(newsIndexable\)\.filter/, 'build-static news sitemap must filter NEWS_NOINDEX');
+assert.match(bs, /const fresh = newsFiles\.filter\(newsIndexable\)/, 'build-static news sitemap must filter NEWS_NOINDEX');
 assert.match(bs, /const items = newsFiles\.filter\(newsIndexable\)/, 'build-static RSS must filter NEWS_NOINDEX');
 for (const f of ['news-rss.xml', 'news-sitemap.xml']) {
   const t = fs.readFileSync(path.join(ROOT, f), 'utf8');

@@ -143,6 +143,14 @@ const html = `<!DOCTYPE html>
 "image": "https://younghadene.ca/images/poster1.png" }
 </script>
 <script type="application/ld+json">
+{ "@context": "https://schema.org", "@type": "BreadcrumbList",
+"itemListElement": [
+{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://younghadene.ca/" },
+{ "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://younghadene.ca/blog.html" },
+{ "@type": "ListItem", "position": 3, "name": "${esc(title)}", "item": "https://younghadene.ca/blog/${slug}.html" }
+] }
+</script>
+<script type="application/ld+json">
 ${JSON.stringify(faqSchema)}
 </script>
 <style>
@@ -165,7 +173,7 @@ ${JSON.stringify(faqSchema)}
 .article-wrap .toc a { color: var(--text-secondary); display: block; padding: 6px 0; font-size: 0.85rem; transition: color var(--transition); }
 .article-wrap .toc a:hover { color: var(--accent); }
 .article-wrap .toc ul { list-style: none; padding: 0; margin: 0; }
-.article-wrap .highlight-box { background: rgba(220,38,38,0.05); border: 1px solid rgba(220,38,38,0.15); border-radius: var(--radius); padding: 24px; margin: 24px 0; }
+.article-wrap .highlight-box { background: var(--accent-tint); border: 1px solid var(--accent-hairline); border-radius: var(--radius); padding: 24px; margin: 24px 0; }
 .article-wrap .highlight-box p { margin-bottom: 0; }
 .article-wrap .cta-box { text-align: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 32px; margin: 40px 0; }
 .article-wrap .cta-box h3 { margin-top: 0; color: var(--text-primary); }
@@ -178,7 +186,7 @@ ${JSON.stringify(faqSchema)}
 .artist-card .info h4 { font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 4px; }
 .artist-card .info .tag { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: block; }
 .artist-card .info p { font-size: 0.85rem; margin-bottom: 0; color: var(--text-secondary); }
-.artist-card.featured { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.05); }
+.artist-card.featured { border-color: var(--accent-border); background: var(--accent-tint); }
 .artist-card.featured .num { color: #fff; }
 @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
 </style>

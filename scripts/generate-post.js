@@ -78,7 +78,12 @@ function pickKw(used) {
   return (free.length ? free : KEYWORDS)[Math.floor(Math.random() * (free.length || KEYWORDS.length))];
 }
 
-function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 60); }
+function slugify(s) {
+  const out = s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  // Truncate at <=60 chars on a word boundary so slugs never end mid-word
+  // (e.g. "...-in-202" / "...-in-20") or on a dangling hyphen.
+  return out.length > 60 ? out.slice(0, 60).replace(/-[^-]*$/, '') : out;
+}
 function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
 // ── Load HTML template (header + footer from existing article) ──
@@ -165,7 +170,16 @@ function save(article, kw, cat) {
     "description": "${esc(article.excerpt)}",
     "author": { "@type": "MusicGroup", "name": "Young Hadene" },
     "datePublished": "${ds}",
-    "image": "https://younghadene.ca/images/poster1.png" }
+    "image": "https://younghadene.ca/images/poster1.png",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://younghadene.ca/blog/${slug}.html" } }
+  </script>
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://younghadene.ca/" },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://younghadene.ca/blog.html" },
+      { "@type": "ListItem", "position": 3, "name": "${esc(article.title)}", "item": "https://younghadene.ca/blog/${slug}.html" }
+    ] }
   </script>
 </head>
 <body>
