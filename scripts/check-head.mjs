@@ -1,9 +1,11 @@
 // Verifies blog HEAD responses match GET (status + Location, empty body).
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os'; import { join } from 'node:path';
 // functions/ are ESM .js in a non-module package; copy to .mjs to import them.
 const d = mkdtempSync(join(tmpdir(), 'yhhead-')); mkdirSync(join(d, 'blog'));
-writeFileSync(join(d, '_blog-redirects.mjs'), readFileSync('functions/_blog-redirects.js'));
+for (const f of readdirSync('functions').filter((x) => /^_.*\.js$/.test(x))) {
+  writeFileSync(join(d, f.replace(/\.js$/, '.mjs')), readFileSync('functions/' + f, 'utf8').replace(/(['"])\.\/([^'"]+)\.js\1/g, "'./$2.mjs'"));
+}
 writeFileSync(join(d, 'blog', 'slug.mjs'), readFileSync('functions/blog/[slug].js', 'utf8').replace(/(['"])\.\.\/([^'"]+)\.js\1/g, "'../$2.mjs'"));
 const { onRequestGet, onRequestHead } = await import(join(d, 'blog', 'slug.mjs'));
 const { BLOG_REDIRECTS } = await import(join(d, '_blog-redirects.mjs'));

@@ -6,6 +6,9 @@
 //  - BLOG_NOINDEX: served (no delete/redirect) but noindex,follow — meta robots
 //    in every copy, X-Robots-Tag on GET and HEAD (function + _headers), and absent
 //    from the sitemaps, the blog listings, posts-list API and related links.
+//  - Listings (/api/posts-list, blog.html baked + live merge, related links, the
+//    listing files) never include a slug that 301s (BLOG_REDIRECTS key) or is
+//    noindexed (BLOG_NOINDEX, NEWS_NOINDEX) — see functions/_listing.js.
 // Runs the Pages Functions in node against stubbed ASSETS / KV bindings.
 import { readFileSync, existsSync, mkdtempSync, cpSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -33,6 +36,8 @@ const flags = await imp('_blog-redirects.js');
 const blogFn = await imp('blog/[slug].js');
 const listFn = await imp('api/posts-list.js');
 const smFn = await imp('sitemap.xml.js');
+const listing = await imp('_listing.js');
+const newsNoindex = (await imp('_news-noindex.js')).NEWS_NOINDEX;
 rmSync(dir, { recursive: true, force: true });
 
 // 1. Lists.
@@ -50,7 +55,14 @@ for (const s of NOINDEX) {
 const now = Date.now();
 const kvDoc = (slug) => ({ slug, title: 'KV COPY ' + slug, content: 'KV BODY', status: 'published', category: 'Blog', tags: 'toronto', dateNum: now - 1000 });
 const allSlugs = [...new Set([...REPO_FIRST, ...NOINDEX, 'kv-only-post'])];
-const kvIndex = allSlugs.map(kvDoc);
+// KV-only listing entries that must never be listed: a redirected slug (the
+// 2026-guide dupe of a repo-first post) and an off-topic news-noindexed slug.
+const UNLISTED_KV = ['haitian-rappers-in-toronto-new-generation-2026-guide', [...newsNoindex][0]];
+const UNLISTED = new Set(listing.unlistedSlugs());
+for (const s of [...Object.keys(flags.BLOG_REDIRECTS), ...flags.BLOG_NOINDEX, ...newsNoindex]) if (listing.isListable(s) || !UNLISTED.has(s)) fail(`_listing.js treats ${s} as listable`);
+if (!listing.isListable('basement-to-stage-first-show')) fail('_listing.js drops an indexable post');
+// Unlisted entries are newest so they would win related-link ranking if not filtered.
+const kvIndex = [...UNLISTED_KV.map((x) => ({ ...kvDoc(x), dateNum: now })), ...allSlugs.map(kvDoc)];
 const store = {
   async get(key) {
     if (key === 'blog:index') return JSON.stringify(kvIndex);
@@ -89,7 +101,7 @@ for (const s of allSlugs) {
     if (gx !== 'noindex, follow') fail(`${s}: GET X-Robots-Tag is ${gx}, want "noindex, follow"`);
   } else if (gx) fail(`${s}: indexable post sends X-Robots-Tag ${gx}`);
   if (s === 'kv-only-post' && !body.includes('KV COPY')) fail('kv-only-post: KV-only post no longer served from KV');
-  if (s === 'kv-only-post') for (const n of NOINDEX) if (body.includes(`/blog/${n}"`)) fail(`related links on a KV page include noindexed ${n}`);
+  if (s === 'kv-only-post') for (const n of [...NOINDEX, ...UNLISTED_KV]) if (body.includes(`/blog/${n}"`)) fail(`related links on a KV page include unlisted ${n}`);
 }
 // .html variant too
 {
@@ -103,6 +115,8 @@ for (const s of allSlugs) {
   const d = await r.json();
   const got = new Set(d.posts.map((p) => p.slug));
   for (const n of NOINDEX) if (got.has(n)) fail(`/api/posts-list lists noindexed ${n}`);
+  for (const n of got) if (!listing.isListable(n)) fail(`/api/posts-list lists redirected/noindexed ${n}`);
+  if (!Array.isArray(d.unlisted) || d.unlisted.length !== UNLISTED.size || d.unlisted.some((x) => !UNLISTED.has(x))) fail('/api/posts-list unlisted does not equal redirects + noindex sets');
   if (!got.has('basement-to-stage-first-show')) fail('/api/posts-list dropped an indexable post');
   const x = await (await smFn.onRequestGet({ env })).text();
   for (const n of NOINDEX) if (x.includes(`/blog/${n}<`) || x.includes(`/${n}<`)) fail(`dynamic sitemap.xml lists noindexed ${n}`);
@@ -137,11 +151,12 @@ import vm from 'node:vm';
   const fnSrc = html.match(/async function refreshLivePosts\(\) \{[\s\S]*?\n    \}\n/);
   if (!baked || !fnSrc) fail('blog.html: could not find SERVER_POSTS / refreshLivePosts');
   else {
-    const kvPosts = [...new Set([...allSlugs, ...flags.BLOG_STATIC_FIRST])].map(kvDoc);
-    const sandbox = { renderBlog() {}, fetch: async () => ({ ok: true, json: async () => ({ ok: true, posts: kvPosts, repoFirst: [...flags.BLOG_STATIC_FIRST] }) }) };
+    const kvPosts = [...new Set([...allSlugs, ...flags.BLOG_STATIC_FIRST, ...UNLISTED_KV])].map(kvDoc);
+    const sandbox = { renderBlog() {}, fetch: async () => ({ ok: true, json: async () => ({ ok: true, posts: kvPosts, repoFirst: [...flags.BLOG_STATIC_FIRST], unlisted: d.unlisted }) }) };
     vm.createContext(sandbox);
     vm.runInContext(baked[1] + '\n' + fnSrc[0] + '\nthis.__run = refreshLivePosts; this.__get = () => SERVER_POSTS;', sandbox);
     const bakedBefore = new Map(sandbox.__get().map((p) => [p.slug, p.title]));
+    for (const n of bakedBefore.keys()) if (!listing.isListable(n)) fail(`blog.html baked SERVER_POSTS lists redirected/noindexed ${n}`);
     await sandbox.__run();
     const merged = sandbox.__get();
     for (const s of flags.BLOG_STATIC_FIRST) {
@@ -151,6 +166,7 @@ import vm from 'node:vm';
       if (hits.length !== 1) fail(`blog.html merge: ${s} appears ${hits.length} times`);
       else if (hits[0].title !== bakedBefore.get(s)) fail(`blog.html merge: ${s} card uses the KV title "${hits[0].title}"`);
     }
+    for (const p of merged) if (!listing.isListable(p.slug)) fail(`blog.html merge lists redirected/noindexed ${p.slug}`);
     const kvOnly = merged.find((p) => p.slug === 'kv-only-post');
     if (!kvOnly || !/KV COPY/.test(kvOnly.title)) fail('blog.html merge: KV-only post missing or not from KV');
   }
@@ -174,6 +190,14 @@ for (const f of LISTINGS) {
   const s = readFileSync(f, 'utf8');
   for (const n of NOINDEX) if (new RegExp(`${n}(?![a-z0-9-])`).test(s)) fail(`${f} still lists/links noindexed ${n}`);
 }
+// Listing data files: no entry for a redirected / noindexed slug.
+for (const f of ['blog.html', 'blog/index.html', 'blog/posts.json', 'posts.json', 'yh_blogPosts.json']) {
+  if (!existsSync(f)) continue;
+  const s = readFileSync(f, 'utf8');
+  const listed = new Set([...s.matchAll(/(?:\bslug\s*:\s*|"slug"\s*:\s*)\\?['"]([a-z0-9-]+)\\?['"]|href="(?:https:\/\/younghadene\.ca)?\/blog\/([a-z0-9-]+?)(?:\.html)?"/g)].map((m) => m[1] || m[2]));
+  if (!listed.size) fail(`${f}: no listing entries found (pattern drift?)`);
+  for (const n of listed) if (!listing.isListable(n)) fail(`${f} lists redirected/noindexed ${n}`);
+}
 // Related-post links in other blog pages.
 import { readdirSync } from 'node:fs';
 for (const f of readdirSync('blog').filter((x) => x.endsWith('.html'))) {
@@ -185,4 +209,4 @@ for (const f of readdirSync('blog').filter((x) => x.endsWith('.html'))) {
 }
 
 if (bad) { console.error(`BLOG-FLAGS FAIL: ${bad} problem(s)`); process.exit(1); }
-console.log(`BLOG-FLAGS OK: ${REPO_FIRST.length} repo-first slugs serve blog/<slug>.html over KV (GET = HEAD); ${NOINDEX.length} noindexed slugs send X-Robots-Tag + meta robots and are out of sitemaps, listings, posts-list and related links; /blog listing + posts-list use the repo entry for repo-first slugs; KV-only posts still render from KV.`);
+console.log(`BLOG-FLAGS OK: ${REPO_FIRST.length} repo-first slugs serve blog/<slug>.html over KV (GET = HEAD); ${NOINDEX.length} noindexed slugs send X-Robots-Tag + meta robots and are out of sitemaps, listings, posts-list and related links; /blog listing + posts-list use the repo entry for repo-first slugs and list no redirected/noindexed slug (${UNLISTED.size} unlisted); KV-only posts still render from KV.`);

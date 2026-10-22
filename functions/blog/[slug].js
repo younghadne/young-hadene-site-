@@ -8,6 +8,7 @@
 //
 // Allows both /blog/<slug> and /blog/<slug>.html
 import { BLOG_REDIRECTS, BLOG_STATIC_FIRST, BLOG_NOINDEX } from '../_blog-redirects.js';
+import { isListable } from '../_listing.js';
 
 const SITE_URL = 'https://younghadene.ca';
 const GOOGLE_URL = 'https://share.google/HesREN5rtFGRek6bi';
@@ -93,7 +94,7 @@ function relatedOf(doc, index) {
     const scored = [];
     for (const x of index) {
       if (!x || x.slug === doc.slug || !isVisible(x, Date.now())) continue;
-      if (BLOG_NOINDEX.has(x.slug) || BLOG_REDIRECTS[x.slug]) continue;
+      if (!isListable(x.slug)) continue;
       let score = 0;
       if (x.category && x.category === doc.category) score += 1;
       const xt = String(x.tags || '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
