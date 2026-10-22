@@ -748,9 +748,14 @@
         if (!r.ok) return;
         const d = await r.json();
         if (d && Array.isArray(d.posts) && d.posts.length > 0) {
-          const seen = new Set(d.posts.map((x) => x && x.slug));
+          // Repo-first posts (BLOG_STATIC_FIRST, sent as d.repoFirst): the
+          // baked repo entry wins over the KV entry for the same slug.
+          const repoFirst = new Set(Array.isArray(d.repoFirst) ? d.repoFirst : []);
+          const bakedBySlug = new Map((SERVER_POSTS || []).filter((x) => x && x.slug).map((x) => [x.slug, x]));
+          const live = d.posts.map((x) => (x && repoFirst.has(x.slug) && bakedBySlug.has(x.slug) ? bakedBySlug.get(x.slug) : x));
+          const seen = new Set(live.map((x) => x && x.slug));
           const baked = (SERVER_POSTS || []).filter((x) => x && x.slug && !seen.has(x.slug));
-          SERVER_POSTS = d.posts.concat(baked);
+          SERVER_POSTS = live.concat(baked);
           renderBlog();
         } else if (d && Array.isArray(d.posts)) {
           // KV reachable but empty: keep baked listing (static posts stay visible)
