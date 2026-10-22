@@ -19,7 +19,7 @@ const PUBLISHED = '2026-05-31', MODIFIED = '2026-10-22';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 const blocks = JSON.parse(fs.readFileSync(path.join(here, 'anchor', 'top-toronto-rappers.content.json'), 'utf8'));
-const template = fs.readFileSync(path.join(here, 'anchor', 'top-toronto-rappers.template.html'), 'utf8');
+const template = fs.readFileSync(path.join(here, 'anchor', 'top-toronto-rappers.template.tpl'), 'utf8');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const attr = (s) => esc(s).replace(/"/g, '&quot;');
