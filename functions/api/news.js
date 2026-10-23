@@ -1,6 +1,7 @@
 // POST /api/news — create/update a news post in KV. Live instantly,
 // no GitHub commit, no redeploy. Reads via /api/news-list + /news/:slug.
 // DELETE /api/news?slug=<slug> — delete from KV (URL 404s instantly).
+// Both need NEWS_WRITES_ENABLED=1 (403 otherwise) and ADMIN_PASSWORD.
 //
 // Same semantics as /api/posts (status, scheduling, redirects, conflicts).
 // Required Pages bindings / env vars:
@@ -15,12 +16,28 @@
 
 const SITE_URL = 'https://younghadene.ca';
 
-function timingSafeEqual(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string') return false;
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+// Constant-time string compare that doesn't leak length: both values are
+// HMAC-SHA-256'd with a fresh random key per call, and the fixed 32-byte
+// digests are XOR-compared over every byte (no early return).
+async function safeEqual(a, b) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', crypto.getRandomValues(new Uint8Array(32)),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const [x, y] = await Promise.all([
+    crypto.subtle.sign('HMAC', key, enc.encode(String(a))),
+    crypto.subtle.sign('HMAC', key, enc.encode(String(b))),
+  ]);
+  const u = new Uint8Array(x), v = new Uint8Array(y);
+  let diff = u.length ^ v.length;
+  for (let i = 0; i < u.length; i++) diff |= u[i] ^ v[i];
   return diff === 0;
+}
+
+// Publishing and deleting are both OFF unless the Pages env var
+// NEWS_WRITES_ENABLED=1 is set. Checked before auth; same 403 for both.
+const WRITES_DISABLED = 'News publishing is disabled (set NEWS_WRITES_ENABLED=1 in Cloudflare Pages env)';
+function writesEnabled(env) {
+  return !!env && env.NEWS_WRITES_ENABLED === '1';
 }
 
 function json(data, status = 200) {
@@ -87,10 +104,10 @@ function sortIndex(index) {
   });
 }
 
-function checkAuth(env, password) {
+async function checkAuth(env, password) {
   const expected = env && env.ADMIN_PASSWORD;
   if (!expected) return { ok: false, status: 500, error: 'ADMIN_PASSWORD not configured on the server' };
-  if (!password || !timingSafeEqual(String(password), String(expected))) {
+  if (!password || !(await safeEqual(password, expected))) {
     return { ok: false, status: 401, error: 'Incorrect password' };
   }
   return { ok: true };
@@ -107,11 +124,11 @@ export async function onRequestPost(context) {
   try {
     // Publishing (create/update) is OFF unless the Pages env var
     // NEWS_WRITES_ENABLED=1 is set (gated after the Oct 10 bulk import).
-    // ADMIN_PASSWORD is still required. DELETE is not gated by this flag.
-    if (!env || env.NEWS_WRITES_ENABLED !== '1') return json({ error: 'News publishing is disabled (set NEWS_WRITES_ENABLED=1 in Cloudflare Pages env)' }, 403);
+    // ADMIN_PASSWORD is still required. DELETE uses the same switch.
+    if (!writesEnabled(env)) return json({ error: WRITES_DISABLED }, 403);
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const auth = checkAuth(env, body.password);
+    const auth = await checkAuth(env, body.password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const store = kv(env);
     if (!store) return json({ error: 'Post storage not configured (bind YH_POSTS KV)' }, 500);
@@ -201,13 +218,15 @@ export async function onRequestPost(context) {
 export async function onRequestDelete(context) {
   const { request, env } = context;
   try {
+    // Same switch as POST, checked before auth (switch off -> 403, no KV access).
+    if (!writesEnabled(env)) return json({ error: WRITES_DISABLED }, 403);
     const url = new URL(request.url);
     // Slug arrives as /api/news/<slug> (manager) or ?slug= (API clients).
     const pathSlug = url.pathname.split('/').filter(Boolean).pop();
     const slug = slugify(url.searchParams.get('slug') || (pathSlug && pathSlug !== 'news' ? pathSlug : ''));
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const auth = checkAuth(env, body.password);
+    const auth = await checkAuth(env, body.password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const store = kv(env);
     if (!store) return json({ error: 'Post storage not configured (bind YH_POSTS KV)' }, 500);
