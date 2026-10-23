@@ -7,6 +7,9 @@ const BLOCKED = {
   FxV9J8hhXoc: 'private (Cold Hands)',
   '7JernHdTQt8': 'private (Send Him Home)',
   NEAqzPCtt0c: 'private (Street Lights)',
+  Ttp0RT7fP0s: 'deleted, embed 404 (Rise Again Short)',
+  XHrnMZZgbOw: 'private/embedding off, embed 403 (Dis Ain\'t What U Want Short)',
+  H1Cn9k671WE: 'private/embedding off, embed 403 (Controlla)',
 };
 const root = process.argv[2] || '.';
 const SKIP = new Set(['node_modules', '.git', '.wrangler']);
