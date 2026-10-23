@@ -83,7 +83,9 @@ export function renderBody(md) {
   return { h1, html };
 }
 
-export function pageTitle(t) { return (t + ' — Young Hadene News').length > 60 ? t : t + ' — Young Hadene News'; }
+// <title> is the approved front-matter title exactly (no site suffix), so it
+// matches og:title, twitter:title and the schema headline.
+export function pageTitle(t) { return t; }
 
 export function longDate(iso) {
   return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
