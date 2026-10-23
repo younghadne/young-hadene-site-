@@ -1,8 +1,11 @@
 // GET /news-rss.xml — dynamic news RSS. Visible KV news posts and the
 // repo-file posts listed in the static news-rss.xml are merged, sorted by
 // date (newest first) and capped at 20. Off-topic slugs (NEWS_NOINDEX) and
-// removed (tombstoned) posts are left out. New KV items appear instantly.
+// removed (tombstoned) posts are left out, and a KV post is only listed if
+// /news/<slug> would actually render it (its news:<slug> doc exists and is
+// visible). New KV items appear instantly.
 import { NEWS_NOINDEX } from './_news-noindex.js';
+import { readRemovedNews, renderableNewsDoc } from './_news-visibility.js';
 
 const SITE_URL = 'https://younghadene.ca';
 const LIMIT = 20;
@@ -22,20 +25,10 @@ function slugFromLink(link) {
   return m ? m[1].replace(/\.html$/, '') : null;
 }
 
-async function readRemoved(store) {
-  try {
-    const t = await store.get('deleted');
-    const tomb = t ? JSON.parse(t) : null;
-    return new Set(tomb && Array.isArray(tomb.news) ? tomb.news.map(String) : []);
-  } catch {
-    return new Set();
-  }
-}
-
 // Exported for scripts/check-news-rss.mjs.
 export async function collectItems(env, now = Date.now()) {
   const store = env && env.YH_POSTS;
-  const removed = store ? await readRemoved(store) : new Set();
+  const removed = store ? await readRemovedNews(store) : new Set();
   const skip = slug => !slug || NEWS_NOINDEX.has(slug) || removed.has(slug);
   const bySlug = new Map();
   if (store) {
@@ -50,7 +43,7 @@ export async function collectItems(env, now = Date.now()) {
       const vis = p.status === 'published' || !p.status ||
         (p.status === 'scheduled' && p.scheduledFor && Number(p.scheduledFor) <= now);
       if (!vis) continue;
-      bySlug.set(p.slug, { slug: p.slug, date: Number(p.dateNum) || 0, xml: itemXml(p) });
+      bySlug.set(p.slug, { slug: p.slug, date: Number(p.dateNum) || 0, xml: itemXml(p), kv: true });
     }
   }
   try {
@@ -63,16 +56,36 @@ export async function collectItems(env, now = Date.now()) {
         while ((m = re.exec(text)) !== null) {
           const linkM = m[1].match(/<link>([^<]*)<\/link>/);
           const slug = slugFromLink(linkM && linkM[1]);
-          // KV wins when a slug exists in both.
-          if (skip(slug) || bySlug.has(slug)) continue;
+          if (skip(slug)) continue;
           const dM = m[1].match(/<pubDate>([^<]*)<\/pubDate>/);
           const date = (dM && Date.parse(dM[1])) || 0;
-          bySlug.set(slug, { slug, date, xml: `  <item>${m[1]}</item>\n` });
+          const item = { slug, date, xml: `  <item>${m[1]}</item>\n` };
+          const kv = bySlug.get(slug);
+          // KV wins when a slug exists in both; the repo item is kept as the
+          // fallback, since /news/<slug> serves the repo file if the KV doc
+          // isn't renderable.
+          if (kv) { if (kv.kv && !kv.fallback) kv.fallback = item; continue; }
+          bySlug.set(slug, item);
         }
       }
     }
   } catch { /* static merge is best-effort */ }
-  return [...bySlug.values()].sort((a, b) => b.date - a.date).slice(0, LIMIT);
+  // Newest first; KV candidates are confirmed against their doc (same rule as
+  // /news/<slug>) only as needed to fill the 20 slots.
+  const queue = [...bySlug.values()].sort((a, b) => b.date - a.date);
+  const out = [];
+  while (queue.length && out.length < LIMIT) {
+    const it = queue.shift();
+    if (it.kv && !(await renderableNewsDoc(store, it.slug, now))) {
+      if (it.fallback) {
+        const i = queue.findIndex(q => q.date < it.fallback.date);
+        queue.splice(i < 0 ? queue.length : i, 0, it.fallback);
+      }
+      continue;
+    }
+    out.push(it);
+  }
+  return out;
 }
 
 export async function onRequestGet(context) {
