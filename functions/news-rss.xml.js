@@ -105,3 +105,11 @@ export async function onRequestGet(context) {
     return new Response('feed unavailable', { status: 500 });
   }
 }
+
+// HEAD must answer like GET (same status, Content-Type and Cache-Control,
+// empty body). Without this, Pages skips the Function for HEAD and serves
+// the static file with a different Content-Type.
+export async function onRequestHead(context) {
+  const res = await onRequestGet(context);
+  return new Response(null, { status: res.status, headers: res.headers });
+}

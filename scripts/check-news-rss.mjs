@@ -14,7 +14,7 @@ writeFileSync(join(d, '_news-visibility.mjs'), readFileSync('functions/_news-vis
 writeFileSync(join(d, 'rss.mjs'), toMjs('functions/news-rss.xml.js'));
 writeFileSync(join(d, 'nsm.mjs'), toMjs('functions/news-sitemap.xml.js'));
 mkdirSync(join(d, 'news')); writeFileSync(join(d, 'news', 'slug.mjs'), toMjs('functions/news/[slug].js'));
-const { onRequestGet } = await import(join(d, 'rss.mjs'));
+const { onRequestGet, onRequestHead: rssHead } = await import(join(d, 'rss.mjs'));
 const nsm = await import(join(d, 'nsm.mjs'));
 const page = await import(join(d, 'news', 'slug.mjs'));
 const { NEWS_NOINDEX } = await import(join(d, '_news-noindex.mjs'));
@@ -102,7 +102,20 @@ for (const slug of ['sm-ok', 'sm-hidden', 'sm-nodoc']) {
   const c = () => ({ request: new Request('https://younghadene.ca/news/' + slug), env: pageEnv, params: { slug } });
   const g = await page.onRequestGet(c()), h = await page.onRequestHead(c());
   if (g.status !== h.status || (await h.text())) fail(`HEAD /news/${slug} ${h.status} vs GET ${g.status}`);
+  for (const k of ['content-type', 'cache-control']) if (g.headers.get(k) !== h.headers.get(k)) fail(`HEAD /news/${slug} ${k} ${h.headers.get(k)} vs GET ${g.headers.get(k)}`);
   if (slug === 'sm-ok' && g.status !== 200) fail('visible KV post should render 200');
+}
+
+// /news-rss.xml: HEAD = GET status, Content-Type, Cache-Control; empty body.
+{
+  if (typeof rssHead !== 'function') fail('news-rss.xml.js must export onRequestHead');
+  else {
+    const c = () => ({ request: new Request('https://younghadene.ca/news-rss.xml'), env: pageEnv });
+    const g = await onRequestGet(c()), h = await rssHead(c());
+    if (g.headers.get('content-type') !== 'application/rss+xml; charset=utf-8') fail('RSS GET content-type ' + g.headers.get('content-type'));
+    if (g.status !== h.status || (await h.text())) fail(`HEAD /news-rss.xml ${h.status} vs GET ${g.status} or non-empty body`);
+    for (const k of ['content-type', 'cache-control']) if (g.headers.get(k) !== h.headers.get(k)) fail(`HEAD /news-rss.xml ${k} ${h.headers.get(k)} vs GET ${g.headers.get(k)}`);
+  }
 }
 
 if (bad) { console.error(`NEWS-RSS-CHECK FAIL: ${bad}`); process.exit(1); }
