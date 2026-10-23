@@ -2,6 +2,8 @@
 // placeholder check. Fails on:
 //  - page out of date with scripts/build-anchor.mjs sources (blog + root twin)
 //  - tap targets: back link < 44px / footnote refs < 24px tall, or padding without a matching negative margin
+//  - tap targets: Sources single-link entries < 44px (or overlapping), other Sources links / "Broken" video < 24px,
+//    adjacent footnote refs ("1,2") whose hit boxes overlap
 //  - title / og:title / twitter:title / Article headline != TITLE, h1 != H1
 //  - disclosure line missing, duplicated, or not right after the intro
 //  - "Ranked", rank-number cards, "best"/"ranked" in schema, ordered ItemList
@@ -73,6 +75,30 @@ for (const f of OUTPUTS) {
   };
   tap('.back-link', 20.47, 44);
   tap('.article-wrap sup a', 14, 24);
+  // QA batch-1023 on #17: Sources single-link entries (16) >= 44px with inline-block
+  // line-height 20px; multi-link Apple Music entry >= 24px; '"Broken" video' (16px
+  // text box at 0.85rem) >= 24px. Neighbouring 44px Sources targets must not overlap:
+  // li line box 27.36px (0.95rem x 1.8) + li margin-bottom >= 44px.
+  tap('.article-wrap .sources li > a:only-child', 20, 44);
+  if (!/\.article-wrap \.sources li > a:only-child\s*\{[^}]*display:\s*inline-block[^}]*line-height:\s*20px/.test(s)) bad.push(`${f}: Sources single-link rule must be display:inline-block; line-height:20px (44px = 20 + 2 x 12)`);
+  tap('.article-wrap .sources li > a:not(:only-child)', 19, 24);
+  const srcMb = Number(one(s, /\.article-wrap \.sources li\s*\{[^}]*margin-bottom:\s*([\d.]+)px/) || 0);
+  if (27.36 + srcMb < 44) bad.push(`${f}: .sources li margin-bottom ${srcMb}px lets neighbouring 44px Sources targets overlap (need >= 16.64px)`);
+  const single = [...s.matchAll(/<li id="src-[^"]+">(<a [^>]*>[^<]*<\/a>)<\/li>/g)].length;
+  if (single < 16) bad.push(`${f}: expected >= 16 single-link Sources entries, found ${single}`);
+  if (!/<a href="\/music\/broken">/.test(s)) bad.push(`${f}: '"Broken" video' link missing`);
+  tap('.article-wrap .artist-card a[href="/music/broken"]', 16, 24);
+  // Adjacent footnote refs ("1,2"): the second ref is sup.fn-adj; its comma gap must fit
+  // ref 1's 10px right padding (site css) + ref 2's left padding, so the hit boxes never overlap.
+  if (/<\/sup><sup>/.test(s)) bad.push(`${f}: adjacent footnote refs without class fn-adj (tap areas overlap)`);
+  if (/<\/sup><sup class="fn-adj">/.test(s)) {
+    const gap = Number(one(s, /\.article-wrap sup\.fn-adj::before\s*\{[^}]*width:\s*([\d.]+)px/) || 0);
+    const r2 = one(s, /\.article-wrap sup\.fn-adj a\s*\{([^}]*)\}/) || '';
+    const pl = r2.match(/padding-left:\s*([\d.]+)px/), ml = r2.match(/margin-left:\s*-([\d.]+)px/);
+    if (!pl || !ml || pl[1] !== ml[1]) bad.push(`${f}: sup.fn-adj a needs padding-left with a matching negative margin-left`);
+    else if (10 + Number(pl[1]) > gap) bad.push(`${f}: footnote gap ${gap}px < 10px + ${pl[1]}px, adjacent refs overlap`);
+    else if (Number(pl[1]) < 6) bad.push(`${f}: sup.fn-adj a padding-left ${pl[1]}px leaves ref 2 under 24px wide`);
+  }
   if (!/\.sources,\s*\.sources li,\s*\.sources a\s*\{\s*overflow-wrap:\s*anywhere/.test(s)) bad.push(`${f}: Sources overflow-wrap:anywhere rule missing`);
 
   // Links: no raw-URL link text; Street Lights may only link to Apple Music.
@@ -100,7 +126,7 @@ for (const f of OUTPUTS) {
   const cards = [...s.matchAll(/<div class="artist-card" id="([^"]+)">/g)].length;
   if (cards !== ARTISTS.length) bad.push(`${f}: ${cards} cards vs ${ARTISTS.length} artists`);
   // FAQ schema == visible FAQ
-  const vis = new Map([...s.matchAll(/<div class="highlight-box">\s*<p><strong>([\s\S]*?)<\/strong><br>([\s\S]*?)<\/p>/g)].map((m) => [text(m[1]), text(m[2].replace(/<sup>[\s\S]*?<\/sup>/g, ''))]));
+  const vis = new Map([...s.matchAll(/<div class="highlight-box">\s*<p><strong>([\s\S]*?)<\/strong><br>([\s\S]*?)<\/p>/g)].map((m) => [text(m[1]), text(m[2].replace(/<sup\b[^>]*>[\s\S]*?<\/sup>/g, ''))]));
   if (!faq || !faq.mainEntity.length) bad.push(`${f}: FAQPage schema missing`);
   else for (const q of faq.mainEntity) if (vis.get(q.name) !== q.acceptedAnswer.text) bad.push(`${f}: FAQ schema/visible mismatch: ${q.name}`);
 }

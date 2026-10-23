@@ -32,6 +32,8 @@ const inline = (s) => esc(s)
   .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   .replace(/\*([^*]+)\*/g, '<em>$1</em>')
   .replace(/\[\^([^\]]+)\]/g, (_, k) => `<sup><a href="#src-${k}">${fnNum(k)}</a></sup>`)
+  // A ref placed directly after another ref ("1,2") gets class fn-adj so the CSS can separate the two tap targets.
+  .replace(/<\/sup><sup>/g, '</sup><sup class="fn-adj">')
   .replace(/\[([^\]]+)\]\(((?:[^()\s]|\([^()\s]*\))+)\)/g, (_, t, u) => `<a href="${u}"${/^https?:/.test(u) ? ' rel="noopener"' : ''}>${t}</a>`);
 const plain = (s) => s.replace(/\[\^[^\]]+\]/g, '').replace(/\*\*?([^*]+)\*\*?/g, '$1').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim();
 

@@ -80,6 +80,15 @@
     /* Tap targets (UX, same technique as PR #8): padding offset by matching negative margins, so nothing visible moves. Back link >= 44px tall (12px + 20.5px text + 12px; bottom margin 20px + 12px padding = the original 32px gap); footnote refs >= 24px tall (site css gives 4px). */
     .back-link { padding-block: 12px; margin-block: -12px 20px; }
     .article-wrap sup a { padding-block: 6px; margin-block: -6px; }
+    /* Adjacent footnote refs (FAQ "1,2"; build-anchor.mjs marks the second as sup.fn-adj): site css pads sup a by 10px each side, so side-by-side refs overlapped by 20px. A CSS comma + 17px gap separates them; ref 1 keeps 10px on its right, ref 2 gets 7px on its left (10 + 7 = 17), so the hit boxes touch but never overlap and both stay >= 24px wide. */
+    .article-wrap sup.fn-adj::before { content: ","; display: inline-block; width: 17px; }
+    .article-wrap sup.fn-adj a { padding-left: 7px; margin-left: -7px; }
+    /* Sources: the 16 single-link entries >= 44px tall (line-height 20px + 2 x 12px, offset by -12px so the line box is unchanged); li gap 8px -> 18px so neighbouring 44px targets don't overlap. Multi-link Apple Music entry: 2.5px padding -> 24px, under its 27.36px line pitch. */
+    .article-wrap .sources li { margin-bottom: 18px; }
+    .article-wrap .sources li > a:only-child { display: inline-block; line-height: 20px; padding-block: 12px; margin-block: -12px; }
+    .article-wrap .sources li > a:not(:only-child) { padding-block: 2.5px; margin-block: -2.5px; }
+    /* '"Broken" video' inline link: 16px text box (0.85rem) + 2 x 4px = 24px, under its 24.48px line pitch. */
+    .article-wrap .artist-card a[href="/music/broken"] { padding-block: 4px; margin-block: -4px; }
   </style>
 {{BREADCRUMB}}
 </head>
