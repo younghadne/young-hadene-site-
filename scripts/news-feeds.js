@@ -4,6 +4,12 @@
 // Repo news dates are Toronto dates. A date-only value ("2026-10-23") means
 // midnight in Toronto, NOT midnight UTC (which is 8 PM ET the evening
 // before). Values that already carry a time are passed through unchanged.
+//
+// The date helpers below are mirrored in functions/_news-dates.js (ES module,
+// used by the news-rss / news-sitemap / news/[slug] Functions). The build
+// can't require() an ES module on every Node version, so it keeps this copy;
+// scripts/check-news-dates.mjs fails if the two disagree on any hour of
+// 2026-2027.
 const fs = require('fs');
 const path = require('path');
 

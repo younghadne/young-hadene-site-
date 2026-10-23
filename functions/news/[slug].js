@@ -8,6 +8,7 @@
 //
 // Allows both /news/<slug> and /news/<slug>.html
 import { NEWS_NOINDEX } from '../_news-noindex.js';
+import { torontoISOFromMs, kvPostMs } from '../_news-dates.js';
 
 const SITE_URL = 'https://younghadene.ca';
 
@@ -121,10 +122,10 @@ function newsTitle(t) {
 }
 
 function buildNewsHtml(d, related) {
-  const pubMs = Number(d.dateNum || 0) || null;
-  const iso = new Date(pubMs || Date.now()).toISOString();
+  const pubMs = kvPostMs(d, 0) || null;
+  const iso = torontoISOFromMs(pubMs || Date.now());
   const modMs = Number(d.updatedAt || 0);
-  const modIso = (modMs && pubMs && modMs > pubMs) ? new Date(modMs).toISOString() : iso;
+  const modIso = (modMs && pubMs && modMs > pubMs) ? torontoISOFromMs(modMs) : iso;
   const stamp = (pubMs ? fmtStamp(pubMs) : '') || String(d.date || '');
   const desc = escHtml(String(d.seoDesc || d.excerpt || d.content || d.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 160) || d.title);
   const pageTitle = d.seoTitle || d.title;

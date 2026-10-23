@@ -7,8 +7,13 @@
 //    day matches the article's byline date;
 //  - the news-sitemap.xml publication_date and news-rss.xml pubDate that
 //    scripts/build-static.js generates (and the committed copies) carry a
-//    time and fall on that same Toronto day.
+//    time and fall on that same Toronto day;
+//  - functions/_news-dates.js (used by the Functions) matches news-feeds.js;
+//  - the served feeds — functions/news-rss.xml.js, functions/news-sitemap.xml.js
+//    and the /news/<slug> KV page schema — emit Toronto-time dates for KV posts
+//    (EDT, EST, a UTC ISO dateNum, a date-only date) against a mocked KV.
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -102,9 +107,95 @@ for (const f of ['news-sitemap.xml', 'news-rss.xml']) {
   if (fs.existsSync(p)) checkFeed(`committed ${f}`, fs.readFileSync(p, 'utf8'));
 }
 
+// 4. Functions helper == build helper, every hour of 2026-2027 + every day.
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yh-news-dates-'));
+// functions/ are ESM .js in a non-module package; copy to .mjs to import them.
+(function copyFns(src, dst) {
+  fs.mkdirSync(dst, { recursive: true });
+  for (const f of fs.readdirSync(src, { withFileTypes: true })) {
+    if (f.isDirectory()) { copyFns(path.join(src, f.name), path.join(dst, f.name)); continue; }
+    if (!f.name.endsWith('.js')) continue;
+    const code = fs.readFileSync(path.join(src, f.name), 'utf8').replace(/(from\s+['"])(\.{1,2}\/[^'"]+)\.js(['"])/g, '$1$2.mjs$3');
+    fs.writeFileSync(path.join(dst, f.name.replace(/\.js$/, '.mjs')), code);
+  }
+})(path.join(ROOT, 'functions'), tmp);
+const D = await import(path.join(tmp, '_news-dates.mjs'));
+let parity = 0;
+for (let t = Date.UTC(2026, 0, 1); t < Date.UTC(2028, 0, 1); t += 3600000) {
+  if (D.torontoISOFromMs(t) !== F.torontoISOFromMs(t) || D.rssDate(t) !== F.rssDate(t)) { parity++; if (parity < 4) fail(`functions/_news-dates.js disagrees with news-feeds.js at ${new Date(t).toISOString()}`); }
+}
+for (let t = Date.UTC(2026, 0, 1); t < Date.UTC(2028, 0, 1); t += 86400000) {
+  const d = new Date(t).toISOString().slice(0, 10);
+  if (D.newsDateMs(d) !== F.newsDateMs(d)) { parity++; if (parity < 4) fail(`functions/_news-dates.js: newsDateMs(${d}) disagrees with news-feeds.js`); }
+}
+
+// 5. Served feeds from the Functions, mocked KV (in memory only) + ASSETS.
+const KV_POSTS = [
+  // EDT: 2:30 PM UTC = 10:30 AM Toronto (-04:00).
+  { slug: 'kv-edt', title: 'KV EDT', status: 'published', dateNum: Date.parse('2026-10-22T14:30:00Z'),
+    now: Date.parse('2026-10-23T12:00:00Z'), iso: '2026-10-22T10:30:00-04:00', rss: 'Thu, 22 Oct 2026 10:30:00 -0400' },
+  // EST, near midnight: 3:15 AM UTC Dec 3 = 10:15 PM Dec 2 Toronto (-05:00).
+  { slug: 'kv-est', title: 'KV EST', status: 'published', dateNum: Date.parse('2026-12-03T03:15:00Z'),
+    now: Date.parse('2026-12-03T12:00:00Z'), iso: '2026-12-02T22:15:00-05:00', rss: 'Wed, 02 Dec 2026 22:15:00 -0500' },
+  // UTC ISO string in dateNum, in the repeated 1 AM hour of the fall-back day (EST side).
+  { slug: 'kv-utc-iso', title: 'KV UTC ISO', status: 'published', dateNum: '2026-11-01T06:30:00.000Z',
+    now: Date.parse('2026-11-01T12:00:00Z'), iso: '2026-11-01T01:30:00-05:00', rss: 'Sun, 01 Nov 2026 01:30:00 -0500' },
+  // No dateNum, date-only date: Toronto midnight, not UTC midnight.
+  { slug: 'kv-date-only', title: 'KV date-only', status: 'published', date: '2026-10-23',
+    now: Date.parse('2026-10-23T12:00:00Z'), iso: '2026-10-23T00:00:00-04:00', rss: 'Fri, 23 Oct 2026 00:00:00 -0400' },
+];
+function mockKV() {
+  const m = new Map();
+  const docs = KV_POSTS.map(({ now, iso, rss, ...p }) => p);
+  m.set('news:index', JSON.stringify(docs));
+  for (const p of docs) m.set('news:' + p.slug, JSON.stringify(p));
+  return { get: async (k) => (m.has(k) ? m.get(k) : null), put: async (k, v) => { m.set(k, String(v)); }, delete: async (k) => { m.delete(k); },
+    list: async () => ({ keys: [...m.keys()].map((name) => ({ name })), list_complete: true }) };
+}
+const ASSETS = { fetch: async (req) => {
+  const u = new URL(typeof req === 'string' ? req : req.url);
+  const f = path.join(ROOT, u.pathname.replace(/^\/+/, ''));
+  return fs.existsSync(f) && fs.statSync(f).isFile() ? new Response(fs.readFileSync(f, 'utf8'), { status: 200 }) : new Response('nf', { status: 404 });
+} };
+const realNow = Date.now;
+async function serve(mod, now, extra = {}) {
+  Date.now = () => now;
+  try {
+    const res = await mod.onRequestGet({ request: new Request(extra.url || 'https://younghadene.ca/'), env: { YH_POSTS: mockKV(), ASSETS }, params: extra.params || {}, waitUntil: () => {} });
+    return { status: res.status, text: await res.text() };
+  } finally { Date.now = realNow; }
+}
+const rssFn = await import(path.join(tmp, 'news-rss.xml.mjs'));
+const nsmFn = await import(path.join(tmp, 'news-sitemap.xml.mjs'));
+const slugFn = await import(path.join(tmp, 'news', '[slug].mjs'));
+const field = (xml, slug, open, tag) => {
+  const b = (xml.match(new RegExp(`<${open}>(?:(?!</${open}>)[\\s\\S])*?/news/${slug}<(?:(?!</${open}>)[\\s\\S])*</${open}>`)) || [])[0] || '';
+  return ((b.match(new RegExp(`<${tag}>([^<]*)</${tag}>`)) || [])[1] || '').trim();
+};
+for (const k of KV_POSTS) {
+  const rss = await serve(rssFn, k.now);
+  const got = field(rss.text, k.slug, 'item', 'pubDate');
+  if (got !== k.rss) fail(`functions/news-rss.xml.js ${k.slug}: pubDate "${got}", want "${k.rss}"`);
+  const nsm = await serve(nsmFn, k.now);
+  const iso = field(nsm.text, k.slug, 'url', 'news:publication_date');
+  if (iso !== k.iso) fail(`functions/news-sitemap.xml.js ${k.slug}: publication_date "${iso}", want "${k.iso}"`);
+  if (iso && Date.parse(iso) !== Date.parse(k.rss)) fail(`functions: ${k.slug} sitemap and RSS dates are different instants`);
+  const page = await serve(slugFn, k.now, { url: `https://younghadene.ca/news/${k.slug}`, params: { slug: k.slug } });
+  const pub = ((page.text.match(/"datePublished":"([^"]+)"/) || [])[1] || '');
+  if (page.status !== 200 || pub !== k.iso) fail(`functions/news/[slug].js ${k.slug}: datePublished "${pub}" (HTTP ${page.status}), want "${k.iso}"`);
+  // Repo posts unioned in from the static files must also be Toronto time.
+  for (const [label, text] of [['functions/news-rss.xml.js', rss.text], ['functions/news-sitemap.xml.js', nsm.text]]) {
+    if (/<pubDate>[^<]*GMT<\/pubDate>/.test(text)) fail(`${label}: served feed still has a GMT pubDate`);
+    if (/<news:publication_date>[^<]*Z<\/news:publication_date>/.test(text)) fail(`${label}: served sitemap still has a UTC (Z) publication_date`);
+  }
+}
+const allRss = await serve(rssFn, Date.parse('2026-12-03T12:00:00Z'));
+checkFeed('served news-rss.xml (functions)', allRss.text);
+fs.rmSync(tmp, { recursive: true, force: true });
+
 if (errors.length) {
   console.error(`check-news-dates: ${errors.length} problem(s)`);
   for (const e of errors) console.error('  ✗ ' + e);
   process.exit(1);
 }
-console.log(`check-news-dates: ${entries.length} news posts; schema, news-sitemap and RSS dates are full Toronto-day timestamps ✓`);
+console.log(`check-news-dates: ${entries.length} news posts; schema, news-sitemap and RSS dates are full Toronto-day timestamps; Functions feeds + KV page schema use Toronto time (${KV_POSTS.length} mocked KV posts, EDT/EST/UTC-ISO/date-only) ✓`);
