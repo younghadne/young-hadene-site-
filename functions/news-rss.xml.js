@@ -1,5 +1,7 @@
 // GET /news-rss.xml — dynamic news RSS from KV (latest 20), unioned with
 // the static file so nothing is lost. New items appear instantly, no rebuild.
+import { rssDate, kvPostMs } from './_news-dates.js';
+
 const SITE_URL = 'https://younghadene.ca';
 
 function esc(s) {
@@ -9,7 +11,7 @@ function esc(s) {
 function itemXml(p) {
   const link = `${SITE_URL}/news/${p.slug}`;
   const desc = String(p.excerpt || p.content || p.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 300);
-  return '  <item>\n    <title>' + esc(p.title) + '</title>\n    <link>' + esc(link) + '</link>\n    <guid isPermaLink="true">' + esc(link) + '</guid>\n    <description>' + esc(desc) + '</description>\n    <pubDate>' + new Date(Number(p.dateNum) || Date.now()).toUTCString() + '</pubDate>\n    <category>' + esc(p.category || 'News') + '</category>\n  </item>\n';
+  return '  <item>\n    <title>' + esc(p.title) + '</title>\n    <link>' + esc(link) + '</link>\n    <guid isPermaLink="true">' + esc(link) + '</guid>\n    <description>' + esc(desc) + '</description>\n    <pubDate>' + rssDate(kvPostMs(p)) + '</pubDate>\n    <category>' + esc(p.category || 'News') + '</category>\n  </item>\n';
 }
 
 export async function onRequestGet(context) {
@@ -27,7 +29,7 @@ export async function onRequestGet(context) {
         const parsed = t ? JSON.parse(t) : [];
         if (Array.isArray(parsed)) arr = parsed;
       } catch { arr = []; }
-      arr.sort((a, b) => (Number(b.dateNum) || 0) - (Number(a.dateNum) || 0));
+      arr.sort((a, b) => kvPostMs(b, 0) - kvPostMs(a, 0));
       for (const p of arr) {
         if (count >= 20 || !p || !p.slug) continue;
         const vis = p.status === 'published' || !p.status ||
