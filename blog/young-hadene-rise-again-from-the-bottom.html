@@ -97,6 +97,23 @@
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://younghadene.ca/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://younghadene.ca/blog"},{"@type":"ListItem","position":3,"name":"Rise Again and From the Bottom: Young Hadene's March 16 Uploads","item":"https://younghadene.ca/blog/young-hadene-rise-again-from-the-bottom"}]}</script>
 <style>
+/* CLS: metric-matched fallbacks (same values as PR #11) so the Anton/Inter/Plex swap moves nothing. */
+@font-face { font-family: 'Anton Fallback Narrow'; src: local('Arial Narrow Bold'), local('ArialNarrow-Bold'); size-adjust: 80.84%; ascent-override: 145.51%; descent-override: 40.71%; line-gap-override: 0%; }
+@font-face { font-family: 'Anton Fallback'; src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold'); size-adjust: 66.28%; ascent-override: 177.47%; descent-override: 49.65%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans-Regular'); size-adjust: 107.48%; ascent-override: 90.14%; descent-override: 22.44%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-weight: 700; src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold'); size-adjust: 102.42%; ascent-override: 94.58%; descent-override: 23.55%; line-gap-override: 0%; }
+@font-face { font-family: 'IBM Plex Mono Fallback'; src: local('Menlo-Regular'), local('Menlo'), local('Liberation Mono'), local('LiberationMono-Regular'), local('DejaVu Sans Mono'), local('Courier New'); size-adjust: 100%; ascent-override: 102.5%; descent-override: 27.5%; line-gap-override: 0%; }
+:root { --font-heading: 'Anton', 'Anton Fallback Narrow', 'Anton Fallback', sans-serif; --font-body: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, SFMono-Regular, Menlo, monospace; }
+/* Tap-to-load YouTube poster (same pattern as PR #15 /music): no YouTube JS until tapped, so it can't hold up LCP. */
+.post-video{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;margin:24px 0;background:#1C1E22}
+.post-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.post-video .post-facade{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;border:0;background:#1C1E22;cursor:pointer;min-height:44px;overflow:hidden}
+.post-video .post-facade img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;transition:opacity var(--transition)}
+.post-video .post-facade:hover img{opacity:1}
+.post-video .post-facade .yt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:#79C043;display:flex;align-items:center;justify-content:center;transition:transform var(--dur-1) var(--ease-out),background-color var(--dur-2) var(--ease-out)}
+.post-video .post-facade .yt-play::before{content:'';border-style:solid;border-width:12px 0 12px 20px;border-color:transparent transparent transparent #131417;margin-left:5px}
+.post-video .post-facade:hover .yt-play,.post-video .post-facade:focus-visible .yt-play{background:#8bd052;transform:translate(-50%,-50%) scale(1.06)}
+.post-video .post-facade:focus-visible{outline:2px solid #79C043;outline-offset:-2px}
 .article-wrap { max-width: 720px; margin: 0 auto; padding: 40px 0; }
 .article-wrap h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); margin-bottom: 16px; line-height: 1.05; }
 .article-wrap .meta { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 32px; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -173,8 +190,8 @@
 <p>On March 16, 2026, two new videos went up on Young Hadene's YouTube channel within the same day: "Rise Again" and "From the Bottom". That shared upload date is the only connection between them that we can document. Neither upload calls them a set, and we don't either. Each one is covered below on its own terms, followed by a short list of facts that can be checked side by side.</p>
 <p>As with our other song pages, we don't quote lyrics. There's no official lyric sheet, and YouTube's auto-captions aren't accurate enough to quote. We used the captions only to see when a voice comes in and whether a block of words repeats.</p>
 <hr>
-<div class="video-embed" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:24px 0;"><iframe src="https://www.youtube.com/embed/BoQNixsRSUU" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Young Hadene - Rise Again"></iframe></div>
-<div class="video-embed" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:24px 0;"><iframe src="https://www.youtube.com/embed/YMaBpODIwKM" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Young Hadene - From The Bottom"></iframe></div>
+<div class="video-embed post-video"><button type="button" class="post-facade" data-yt-src="https://www.youtube-nocookie.com/embed/BoQNixsRSUU?autoplay=1&amp;rel=0" data-yt-title="Young Hadene - Rise Again" aria-label="Play video: Young Hadene - Rise Again"><img src="https://i.ytimg.com/vi/BoQNixsRSUU/sddefault.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/BoQNixsRSUU/hqdefault.jpg'"><span class="yt-play" aria-hidden="true"></span></button></div>
+<div class="video-embed post-video"><button type="button" class="post-facade" data-yt-src="https://www.youtube-nocookie.com/embed/YMaBpODIwKM?autoplay=1&amp;rel=0" data-yt-title="Young Hadene - From The Bottom" aria-label="Play video: Young Hadene - From The Bottom"><img src="https://i.ytimg.com/vi/YMaBpODIwKM/sddefault.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/YMaBpODIwKM/hqdefault.jpg'"><span class="yt-play" aria-hidden="true"></span></button></div>
 <h2 id="song-a-rise-again">Song A: "Rise Again"</h2>
 <p><strong>Listing:</strong> "Young Hadene – Rise Again (Motivational Hip Hop)". The upload runs 3:07 and YouTube files it under the <em>Entertainment</em> category. It has no description text.</p>
 <h3 id="what-s-on-screen">What's on screen</h3>
@@ -290,6 +307,21 @@
       </div>
     </div>
   </footer>
+<script>
+// Tap-to-load YouTube poster (handler copied from PR #15 js/main.js): build the player on tap and swap the button out for it.
+document.querySelectorAll('.post-facade').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const iframe = document.createElement('iframe');
+    iframe.src = btn.dataset.ytSrc;
+    iframe.title = btn.dataset.ytTitle || 'YouTube video';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    // Swap the button out for the player so the iframe isn't nested inside a <button>.
+    btn.replaceWith(iframe);
+    iframe.focus();
+  }, { once: true });
+});
+</script>
 <script src="/js/main.js"></script>
 </body>
 </html>
