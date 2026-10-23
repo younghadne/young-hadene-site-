@@ -1,6 +1,6 @@
 ---
-title: "k-os BLackneck: New Album Out Oct. 30, Financed by Drake"
-slug: /blog/k-os-blackneck-album-oct-30-drake
+title: "k-os BLackneck: New Album Out Oct. 30"
+slug: /news/k-os-blackneck-album-oct-30
 meta_description: "k-os returns with BLackneck on Oct. 30, his first full album in over a decade, with Drake as executive producer and financier. What we know so far."
 target_keyword: "k-os blackneck"
 secondary_keywords: ["k-os new album", "toronto hip-hop news"]

@@ -1,6 +1,6 @@
 ---
 title: "Saukrates' Fades Away (2026 Remix): Toronto Hip-Hop Lineage"
-slug: /blog/saukrates-fades-away-2026-remix-toronto-hip-hop-lineage
+slug: /news/saukrates-fades-away-2026-remix-toronto-hip-hop-lineage
 meta_description: "Saukrates' Fades Away (2026 Remix) with Drake, the late King Reign and The BLK LT$ is out Oct 23. What a remix across generations says about Toronto hip-hop."
 target_keyword: "saukrates fades away remix"
 secondary_keywords: ["toronto hip-hop news", "toronto rap classics"]

@@ -37,6 +37,7 @@ for (const file of files) {
   const err = (m) => bad.push(`${file}: ${m}`);
   for (const mk of raw.match(/\[(CONFIRM|VERIFY|HELD)[^\]]*\]/gi) || []) err(`leftover marker ${mk}`);
   if (!fm.title) err('missing title');
+  if (fm.slug !== '/news/' + slug) err(`front matter slug must be /news/${slug} (got ${fm.slug || 'nothing'})`);
   if (!fm.meta_description) err('missing meta_description');
   if (!fm.author || !fm.author.name) err('missing author name');
   if (!fm.author || fm.author['@type'] !== 'Organization') err('author @type must be Organization');
