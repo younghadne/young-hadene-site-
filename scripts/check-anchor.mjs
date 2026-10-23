@@ -1,6 +1,7 @@
 // Guard for /blog/top-toronto-rappers (anchor page) plus a sitewide
 // placeholder check. Fails on:
 //  - page out of date with scripts/build-anchor.mjs sources (blog + root twin)
+//  - tap targets: back link < 44px / footnote refs < 24px tall, or padding without a matching negative margin
 //  - title / og:title / twitter:title / Article headline != TITLE, h1 != H1
 //  - disclosure line missing, duplicated, or not right after the intro
 //  - "Ranked", rank-number cards, "best"/"ranked" in schema, ordered ItemList
@@ -57,6 +58,22 @@ for (const f of OUTPUTS) {
   if (!beforeH2.includes(DISCLOSURE)) bad.push(`${f}: disclosure line is not between the H1 and the first H2`);
 
   for (const [re, label] of BANNED) { const m = raw.match(re); if (m) bad.push(`${f}: contains ${label} ("${m[0]}")`); }
+
+  // Tap targets (UX on #17): "← Back to Blog" >= 44px tall, footnote refs >= 24px
+  // tall, via padding-block offset by a matching negative margin-block (PR #8
+  // technique). Text-box heights measured at 375px in Chromium: back link
+  // 20.47px (0.8rem x 1.6), footnote ref 14px. Static CSS check, not a render.
+  const rule = (sel) => (s.match(new RegExp(`\\n\\s*${sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\{([^}]*padding-block[^}]*)\\}`)) || [])[1] || '';
+  const tap = (sel, textH, min) => {
+    const r = rule(sel);
+    const pad = r.match(/padding-block:\s*([\d.]+)px/), mar = r.match(/margin-block:\s*-([\d.]+)px/);
+    if (!pad) return bad.push(`${f}: no "${sel} { padding-block }" tap-target rule`);
+    if (!mar || mar[1] !== pad[1]) bad.push(`${f}: ${sel} padding-block ${pad[1]}px needs a matching -${pad[1]}px margin-block so layout does not shift`);
+    if (textH + 2 * Number(pad[1]) < min) bad.push(`${f}: ${sel} tap target ${(textH + 2 * Number(pad[1])).toFixed(2)}px tall (< ${min}px)`);
+  };
+  tap('.back-link', 20.47, 44);
+  tap('.article-wrap sup a', 14, 24);
+  if (!/\.sources,\s*\.sources li,\s*\.sources a\s*\{\s*overflow-wrap:\s*anywhere/.test(s)) bad.push(`${f}: Sources overflow-wrap:anywhere rule missing`);
 
   // Links: no raw-URL link text; Street Lights may only link to Apple Music.
   for (const [, href, inner] of s.matchAll(/<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)) {

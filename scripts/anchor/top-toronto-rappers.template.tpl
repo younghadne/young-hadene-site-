@@ -77,6 +77,9 @@
     @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
     .artist-card .info ul { margin: 0; padding-left: 18px; font-size: 0.85rem; }
     .sources, .sources li, .sources a { overflow-wrap: anywhere; }
+    /* Tap targets (UX, same technique as PR #8): padding offset by matching negative margins, so nothing visible moves. Back link >= 44px tall (12px + 20.5px text + 12px; bottom margin 20px + 12px padding = the original 32px gap); footnote refs >= 24px tall (site css gives 4px). */
+    .back-link { padding-block: 12px; margin-block: -12px 20px; }
+    .article-wrap sup a { padding-block: 6px; margin-block: -6px; }
   </style>
 {{BREADCRUMB}}
 </head>
