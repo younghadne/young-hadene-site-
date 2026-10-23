@@ -1738,8 +1738,14 @@ html { scroll-behavior: auto; }
 /* Section headline accent words use the full accent (large type >= 24px) — beats .text-accent (--accent-text) */
 .section-title .text-accent { color: var(--accent); }
 
-/* Tap targets: footer links >= 44px tall without moving layout (padding offset by negative margin) */
-.footer ul li a, .footer-bottom-links a { padding-block: 14px; margin-block: -14px; }
+/* Tap targets: every footer link is exactly 44px tall and the boxes tile with no gap, so neighbours touch but never overlap.
+   Was: inline links with 14px padding (44px box) on 35.6px rows (25.6px line + 10px li margin), so rows overlapped by 8.4px.
+   Now: 44px rows (smallest pitch that fits a 44px box); the list pulls up 8.14px so the first row's text keeps its position. */
+.footer ul { margin-top: -8.14px; }
+.footer ul li { margin-bottom: 0; }
+.footer ul li a { display: inline-flex; align-items: center; height: 44px; vertical-align: top; }
+/* Bottom links (Privacy / Terms): single row, 19.2px line; 44px box centred on it, negative margin keeps the bar height unchanged */
+.footer-bottom-links a { display: flex; align-items: center; height: 44px; margin-block: -12.4px; }
 /* Footnote/superscript links: >= 24px tap area */
 sup a, .footnote-backref, .about-content a[href="/about"] { padding: 4px 10px; margin: -4px -10px; }
 /* Newsletter label: light text + accent bar (contrast >= 4.5:1 over poster bg) */
