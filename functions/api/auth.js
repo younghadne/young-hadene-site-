@@ -3,13 +3,7 @@
 // (Pages project Settings → Environment variables). Fails closed when the
 // variable is not set — secrets must never be hardcoded in the repo.
 
-function timingSafeEqual(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string') return false;
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
+import { checkAdminPassword } from '../_safe-equal.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -20,14 +14,14 @@ export async function onRequestPost(context) {
     } catch {
       data = {};
     }
-    const expected = env && env.ADMIN_PASSWORD;
-    if (!expected) {
-      return new Response(JSON.stringify({ ok: false, error: 'ADMIN_PASSWORD not configured on the server' }), {
+    const auth = await checkAdminPassword(env, data.password);
+    if (auth.status === 500) {
+      return new Response(JSON.stringify({ ok: false, error: auth.error }), {
         status: 500,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
-    if (data.password && timingSafeEqual(String(data.password), String(expected))) {
+    if (auth.ok) {
       return new Response(JSON.stringify({ ok: true }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },

@@ -14,24 +14,9 @@
 //   ogTitle?, ogDesc?, ogImage?, canonical? } }
 // Body (DELETE): { password }
 
-const SITE_URL = 'https://younghadene.ca';
+import { checkAdminPassword } from '../_safe-equal.js';
 
-// Constant-time string compare that doesn't leak length: both values are
-// HMAC-SHA-256'd with a fresh random key per call, and the fixed 32-byte
-// digests are XOR-compared over every byte (no early return).
-async function safeEqual(a, b) {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey('raw', crypto.getRandomValues(new Uint8Array(32)),
-    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const [x, y] = await Promise.all([
-    crypto.subtle.sign('HMAC', key, enc.encode(String(a))),
-    crypto.subtle.sign('HMAC', key, enc.encode(String(b))),
-  ]);
-  const u = new Uint8Array(x), v = new Uint8Array(y);
-  let diff = u.length ^ v.length;
-  for (let i = 0; i < u.length; i++) diff |= u[i] ^ v[i];
-  return diff === 0;
-}
+const SITE_URL = 'https://younghadene.ca';
 
 // Publishing and deleting are both OFF unless the Pages env var
 // NEWS_WRITES_ENABLED=1 is set. Checked before auth; same 403 for both.
@@ -104,15 +89,6 @@ function sortIndex(index) {
   });
 }
 
-async function checkAuth(env, password) {
-  const expected = env && env.ADMIN_PASSWORD;
-  if (!expected) return { ok: false, status: 500, error: 'ADMIN_PASSWORD not configured on the server' };
-  if (!password || !(await safeEqual(password, expected))) {
-    return { ok: false, status: 401, error: 'Incorrect password' };
-  }
-  return { ok: true };
-}
-
 function cleanStr(v, max) {
   let s = String(v == null ? '' : v);
   if (max && s.length > max) s = s.substring(0, max);
@@ -128,7 +104,7 @@ export async function onRequestPost(context) {
     if (!writesEnabled(env)) return json({ error: WRITES_DISABLED }, 403);
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const auth = await checkAuth(env, body.password);
+    const auth = await checkAdminPassword(env, body.password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const store = kv(env);
     if (!store) return json({ error: 'Post storage not configured (bind YH_POSTS KV)' }, 500);
@@ -226,7 +202,7 @@ export async function onRequestDelete(context) {
     const slug = slugify(url.searchParams.get('slug') || (pathSlug && pathSlug !== 'news' ? pathSlug : ''));
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const auth = await checkAuth(env, body.password);
+    const auth = await checkAdminPassword(env, body.password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const store = kv(env);
     if (!store) return json({ error: 'Post storage not configured (bind YH_POSTS KV)' }, 500);

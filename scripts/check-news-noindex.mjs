@@ -15,6 +15,7 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yh-noindex-'));
 fs.mkdirSync(path.join(tmp, 'api'));
 const asMjs = (src, dst) => fs.writeFileSync(path.join(tmp, dst), fs.readFileSync(fn(src), 'utf8').replace(/(from '\.{1,2}\/[^']+)\.js'/g, "$1.mjs'"));
 asMjs('_news-noindex.js', '_news-noindex.mjs');
+asMjs('_safe-equal.js', '_safe-equal.mjs'); // imported by api/news-list.js
 asMjs('news-rss.xml.js', 'news-rss.xml.mjs');
 asMjs('news-sitemap.xml.js', 'news-sitemap.xml.mjs');
 asMjs('api/news-list.js', 'api/news-list.mjs');
