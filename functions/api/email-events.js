@@ -4,7 +4,7 @@
 // - Validates TopicArn against settings allowlist when configured.
 // - Handles SubscriptionConfirmation by fetching SubscribeURL (server-side).
 // - Idempotent: event message-ids recorded; duplicates ignored.
-import { json, kv, timingSafeEqual, verifySnsSignature, normEmail, emailHash } from './_email-lib.js';
+import { json, kv, safeEqual, verifySnsSignature, normEmail, emailHash } from './_email-lib.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -12,7 +12,7 @@ export async function onRequestPost(context) {
     const url = new URL(request.url);
     const key = url.searchParams.get('key') || '';
     const expected = (env && env.EMAIL_WEBHOOK_KEY) || '';
-    if (!expected || !timingSafeEqual(key, expected)) return json({ error: 'Forbidden.' }, 403);
+    if (!expected || !(await safeEqual(key, expected))) return json({ error: 'Forbidden.' }, 403);
     const store = kv(env);
     if (!store) return json({ error: 'KV not configured.' }, 500);
     let msg = null;

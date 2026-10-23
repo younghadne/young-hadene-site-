@@ -18,7 +18,7 @@ export async function onRequestPost(context) {
   try {
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const auth = checkAuth(env, body.password);
+    const auth = await checkAuth(env, body.password);
     if (!auth.ok) return json({ error: auth.error }, auth.status);
     const store = kv(env);
     if (!store) return json({ error: 'KV not configured (bind YH_POSTS)' }, 500);

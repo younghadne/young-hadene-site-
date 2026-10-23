@@ -14,9 +14,11 @@ import { pathToFileURL } from 'node:url';
 const TMP = path.join('scripts', '.tmp-email-test');
 fs.mkdirSync(TMP, { recursive: true });
 fs.copyFileSync('functions/api/_email-lib.js', path.join(TMP, '_email-lib.mjs'));
+fs.copyFileSync('functions/_safe-equal.js', path.join(TMP, '_safe-equal.mjs')); // shared constant-time compare
 async function loadEp(name) {
   const src = fs.readFileSync('functions/api/' + name + '.js', 'utf8')
-    .replace(/from '\.\/_email-lib\.js'/g, "from './_email-lib.mjs'");
+    .replace(/from '\.\/_email-lib\.js'/g, "from './_email-lib.mjs'")
+    .replace(/from '\.\.\/_safe-equal\.js'/g, "from './_safe-equal.mjs'");
   const f = path.join(TMP, name + '.mjs');
   fs.writeFileSync(f, src);
   return import(pathToFileURL(f).href);

@@ -3,6 +3,7 @@
 // Cloudflare Pages Functions AND in node18+ unit tests.
 // This file is imported relatively by functions/api/email-*.js endpoints.
 // It intentionally creates NO route itself (underscore prefix).
+import { safeEqual, checkAdminPassword } from '../_safe-equal.js';
 
 const enc = new TextEncoder();
 
@@ -36,14 +37,8 @@ export async function hmacHex(keyBytes, msg) {
   return [...new Uint8Array(sig)].map((x) => x.toString(16).padStart(2, '0')).join('');
 }
 
-export function timingSafeEqual(a, b) {
-  a = String(a == null ? '' : a);
-  b = String(b == null ? '' : b);
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
+// Constant-time compare (shared, no length leak). Async: always await it.
+export { safeEqual };
 
 export function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -52,13 +47,9 @@ export function json(data, status = 200) {
   });
 }
 
+// Async: always await it. ADMIN_PASSWORD unset/empty -> 500, wrong/missing -> 401.
 export function checkAuth(env, password) {
-  const expected = env && env.ADMIN_PASSWORD;
-  if (!expected) return { ok: false, status: 500, error: 'ADMIN_PASSWORD not configured on the server' };
-  if (!password || !timingSafeEqual(String(password), String(expected))) {
-    return { ok: false, status: 401, error: 'Incorrect password' };
-  }
-  return { ok: true };
+  return checkAdminPassword(env, password);
 }
 
 export function kv(env) {
@@ -147,7 +138,7 @@ export async function tokenFor(env, purpose, email) {
 export async function tokenValid(env, purpose, email, token) {
   try {
     const expect = await tokenFor(env, purpose, email);
-    return timingSafeEqual(expect, String(token || ''));
+    return await safeEqual(expect, String(token || ''));
   } catch {
     return false;
   }

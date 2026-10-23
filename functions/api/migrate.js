@@ -6,19 +6,14 @@
 // keep serving via the static fallback until republished from the manager).
 //
 // Body: { password }
+
+import { checkAdminPassword } from '../_safe-equal.js';
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
   });
-}
-
-function timingSafeEqual(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string') return false;
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
 }
 
 function extractArr(html, varName) {
@@ -68,11 +63,8 @@ export async function onRequestPost(context) {
   try {
     let body = {};
     try { body = await request.json(); } catch { body = {}; }
-    const expected = env && env.ADMIN_PASSWORD;
-    if (!expected) return json({ error: 'ADMIN_PASSWORD not configured on the server' }, 500);
-    if (!body.password || !timingSafeEqual(String(body.password), String(expected))) {
-      return json({ error: 'Incorrect password' }, 401);
-    }
+    const auth = await checkAdminPassword(env, body.password);
+    if (!auth.ok) return json({ error: auth.error }, auth.status);
     const store = env.YH_POSTS;
     if (!store) return json({ error: 'Post storage not configured (bind YH_POSTS KV)' }, 500);
     if (!env.ASSETS) return json({ error: 'Static assets unavailable' }, 500);
