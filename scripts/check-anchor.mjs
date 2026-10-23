@@ -4,6 +4,9 @@
 //  - tap targets: back link < 44px / footnote refs < 24px tall, or padding without a matching negative margin
 //  - tap targets: Sources single-link entries < 44px (or overlapping), other Sources links / "Broken" video < 24px,
 //    adjacent footnote refs ("1,2") whose hit boxes overlap
+//  - tap targets: footer Navigate/Music/Contact links < 44px tall or overlapping the next row
+//  - tap targets: an Apple Music Sources link on its own line (standalone entry) not getting the 44px rule;
+//    Apple Music links inline in the Sources sentence < 24px
 //  - title / og:title / twitter:title / Article headline != TITLE, h1 != H1
 //  - disclosure line missing, duplicated, or not right after the intro
 //  - "Ranked", rank-number cards, "best"/"ranked" in schema, ordered ItemList
@@ -18,6 +21,7 @@ import { execFileSync } from 'node:child_process';
 import { TITLE, H1, DISCLOSURE, OUTPUTS, ARTISTS } from './build-anchor.mjs';
 
 const bad = [];
+let appleSummary = '';
 try { execFileSync(process.execPath, ['scripts/build-anchor.mjs', '--check'], { stdio: 'pipe' }); }
 catch (e) { bad.push(String(e.stderr || e.message).trim()); }
 
@@ -101,6 +105,42 @@ for (const f of OUTPUTS) {
   }
   if (!/\.sources,\s*\.sources li,\s*\.sources a\s*\{\s*overflow-wrap:\s*anywhere/.test(s)) bad.push(`${f}: Sources overflow-wrap:anywhere rule missing`);
 
+  // Footer link lists (UX on #17): site css (style.css "Tap targets: footer links") pads the
+  // inline links 14px each way (16px text box at 0.85rem -> 44px), but rows are 25.59px line
+  // + 10px li margin = 35.59px apart, so neighbours overlapped by 8.41px (Chromium, 360/375px).
+  // The page must make each link a 44px inline-block whose margin box sets the row pitch, so
+  // tap areas touch but never overlap: pitch = L + 2P + 2M + li margin-bottom >= L + 2P >= 44.
+  {
+    const SITE_PAD = 14, SITE_TEXT = 16, SITE_LINE = 25.59, SITE_LI_MB = 10;
+    const fa = one(s, /\n\s*\.footer ul li a\s*\{([^}]*)\}/) || '';
+    const liMb = Number(one(s, /\n\s*\.footer ul li\s*\{[^}]*margin-bottom:\s*(-?[\d.]+)(?:px)?/) ?? SITE_LI_MB);
+    const num = (re, d) => { const m = fa.match(re); return m ? Number(m[1]) : d; };
+    if (/display:\s*inline-block/.test(fa) && /vertical-align:\s*top/.test(fa)) {
+      const L = num(/line-height:\s*([\d.]+)px/, NaN), P = num(/padding-block:\s*([\d.]+)px/, NaN), M = num(/margin-block:\s*(-?[\d.]+)(?:px)?/, 0);
+      const tapH = L + 2 * P, box = tapH + 2 * M, pitch = Math.max(box, SITE_LINE) + liMb;
+      if (!(tapH >= 44)) bad.push(`${f}: footer links tap target ${tapH}px tall (< 44px; need line-height + 2 x padding-block)`);
+      else if (pitch + 0.01 < tapH) bad.push(`${f}: footer links overlap the next row by ${(tapH - pitch).toFixed(2)}px (pitch ${pitch.toFixed(2)}px < ${tapH}px tap)`);
+    } else {
+      const tapH = SITE_TEXT + 2 * SITE_PAD, pitch = SITE_LINE + liMb;
+      if (tapH > pitch) bad.push(`${f}: footer links (inline, site css padding-block ${SITE_PAD}px) overlap the next row by ${(tapH - pitch).toFixed(2)}px; add a page ".footer ul li a { display:inline-block; vertical-align:top; line-height; padding-block }" rule with rows >= the tap height apart`);
+    }
+  }
+  // Apple Music links in Sources (Design Lead on #17): one on its own line (the entry's whole
+  // text is the link) must be the entry's only child so the 44px a:only-child rule applies;
+  // ones inline in the Apple Music sentence get the >= 24px a:not(:only-child) rule (checked above).
+  const apple = { standalone: [], inline: [] };
+  for (const [, id, li] of s.matchAll(/<li id="(src-[^"]+)">([\s\S]*?)<\/li>/g)) {
+    for (const [a, inner] of li.matchAll(/<a [^>]*href="https:\/\/music\.apple\.com\/[^"]*"[^>]*>([\s\S]*?)<\/a>/g)) {
+      const label = `${id}: ${text(inner)}`;
+      if (text(li) === text(inner)) {
+        apple.standalone.push(label);
+        if (li.trim() !== a.trim()) bad.push(`${f}: standalone Apple Music source "${label}" is not the entry's only child, so it misses the 44px rule`);
+      } else apple.inline.push(label);
+    }
+  }
+  if (apple.standalone.length + apple.inline.length < 5) bad.push(`${f}: expected >= 5 Apple Music links in Sources, found ${apple.standalone.length + apple.inline.length}`);
+  appleSummary = `Apple Music Sources: ${apple.standalone.length} standalone (44px), ${apple.inline.length} inline (24px)`;
+
   // Links: no raw-URL link text; Street Lights may only link to Apple Music.
   for (const [, href, inner] of s.matchAll(/<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)) {
     const lt = text(inner);
@@ -149,4 +189,4 @@ const walk = (d) => {
 walk('.');
 
 if (bad.length) { console.error('ANCHOR-CHECK FAIL:\n  ' + bad.join('\n  ')); process.exit(1); }
-console.log(`ANCHOR-CHECK OK: ${OUTPUTS.join(' + ')} (title, H1, disclosure x1, ${ARTISTS.length} unranked cards, schema); no [HELD]/[VERIFY]/[CONFIRM] in ${scanned} shipped files.`);
+console.log(`ANCHOR-CHECK OK: ${OUTPUTS.join(' + ')} (title, H1, disclosure x1, ${ARTISTS.length} unranked cards, schema, footer taps 44px no overlap, ${appleSummary}); no [HELD]/[VERIFY]/[CONFIRM] in ${scanned} shipped files.`);

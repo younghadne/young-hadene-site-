@@ -284,6 +284,9 @@
     .article-wrap .sources li > a:not(:only-child) { padding-block: 2.5px; margin-block: -2.5px; }
     /* '"Broken" video' inline link: 16px text box (0.85rem) + 2 x 4px = 24px, under its 24.48px line pitch. */
     .article-wrap .artist-card a[href="/music/broken"] { padding-block: 4px; margin-block: -4px; }
+    /* Footer nav + Music links: site css (style.css "Tap targets: footer links") pads these inline links 14px each way to 44px, but the rows are only 35.59px apart (25.59px line + 10px li gap), so neighbours overlapped by 8.41px. Here each link is a 44px inline-block (20px line + 2 x 12px) and the li gap is 0, so rows sit exactly 44px apart: tap areas touch, never overlap. */
+    .footer ul li { margin-bottom: 0; }
+    .footer ul li a { display: inline-block; vertical-align: top; line-height: 20px; padding-block: 12px; margin-block: 0; }
   </style>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://younghadene.ca/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://younghadene.ca/blog.html"},{"@type":"ListItem","position":3,"name":"Top Toronto Rappers to Know: 15 Artists, From Maestro to Now","item":"https://younghadene.ca/blog/top-toronto-rappers"}]}</script>
 </head>
