@@ -128,4 +128,10 @@ export const BLOG_REDIRECTS = {
 // KV doc with the same slug, until the KV copy is updated via the admin.
 export const BLOG_STATIC_FIRST = new Set([
   'haitian-rappers-in-toronto-young-hadene-and-the-new-generation',
+  // Blog batch 1 (2026-10-22): repo-first so a hidden KV draft or tombstone
+  // with the same slug can't 404 the published page.
+  'young-hadene-4-minutes-of-hell-freestyle',
+  'young-hadene-nightmares-in-the-nighttime',
+  'young-hadene-in-the-cut',
+  'young-hadene-rise-again-from-the-bottom',
 ]);
