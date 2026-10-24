@@ -2293,3 +2293,44 @@ body .article-wrap .meta span{color:#79C043}
 @media (max-width: 1023px) {
   .nf-pill { display: none; }
 }
+
+/* ---------------------------------------------------------------------
+   Inline link tap areas (WCAG 2.5.8): links inside sentences get a tap box >= 24px.
+   Vertical padding on an inline box doesn't change line boxes, so text doesn't move.
+   Padding is sized to the font's 1.25em content box so the box is 24px, which stays
+   inside the line pitch and keeps neighbouring lines from overlapping. Footer excluded (#26).
+   Post rules (.article-wrap, .back-link) skip the 5 posts PR #18 (blog-batch-1) rewrites,
+   matched by canonical URL; #18 sets its own tap targets on those pages.
+   --------------------------------------------------------------------- */
+/* 16px body text (20px content box): +2px */
+.nf-statement p > a, .nfp-copy p > a, p.nfp-copy > a, .nfp-faq li > p > a { padding-block: 2px; }
+/* 15px /music notes (19px): +2.5px */
+p.nfp-note > a { padding-block: 2.5px; }
+/* 14.4px hero subtitle (17px): +3.5px */
+.page-hero p.section-subtitle > a { padding-block: 3.5px; }
+/* 13.6px FAQ answers on / (16px): +4px */
+p.faq-a > a { padding-block: 4px; }
+/* 12.8px /news tips note (15px): +4.5px */
+.container > p[style*="font-size:.8rem"] > a, .container > p[style*="font-size:0.8rem"] > a { padding-block: 4.5px; }
+/* Blog/news post body copy, 15.2px (19px): +2.5px */
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > p > a:not([class]),
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > ul > li > a:not([class]),
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > ol > li > a:not([class]) { padding-block: 2.5px; }
+/* Editorial/corrections note on posts, 12px (15px): +4.5px */
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > p[style*="font-size:.75rem"] > a,
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > p[style*="font-size:0.75rem"] > a { padding-block: 4.5px; }
+
+/* Where these small-text paragraphs have a line pitch under 24px (FAQ answers 21.76px, /news note 20.48px,
+   post editorial note 21.6px), 24px boxes on adjacent lines would overlap by 2-3.5px at 375px. Raise the
+   line pitch to 24px, only in paragraphs that actually contain a link, so the boxes touch but don't overlap. */
+p.faq-a:has(> a), .container > p[style*="font-size:.8rem"]:has(> a), .container > p[style*="font-size:0.8rem"]:has(> a),
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > p[style*="font-size:.75rem"]:has(> a),
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) .article-wrap > p[style*="font-size:0.75rem"]:has(> a) { line-height: 24px; }
+
+/* "Back to Blog / News" on post templates: standalone link -> 44px box. Padding with a matching
+   negative margin, as in #8, so the text and the 32px gap below don't move. */
+html:not(:has(link[rel="canonical"][href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"], link[rel="canonical"][href$="/blog/young-hadene-4-minutes-of-hell-freestyle"], link[rel="canonical"][href$="/blog/young-hadene-in-the-cut"], link[rel="canonical"][href$="/blog/young-hadene-nightmares-in-the-nighttime"], link[rel="canonical"][href$="/blog/young-hadene-rise-again-from-the-bottom"])) body:not(.album-page) .section > .container > a.back-link {
+  padding-block: calc((44px - 1.6em) / 2);
+  margin-top: calc((1.6em - 44px) / 2);
+  margin-bottom: calc(32px - (44px - 1.6em) / 2);
+}
