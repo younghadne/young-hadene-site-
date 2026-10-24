@@ -105,8 +105,14 @@ if (L) {
     if (!ms) { fail(`news.html card ${c.href}: no data-published and no readable visible date`); continue; }
     const pub = articlePub(slug);
     if (!pub) continue;
-    if (c.published && c.published !== pub) fail(`news.html card ${slug}: data-published "${c.published}" != article datePublished "${pub}"`);
+    // Same instant, any notation (date-only = Toronto midnight, Z, offsets).
     const pms = L.newsDateMs(pub);
+    if (!pms) { fail(`news/${slug}.html: datePublished "${pub}" is not a readable date`); continue; }
+    if (c.published) {
+      const cms = L.newsDateMs(c.published);
+      if (!cms) fail(`news.html card ${slug}: data-published "${c.published}" is not a readable date`);
+      else if (cms !== pms) fail(`news.html card ${slug}: data-published "${c.published}" (${iso(cms)}) != article datePublished "${pub}" (${iso(pms)})`);
+    }
     if (torontoDay(ms) !== torontoDay(pms)) fail(`news.html card ${slug}: listed on ${torontoDay(ms)}, article is dated ${torontoDay(pms)} in Toronto`);
   }
 }
@@ -114,12 +120,12 @@ if (L) {
 // Fixture repo cards, shaped like the cards #20 and #27 add above the
 // existing ones (no data-published; #20's articles use date-only dates).
 const pr20 = [
-  { href: '/news/k-os-blackneck-album-oct-30', published: '', dateText: 'October 23, 2026 · By Young Hadene Team' },
-  { href: '/news/saukrates-fades-away-2026-remix-toronto-hip-hop-lineage', published: '', dateText: 'October 23, 2026 · By Young Hadene Team' },
+  { fixture: true, href: '/news/k-os-blackneck-album-oct-30', published: '', dateText: 'October 23, 2026 · By Young Hadene Team' },
+  { fixture: true, href: '/news/saukrates-fades-away-2026-remix-toronto-hip-hop-lineage', published: '', dateText: 'October 23, 2026 · By Young Hadene Team' },
 ];
 const pr27 = [
-  { href: '/news/kardinal-offishall-firestarter-vol-2-independent-release-toronto', published: '', dateText: 'October 24, 2026 · By Young Hadene Team' },
-  { href: '/news/waahli-soap-club-vol-1-independent-rap-business', published: '', dateText: 'October 24, 2026 · By Young Hadene Team' },
+  { fixture: true, href: '/news/kardinal-offishall-firestarter-vol-2-independent-release-toronto', published: '', dateText: 'October 24, 2026 · By Young Hadene Team' },
+  { fixture: true, href: '/news/waahli-soap-club-vol-1-independent-rap-business', published: '', dateText: 'October 24, 2026 · By Young Hadene Team' },
 ];
 
 // Mocked KV (read-only, in memory): ~106 published posts Oct 9-10 like
@@ -156,7 +162,9 @@ if (listFn) {
   if (!api || !Array.isArray(api.posts)) fail('functions/api/news-list.js (mock KV) returned no posts');
 }
 
-// Expected instants for the interesting slugs.
+// Expected instants for the interesting slugs. The #20/#27 entries are
+// for the FIXTURE cards above (visible date only -> Toronto midnight); a
+// real news.html card is always held to its own article's datePublished.
 const EXPECT = {
   'kardinal-offishall-firestarter-vol-2-independent-release-toronto': '2026-10-24T00:00:00-04:00',
   'waahli-soap-club-vol-1-independent-rap-business': '2026-10-24T00:00:00-04:00',
@@ -181,10 +189,20 @@ function checkOrder(label, statics, opts = {}) {
     if (merged[i].ms > merged[i - 1].ms) { fail(`${label}: not newest-first at #${i + 1} (${merged[i].slug} ${iso(merged[i].ms)} after ${merged[i - 1].slug} ${iso(merged[i - 1].ms)})`); break; }
   }
   for (const s of ['kv-tombstoned', 'young-hadene-launches-official-newsroom', 'kv-draft', 'kv-future']) if (pos(s)) fail(`${label}: ${s} (removed/hidden) is listed at #${pos(s)}`);
-  for (const [s, want] of Object.entries(EXPECT)) {
+  for (const s of new Set([...Object.keys(EXPECT), ...items.map((i) => i.slug)])) {
     const it = merged.find((i) => i.slug === s);
-    if (!it) { if (statics.some((c) => c.href.endsWith('/' + s)) || api.posts.some((p) => p.slug === s)) fail(`${label}: ${s} missing`); continue; }
-    if (it.ms !== Date.parse(want) && !(opts.exact && opts.exact[s] && it.ms === Date.parse(opts.exact[s]))) fail(`${label}: ${s} dated ${iso(it.ms)}, want ${want}`);
+    if (!it) { if (!(api.removed || []).includes(s) && (items.some((i) => i.slug === s) || api.posts.some((p) => p.slug === s))) fail(`${label}: ${s} missing`); continue; }
+    let want = null, why = 'fixture';
+    if (it.kv) want = EXPECT[s] || null;
+    else if (it.ref.card.fixture) want = (opts.exact && opts.exact[s]) || EXPECT[s] || null;
+    else {
+      // Real repo card: the instant of its article's datePublished.
+      const pub = articlePub(s);
+      if (pub) { want = pub; why = `news/${s}.html datePublished`; } else want = EXPECT[s] || null;
+    }
+    if (want == null) continue;
+    const wantMs = L.newsDateMs(want);
+    if (!wantMs || it.ms !== wantMs) fail(`${label}: ${s} dated ${iso(it.ms)}, want ${want} (${why})`);
   }
   const dup = merged.find((i) => i.slug === 'they-took-me-down-album-spotlight');
   if (dup && !dup.kv) fail(`${label}: slug in both KV and repo should use the KV entry (as news-rss.xml does)`);
