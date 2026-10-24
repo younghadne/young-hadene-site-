@@ -130,6 +130,12 @@
 .article-wrap hr { border: 0; border-top: 1px solid var(--border-color); margin: 40px 0; }
 .article-wrap .breadcrumb { margin-bottom: 24px; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .article-wrap .breadcrumb a { color: var(--text-muted); }
+/* Tap targets (UX on #18), same technique as PR #8: padding offset by matching negative margins, so nothing visible moves (layout and CLS unchanged).
+   Back link 20.47px text + 2 x 12px = 44.47px (bottom margin 20px + 12px padding = the original 32px gap). Breadcrumb links 15px + 2 x 15px = 45px (44.5px while a fallback font is showing).
+   Byline link 14px + 2 x 6px = 26px (>= 24px; the meta line has no other links). */
+.back-link { padding-block: 12px; margin-block: -12px 20px; }
+.article-wrap .breadcrumb a { padding-block: 15px; margin-block: -15px; }
+.article-wrap .meta a[rel="author"] { padding-block: 6px; margin-block: -6px; }
 </style>
 </head>
 <body>
