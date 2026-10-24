@@ -1,4 +1,6 @@
 import { NEWS_NOINDEX } from './_news-noindex.js';
+import { readRemovedNews, renderableNewsDoc } from './_news-visibility.js';
+import { torontoISOFromMs, kvPostMs } from './_news-dates.js';
 // GET /news-sitemap.xml — dynamic Google News sitemap from KV (fresh items
 // from the last 2 days), unioned with the static file so nothing is lost.
 // New items appear instantly, no rebuild.
@@ -15,7 +17,7 @@ function titleOf(p) {
 
 function itemXml(p) {
   const loc = `${SITE_URL}/news/${p.slug}`;
-  const pub = new Date(Number(p.dateNum) || Date.now()).toISOString();
+  const pub = torontoISOFromMs(kvPostMs(p));
   return '  <url>\n    <loc>' + esc(loc) + '</loc>\n    <news:news>\n      <news:publication>\n        <news:name>Young Hadene</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>' + pub + '</news:publication_date>\n      <news:title>' + esc(titleOf(p)) + '</news:title>\n    </news:news>\n  </url>\n';
 }
 
@@ -33,12 +35,15 @@ export async function onRequestGet(context) {
         const parsed = t ? JSON.parse(t) : [];
         if (Array.isArray(parsed)) arr = parsed;
       } catch { arr = []; }
+      const removed = await readRemovedNews(store);
       for (const p of arr) {
         if (!p || !p.slug || NEWS_NOINDEX.has(p.slug)) continue;
         const vis = p.status === 'published' || !p.status ||
           (p.status === 'scheduled' && p.scheduledFor && Number(p.scheduledFor) <= now);
         if (!vis) continue;
-        if (now - Number(p.dateNum || 0) > TWO_DAYS_MS) continue;
+        if (now - kvPostMs(p, 0) > TWO_DAYS_MS) continue;
+        // Only list posts /news/<slug> would render (doc exists, visible, not removed).
+        if (removed.has(p.slug) || !(await renderableNewsDoc(store, p.slug, now))) continue;
         const loc = `${SITE_URL}/news/${p.slug}`;
         if (seen.has(loc)) continue;
         seen.add(loc);
