@@ -8,6 +8,7 @@
 //
 // Allows both /news/<slug> and /news/<slug>.html
 import { NEWS_NOINDEX } from '../_news-noindex.js';
+import { isVisible } from '../_news-visibility.js';
 import { torontoISOFromMs, kvPostMs } from '../_news-dates.js';
 
 const SITE_URL = 'https://younghadene.ca';
@@ -76,13 +77,6 @@ function renderArticleBody(d) {
     faqs.forEach((f) => { const idx = f.indexOf('|'); const q = (idx >= 0 ? f.substring(0, idx) : f).trim(); const a = (idx >= 0 ? f.substring(idx + 1) : '').trim(); out += '<h3>' + escHtml(q) + '</h3><p>' + fmtInline(a) + '</p>'; });
   }
   return out;
-}
-
-function isVisible(doc, now) {
-  if (!doc) return false;
-  if (doc.status === 'published') return true;
-  if (doc.status === 'scheduled' && doc.scheduledFor && Number(doc.scheduledFor) <= now) return true;
-  return false;
 }
 
 function relatedOf(doc, index) {
@@ -271,4 +265,12 @@ export async function onRequestGet(context) {
       return new Response('Not found', { status: 404 });
     }
   }
+}
+
+// HEAD must answer like GET. Without this, Pages skips the Function for HEAD
+// and serves the static asset, so every KV-only post 404s to HEAD requests
+// (link checkers, some crawlers) while GET returns 200.
+export async function onRequestHead(context) {
+  const res = await onRequestGet(context);
+  return new Response(null, { status: res.status, headers: res.headers });
 }
