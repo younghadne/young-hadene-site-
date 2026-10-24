@@ -159,6 +159,10 @@
 .back-link { padding-block: 12px; margin-block: -12px 20px; }
 .article-wrap .breadcrumb a { padding-block: 15px; margin-block: -15px; }
 .article-wrap .meta a[rel="author"] { padding-block: 6px; margin-block: -6px; }
+/* Inline "official upload on YouTube" link (in the "Where to go next" list item, mid-sentence): 19px text + 2 x 3px = 25px (>= 24px).
+   Padding only, NO negative margin: vertical padding on a non-replaced inline box does not change the line box, so no line moves.
+   The 3px stays inside the 4.18px half-leading on each side (27.36px line, 19px text), so it cannot reach a link on an adjacent line or row. */
+.article-wrap li > a[href="https://www.youtube.com/watch?v=GTo22YurPzY"] { padding-block: 3px; }
 </style>
 </head>
 <body>

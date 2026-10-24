@@ -7,6 +7,9 @@
 //  - a standalone "… on YouTube" video link (only child of its li) < 44px (19px text box), padding without matching
 //    negative margin, or two of them on consecutive rows (35.36px apart) whose tap areas overlap, or one reaching into
 //    the next row's link (text box 4.18px below the row top) / above the 20px gap under the preceding block
+//  - the 4-minutes-of-hell inline "official upload on YouTube" link (mid-sentence in a list item) < 24px (19px text box,
+//    18.39px while a fallback font shows), has any margin (it must be padding only, so no line box moves), or pads more
+//    than the 4.18px half-leading per side (27.36px line, 19px text), which could reach a link on an adjacent line
 //  - the 4-minutes-of-hell 'Inter Optional' (font-display: optional) fix is missing
 import fs from 'node:fs';
 
@@ -67,8 +70,20 @@ for (const slug of POSTS) {
   }
   if (slug === 'young-hadene-in-the-cut' && !/a\[href="https:\/\/www\.youtube\.com\/watch\?v=CHgnY3hmxng"\]:only-child/.test(css)) bad.push(`${f}: "Watch In the Cut on YouTube" tap rule missing`);
   if (slug === 'young-hadene-rise-again-from-the-bottom' && !(/BoQNixsRSUU"\]:only-child/.test(css) && /YMaBpODIwKM"\]:only-child/.test(css))) bad.push(`${f}: Rise Again / From the Bottom tap rules missing`);
+  if (slug === 'young-hadene-4-minutes-of-hell-freestyle') {
+    const href = 'https://www.youtube.com/watch?v=GTo22YurPzY', label = '"official upload on YouTube" (inline)';
+    if (!s.includes(`<li>Watch the <a href="${href}" target="_blank" rel="noopener">official upload on YouTube</a>.</li>`)) bad.push(`${f}: ${label} link markup changed`);
+    const r = rule(css, `.article-wrap li > a[href="${href}"]`);
+    if (!r || !r.pad) bad.push(`${f}: no tap-target padding rule for ${label}`);
+    else {
+      const tap = 18.39 + r.pad[0] + r.pad[1];
+      if (!(tap + 1e-6 >= 24)) bad.push(`${f}: ${label} tap target ${tap.toFixed(2)}px with a fallback font (< 24px)`);
+      if (r.pad.some((p) => p > INSET + 1e-6)) bad.push(`${f}: ${label} padding ${r.pad.join('/')}px exceeds the ${INSET}px half-leading (could overlap a link on an adjacent line)`);
+      if (r.mar && r.mar.some((m) => m !== 0)) bad.push(`${f}: ${label} must use padding only (no margin), got margin ${r.mar.join('/')}px`);
+    }
+  }
   if (slug === 'young-hadene-4-minutes-of-hell-freestyle' && !(/font-family: 'Inter Optional';[^}]*font-display: optional/.test(css) && /--font-body: 'Inter Optional'/.test(css)))
     bad.push(`${f}: 'Inter Optional' font-display: optional fix missing`);
 }
 if (bad.length) { console.error('BLOG-TAPS FAIL:\n  ' + bad.join('\n  ')); process.exit(1); }
-console.log(`BLOG-TAPS OK: ${POSTS.length} posts (back link 44px, breadcrumbs 44px, byline 24px, standalone YouTube links 44px without overlap; padding cancelled by negative margins).`);
+console.log(`BLOG-TAPS OK: ${POSTS.length} posts (back link 44px, breadcrumbs 44px, byline 24px, standalone YouTube links 44px without overlap, inline "official upload" link 24px padding-only; padding cancelled by negative margins elsewhere).`);
