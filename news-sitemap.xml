@@ -2,6 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://younghadene.ca/news/kardinal-offishall-firestarter-vol-2-independent-release-toronto</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Young Hadene</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-24T12:00:00-04:00</news:publication_date>
+      <news:title>Kardinal Offishall Goes Independent With Firestarter Vol. 2</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://younghadene.ca/news/waahli-soap-club-vol-1-independent-rap-business</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Young Hadene</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-24T12:00:00-04:00</news:publication_date>
+      <news:title>Waahli's Soap Club Vol. 1 and the Rapper-Founder Model</news:title>
+    </news:news>
+  </url>
+  <url>
     <loc>https://younghadene.ca/news/young-hadene-launches-official-newsroom</loc>
     <news:news>
       <news:publication>
