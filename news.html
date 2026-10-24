@@ -101,7 +101,7 @@
   <section class="section">
     <div class="container">
       <div class="news-grid">
-        <a class="news-card" href="/news/exposed-vocals-feature-they-took-me-down">
+        <a class="news-card" href="/news/exposed-vocals-feature-they-took-me-down" data-published="2026-10-10T09:00:00-04:00">
           <img src="images/poster1.webp" alt="Young Hadene 'They Took Me Down' album press feature" loading="lazy">
           <div class="news-card-body">
             <span class="cat">Press</span>
@@ -110,7 +110,7 @@
             <span class="date">October 10, 2026 · By Young Hadene</span>
           </div>
         </a>
-        <a class="news-card" href="/news/they-took-me-down-album-spotlight">
+        <a class="news-card" href="/news/they-took-me-down-album-spotlight" data-published="2026-10-10T10:00:00-04:00">
           <img src="images/poster3.webp" alt="Young Hadene dark trap album spotlight visual" loading="lazy">
           <div class="news-card-body">
             <span class="cat">Music</span>
@@ -119,7 +119,7 @@
             <span class="date">October 10, 2026 · By Young Hadene</span>
           </div>
         </a>
-        <a class="news-card" href="/news/young-hadene-launches-official-newsroom">
+        <a class="news-card" href="/news/young-hadene-launches-official-newsroom" data-published="2026-10-10T11:00:00-04:00">
           <img src="images/poster5.webp" alt="Young Hadene official newsroom launch" loading="lazy">
           <div class="news-card-body">
             <span class="cat">Announcement</span>
@@ -187,62 +187,16 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/news-listing.js"></script>
   <script>
-  // Renders newly published news posts (baked var NEWS_POSTS, refreshed on
-  // publish + at serve time) above the static cards. Static cards stay as fallback.
-  // After first paint, pulls the live index (/api/news-list) so news published
-  // seconds ago appears without a redeploy, and strips cards of deleted posts.
+  // One listing: repo cards (data-published) and KV posts (baked NEWS_POSTS,
+  // then the live /api/news-list index) merged by slug and sorted newest
+  // first; tombstoned posts are stripped. Logic + tests: js/news-listing.js,
+  // scripts/check-news-listing.mjs. Static cards stay as the no-JS fallback.
   (function () {
-    function renderNews(items) {
-      try {
-        if (!items.length) return;
-        var grid = document.querySelector('.news-grid');
-        if (!grid) return;
-        var existing = {};
-        grid.querySelectorAll('a.news-card').forEach(function (a) {
-          var h = a.getAttribute('href') || '';
-          var m = h.match(/\/news\/(.+)\.html/);
-          if (m) existing[m[1]] = true;
-        });
-        var fresh = items.filter(function (p) { return p && p.slug && !existing[p.slug]; });
-        if (!fresh.length) return;
-        fresh.sort(function (a, b) {
-          if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
-          return (b.dateNum || 0) - (a.dateNum || 0);
-        });
-        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-        var html = fresh.map(function (p) {
-          var blurb = p.excerpt || String(p.content || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 140);
-          return '<a class="news-card" href="/news/' + esc(p.slug) + '">'
-            + '<div class="news-card-body"><span class="cat">' + esc(p.category || 'News') + '</span>'
-            + '<h2>' + esc(p.title) + '</h2><p>' + esc(blurb) + '</p>'
-            + '<span class="date">' + esc(p.date || '') + ' · By Young Hadene</span></div></a>';
-        }).join('');
-        grid.insertAdjacentHTML('afterbegin', html);
-      } catch (e) { console.error('news render failed:', e); }
-    }
-    function stripRemoved(slugs) {
-      try {
-        if (!slugs || !slugs.length) return;
-        var grid = document.querySelector('.news-grid');
-        if (!grid) return;
-        grid.querySelectorAll('a.news-card').forEach(function (a) {
-          var h = a.getAttribute('href') || '';
-          var m = h.match(/\/news\/(.+)\.html/);
-          if (m && slugs.indexOf(m[1]) !== -1) a.remove();
-        });
-      } catch (e) { console.error('news strip failed:', e); }
-    }
     try {
       var baked = (typeof NEWS_POSTS !== 'undefined' && Array.isArray(NEWS_POSTS)) ? NEWS_POSTS : [];
-      renderNews(baked);
-      fetch('/api/news-list', { cache: 'no-store' }).then(function (r) {
-        return r.ok ? r.json() : null;
-      }).then(function (d) {
-        if (!d) return;
-        if (Array.isArray(d.removed) && d.removed.length) stripRemoved(d.removed);
-        if (Array.isArray(d.posts) && d.posts.length) renderNews(d.posts);
-      }).catch(function () { /* baked listing stays */ });
+      YHNewsListing.init(document, baked, window.fetch ? window.fetch.bind(window) : null);
     } catch (e) { console.error('news render failed:', e); }
   })();
   </script>
