@@ -2333,3 +2333,40 @@ html:not(:has(link[rel="canonical"]:is([href$="/blog/haitian-rappers-in-toronto-
   margin-top: calc((1.6em - 44px) / 2);
   margin-bottom: calc(32px - (44px - 1.6em) / 2);
 }
+
+/* ---------------------------------------------------------------------
+   Inline link style (UI visual-spec-inline-links): links inside sentences look like links.
+   Same links as the tap-area rules above (#30), including the #18 exclusion. Colour and underline
+   only: no weight/size change, so nothing reflows. Visited = unvisited (no :visited rule).
+   --------------------------------------------------------------------- */
+:is(.nf-statement p > a, .nfp-copy p > a, p.nfp-copy > a, .nfp-faq li > p > a, p.nfp-note > a,
+    .page-hero p.section-subtitle > a, p.faq-a > a, .container > p:is([style*="font-size:.8rem"], [style*="font-size:0.8rem"]) > a),
+html:not(:has(link[rel="canonical"]:is([href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"],[href$="/blog/young-hadene-4-minutes-of-hell-freestyle"],[href$="/blog/young-hadene-in-the-cut"],[href$="/blog/young-hadene-nightmares-in-the-nighttime"],[href$="/blog/young-hadene-rise-again-from-the-bottom"])))
+  :is(.article-wrap > p > a:not([class]), .article-wrap > :is(ul, ol) > li > a:not([class]),
+    .article-wrap > p:is([style*="font-size:.75rem"], [style*="font-size:0.75rem"]) > a) {
+  color: #79C043;
+  text-decoration-line: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+  text-underline-offset: var(--yh-inline-ul-offset, 3px);
+  text-decoration-skip-ink: auto;
+  border-bottom: 0;
+  background: none;
+}
+/* 12-14.4px text (hero subtitle, FAQ answers, /news tips note, post editorial note): underline sits closer. */
+.page-hero p.section-subtitle > a, p.faq-a > a, .container > p:is([style*="font-size:.8rem"], [style*="font-size:0.8rem"]) > a,
+.article-wrap > p:is([style*="font-size:.75rem"], [style*="font-size:0.75rem"]) > a { --yh-inline-ul-offset: 2px; }
+:is(.nf-statement p > a, .nfp-copy p > a, p.nfp-copy > a, .nfp-faq li > p > a, p.nfp-note > a,
+    .page-hero p.section-subtitle > a, p.faq-a > a, .container > p:is([style*="font-size:.8rem"], [style*="font-size:0.8rem"]) > a):hover,
+html:not(:has(link[rel="canonical"]:is([href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"],[href$="/blog/young-hadene-4-minutes-of-hell-freestyle"],[href$="/blog/young-hadene-in-the-cut"],[href$="/blog/young-hadene-nightmares-in-the-nighttime"],[href$="/blog/young-hadene-rise-again-from-the-bottom"])))
+  :is(.article-wrap > p > a:not([class]), .article-wrap > :is(ul, ol) > li > a:not([class]),
+    .article-wrap > p:is([style*="font-size:.75rem"], [style*="font-size:0.75rem"]) > a):hover { color: #ECE8E1 !important; }
+:is(.nf-statement p > a, .nfp-copy p > a, p.nfp-copy > a, .nfp-faq li > p > a, p.nfp-note > a,
+    .page-hero p.section-subtitle > a, p.faq-a > a, .container > p:is([style*="font-size:.8rem"], [style*="font-size:0.8rem"]) > a):focus-visible,
+html:not(:has(link[rel="canonical"]:is([href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"],[href$="/blog/young-hadene-4-minutes-of-hell-freestyle"],[href$="/blog/young-hadene-in-the-cut"],[href$="/blog/young-hadene-nightmares-in-the-nighttime"],[href$="/blog/young-hadene-rise-again-from-the-bottom"])))
+  :is(.article-wrap > p > a:not([class]), .article-wrap > :is(ul, ol) > li > a:not([class]),
+    .article-wrap > p:is([style*="font-size:.75rem"], [style*="font-size:0.75rem"]) > a):focus-visible {
+  outline: 2px solid #79C043;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
