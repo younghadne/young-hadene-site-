@@ -2370,3 +2370,7 @@ html:not(:has(link[rel="canonical"]:is([href$="/blog/haitian-rappers-in-toronto-
   outline-offset: 2px;
   border-radius: 2px;
 }
+/* Post editorial note links keep their muted grey (inline style), but match the site's 1px underline.
+   The template's inline text-decoration shorthand resets thickness to auto, so this needs !important. */
+html:not(:has(link[rel="canonical"]:is([href$="/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation"],[href$="/blog/young-hadene-4-minutes-of-hell-freestyle"],[href$="/blog/young-hadene-in-the-cut"],[href$="/blog/young-hadene-nightmares-in-the-nighttime"],[href$="/blog/young-hadene-rise-again-from-the-bottom"])))
+  .article-wrap > p:is([style*="font-size:.75rem"], [style*="font-size:0.75rem"]) > a { text-decoration-thickness: 1px !important; }
