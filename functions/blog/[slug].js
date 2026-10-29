@@ -237,6 +237,12 @@ export async function onRequestGet(context) {
       }
       if (doc && doc.slug) {
         if (!isVisible(doc, Date.now())) return notFound(env);
+        // One canonical URL per KV article: /blog/<slug>.html and any case
+        // variant 308 to /blog/<doc.slug> instead of serving a duplicate 200.
+        // (The global middleware only acts on 404s, so it never sees these.)
+        if (String(params.slug) !== doc.slug) {
+          return new Response(null, { status: 308, headers: { Location: '/blog/' + doc.slug + new URL(request.url).search } });
+        }
         const job = countView(store, slug);
         if (context.waitUntil) context.waitUntil(job);
         else await job;
