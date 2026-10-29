@@ -92,6 +92,12 @@
     /* Footer nav + Music links: site css (style.css "Tap targets: footer links") pads these inline links 14px each way to 44px, but the rows are only 35.59px apart (25.59px line + 10px li gap), so neighbours overlapped by 8.41px. Here each link is a 44px inline-block (20px line + 2 x 12px) and the li gap is 0, so rows sit exactly 44px apart: tap areas touch, never overlap. */
     .footer ul li { margin-bottom: 0; }
     .footer ul li a { display: inline-block; vertical-align: top; line-height: 20px; padding-block: 12px; margin-block: 0; }
+    /* From PR #9: table of contents: 24.48px line + 2 x 6px = 36.48px -> 2 x 10px = 44.48px, offset by -4px each side; flow-root on the li stops the negative margins collapsing into the 8px li gap, so the rows stay put and neighbouring targets touch (4px + 4px = 8px) without overlapping. */
+    .article-wrap .toc li { display: flow-root; }
+    .article-wrap .toc a { padding-block: 10px; margin-block: -4px; }
+    /* From PR #9: inline links in body copy >= 24px tall. Inline vertical padding does not change line boxes, so no offset is needed: 0.95rem text (19px box) + 2 x 3px = 25px under a 27.36px line pitch; 0.85rem card text (16px box) + 2 x 4px = 24px under a 24.48px pitch. Footnote refs (sup a) are not direct children of p and keep their own rule. */
+    .article-wrap p > a:not(.btn) { padding-block: 3px; }
+    .article-wrap .artist-card .info p > a:not(.btn) { padding-block: 4px; }
   </style>
 {{BREADCRUMB}}
 </head>

@@ -136,7 +136,7 @@ const schema = [
 const breadcrumb = '  <script type="application/ld+json">' + JSON.stringify({
   '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://younghadene.ca/' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://younghadene.ca/blog.html' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://younghadene.ca/blog' },
     { '@type': 'ListItem', position: 3, name: TITLE, item: CANONICAL },
   ] }) + '</script>';
 
