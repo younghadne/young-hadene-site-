@@ -101,6 +101,18 @@
     .artist-card.featured { border-color: var(--accent-border); background: var(--accent-tint); }
     .artist-card.featured .num { color: #fff; }
     @media (max-width: 600px) { .artist-card { flex-direction: column; gap: 12px; } .article-wrap { padding: 24px 0; } }
+    /* Tap targets on this page (same technique as PR #8 / PR #17): padding offset by matching negative margins, so nothing visible moves. */
+    /* From PR #17 (d32a944): back link >= 44px tall (12px + 20.5px text + 12px; bottom margin 20px + 12px padding = the original 32px gap). */
+    .back-link { padding-block: 12px; margin-block: -12px 20px; }
+    /* From PR #17 (e403c67), scoped to this page: style.css pads footer links 14px each way to 44px but the rows are 35.59px apart (25.59px line + 10px li gap), so neighbours overlapped by 8.41px. Each link is a 44px inline-block (20px line + 2 x 12px) and the li gap is 0: tap areas touch, never overlap. */
+    .footer ul li { margin-bottom: 0; }
+    .footer ul li a { display: inline-block; vertical-align: top; line-height: 20px; padding-block: 12px; margin-block: 0; }
+    /* Table of contents: 24.48px line + 2 x 6px = 36.48px -> 2 x 10px = 44.48px, offset by -4px each side; flow-root on the li stops the negative margins collapsing into the 8px li gap, so the rows stay put and neighbouring targets touch (4px + 4px = 8px) without overlapping. */
+    .article-wrap .toc li { display: flow-root; }
+    .article-wrap .toc a { padding-block: 10px; margin-block: -4px; }
+    /* Inline links in body copy >= 24px tall. Inline vertical padding does not change line boxes, so no offset is needed: 0.95rem text (19px box) + 2 x 3px = 25px under a 27.36px line pitch; 0.85rem card text (16px box) + 2 x 4px = 24px under a 24.48px pitch. */
+    .article-wrap p > a:not(.btn) { padding-block: 3px; }
+    .article-wrap .artist-card .info p > a:not(.btn) { padding-block: 4px; }
   </style>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://younghadene.ca/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://younghadene.ca/blog"},{"@type":"ListItem","position":3,"name":"Best Toronto Rappers 2026 — The Top Toronto Hip Hop Artists Ranked","item":"https://younghadene.ca/blog/top-toronto-rappers"}]}</script>
 </head>
