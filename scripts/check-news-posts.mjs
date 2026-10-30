@@ -5,9 +5,14 @@
 // datePublished, source URL), a slug in BLOG_REDIRECTS / NEWS_NOINDEX /
 // _redirects, an internal link to a redirected URL, literal markdown markers
 // (* or _x_) in FAQ text or FAQPage JSON-LD, or a post missing from
-// the news.html listing, news-sitemap.xml or news-rss.xml.
+// the news.html listing, news-sitemap.xml or news-rss.xml, or a listing card /
+// news-sitemap / RSS entry that differs from what the build writes for it.
+// Dates: datePublished and optional dateModified are YYYY-MM-DD or a full ISO
+// timestamp with an offset (normalised to Toronto time); dateModified must not
+// be before datePublished, and must reach the NewsArticle schema, the
+// article:modified_time meta and the news-sitemap <lastmod>.
 import fs from 'node:fs';
-import { listSources, parse, buildPage, SITE } from './news-posts-lib.mjs';
+import { listSources, parse, buildPage, card, sitemapItem, rssItem, modified, normNewsDate, SITE } from './news-posts-lib.mjs';
 
 const load = (f, name) => new Function(fs.readFileSync('functions/' + f, 'utf8').replace(/export const /g, 'const ') + `; return ${name};`)();
 const BLOG_REDIRECTS = load('_blog-redirects.js', 'BLOG_REDIRECTS');
@@ -27,6 +32,14 @@ const pageExists = (u) => {
 };
 
 const bad = [];
+// Date normalisation self-test (Toronto time, EDT and EST).
+for (const [inp, want] of [
+  ['2026-10-23', '2026-10-23'], ['2026-10-30T12:00:00-04:00', '2026-10-30T12:00:00-04:00'],
+  ['2026-10-30T16:00:00Z', '2026-10-30T12:00:00-04:00'], ['2026-10-30T12:00-0400', '2026-10-30T12:00:00-04:00'],
+  ['2026-12-01T17:30:00.000Z', '2026-12-01T12:30:00-05:00'], ['2026-10-30T12:00:00', null], ['Oct 30, 2026', null], ['2026-13-01', null],
+]) if (normNewsDate(inp) !== want) bad.push(`normNewsDate(${inp}) gave ${normNewsDate(inp)}, expected ${want}`);
+const block = (doc, re) => (doc.match(re) || [])[0] || '';
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const files = listSources();
 const listing = fs.readFileSync('news.html', 'utf8');
 const sm = fs.readFileSync('news-sitemap.xml', 'utf8');
@@ -42,7 +55,8 @@ for (const file of files) {
   if (!fm.meta_description) err('missing meta_description');
   if (!fm.author || !fm.author.name) err('missing author name');
   if (!fm.author || fm.author['@type'] !== 'Organization') err('author @type must be Organization');
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fm.datePublished || '')) err('missing or malformed datePublished (YYYY-MM-DD)');
+  if (!fm.datePublished) err('missing datePublished (YYYY-MM-DD or full ISO with offset)');
+  if (fm.dateModified && !(p.modMs >= p.pubMs)) err(`dateModified ${fm.dateModified} is before datePublished ${fm.datePublished}`);
   if (!sources.length || sources.some((s) => !/^https:\/\/\S+$/.test(s.url))) err('missing source link in front matter `sources`');
   if (sources.some((s) => s.url && !p.body.includes(`](${s.url})`))) err('source URL is not linked in the post body');
   if (BLOG_REDIRECTS[slug]) err('slug is in BLOG_REDIRECTS');
@@ -63,6 +77,7 @@ for (const file of files) {
   else {
     if (!j.author || j.author['@type'] !== 'Organization' || !j.author.name) err('schema author is not a named Organization');
     if (j.datePublished !== fm.datePublished) err('schema datePublished does not match front matter');
+    if (j.dateModified !== modified(p)) err(`schema dateModified ${j.dateModified} should be ${modified(p)} (front-matter dateModified, else datePublished)`);
     if (!sources.every((s) => (j.isBasedOn || []).includes(s.url))) err('schema isBasedOn is missing the source URL');
   }
   for (const s of sources) if (!html.includes(`href="${s.url}"`)) err(`page does not link the source ${s.url}`);
@@ -81,6 +96,16 @@ for (const file of files) {
     Object.values(o).forEach(walkFaq);
   };
   for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) walkFaq(JSON.parse(m[1]));
+  const mod = (html.match(/<meta property="article:modified_time" content="([^"]*)">/) || [])[1];
+  if ((mod || null) !== (fm.dateModified || null)) err(`article:modified_time is ${mod || 'missing'}, front-matter dateModified is ${fm.dateModified || 'unset'}`);
+  const u = reEsc(`/news/${slug}`);
+  const cardBlk = block(listing, new RegExp(`        <a class="news-card" href="${u}"[^>]*>\\n[\\s\\S]*?</a>\\n`));
+  const smBlk = block(sm, new RegExp(`  <url>\\n    <loc>${reEsc(SITE)}${u}</loc>\\n[\\s\\S]*?</url>\\n`));
+  const rssBlk = block(rss, new RegExp(`  <item>\\n    <title>[^<]*</title>\\n    <link>${reEsc(SITE)}${u}</link>\\n[\\s\\S]*?</item>\\n`));
+  if (cardBlk && cardBlk !== card(p)) err('news.html card is stale (title, description, date or data-published; run node scripts/build-news-posts.mjs)');
+  if (smBlk && smBlk !== sitemapItem(p)) err('news-sitemap.xml entry is stale (title, publication_date or lastmod; run node scripts/build-news-posts.mjs)');
+  if (rssBlk && rssBlk !== rssItem(p)) err('news-rss.xml item is stale (title, description or pubDate; run node scripts/build-news-posts.mjs)');
+  if (smBlk && /<lastmod>/.test(smBlk) !== !!fm.dateModified) err('news-sitemap.xml <lastmod> must be present exactly when dateModified is set');
   if (!listing.includes(`href="/news/${slug}"`)) err('missing from news.html listing');
   if (!sm.includes(`<loc>${SITE}/news/${slug}</loc>`)) err('missing from news-sitemap.xml');
   if (!rss.includes(`<link>${SITE}/news/${slug}</link>`)) err('missing from news-rss.xml');

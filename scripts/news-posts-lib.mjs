@@ -4,6 +4,28 @@
 // its static fallback (no KV doc exists for these slugs). URL: /news/<slug>.
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// Toronto date helpers: functions/_news-dates.js, the same file the news
+// Functions use (byte-identical to the copy in PR #22). package.json is
+// "type": "commonjs", so the ES module is loaded the way the other
+// functions/_*.js files are loaded by the scripts.
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+export const DATES = new Function(fs.readFileSync(path.join(ROOT, 'functions/_news-dates.js'), 'utf8').replace(/^export /gm, '') +
+  '; return { DATE_ONLY, newsDateMs, torontoISOFromMs, rssDate };')();
+
+// Front-matter dates are Toronto dates. Accepted: date-only "YYYY-MM-DD"
+// (midnight Toronto; kept date-only, as the existing posts, RSS and news
+// sitemap write it) or a full ISO timestamp with an explicit offset, which is
+// normalised to Toronto time, e.g. "2026-10-30T16:00:00Z" ->
+// "2026-10-30T12:00:00-04:00" (the form #27's posts use).
+const FULL_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})$/;
+export function normNewsDate(v) {
+  const t = String(v == null ? '' : v).trim();
+  if (DATES.DATE_ONLY.test(t)) { const ms = DATES.newsDateMs(t); return Number.isFinite(ms) && DATES.torontoISOFromMs(ms).slice(0, 10) === t ? t : null; }
+  if (FULL_ISO.test(t) && Number.isFinite(Date.parse(t))) return DATES.torontoISOFromMs(Date.parse(t));
+  return null;
+}
 
 export const SITE = 'https://younghadene.ca';
 export const SRC_DIR = 'scripts/news';
@@ -39,13 +61,21 @@ export function parse(file) {
       fm[k] = arr;
     }
   }
+  for (const k of ['datePublished', 'dateModified']) {
+    if (fm[k] === undefined) continue;
+    const n = normNewsDate(fm[k]);
+    if (!n) throw new Error(`${file}: ${k} must be YYYY-MM-DD or a full ISO timestamp with an offset (got ${fm[k]})`);
+    fm[k] = n;
+  }
   const slug = path.basename(file, '.md');
   const sources = (fm.sources || []).map((s) => {
     const u = (s.match(/(https?:\/\/\S+)\s*$/) || [])[1] || '';
     const parts = s.replace(/,?\s*https?:\/\/\S+\s*$/, '').split(':');
     return { text: s, url: u, publisher: parts[0].trim() };
   });
-  return { file, slug, fm, sources, body: m[2], raw };
+  const pubMs = fm.datePublished ? DATES.newsDateMs(fm.datePublished) : NaN;
+  const modMs = fm.dateModified ? DATES.newsDateMs(fm.dateModified) : NaN;
+  return { file, slug, fm, sources, body: m[2], raw, pubMs, modMs };
 }
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -93,8 +123,12 @@ export function renderBody(md) {
 export function pageTitle(t) { return t; }
 
 export function longDate(iso) {
-  return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  if (DATES.DATE_ONLY.test(iso)) return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  return new Date(Date.parse(iso)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Toronto' });
 }
+
+// dateModified falls back to datePublished when the front matter has none.
+export const modified = (p) => p.fm.dateModified || p.fm.datePublished;
 
 export function buildPage(p) {
   const { fm, slug, sources } = p;
@@ -104,7 +138,7 @@ export function buildPage(p) {
   const schema = {
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: fm.title, description: fm.meta_description, image: img,
-    datePublished: fm.datePublished, dateModified: fm.datePublished,
+    datePublished: fm.datePublished, dateModified: modified(p),
     author: { '@type': 'Organization', name: fm.author.name, url: `${SITE}/editorial-policy` },
     publisher: { '@type': 'NewsMediaOrganization', name: 'Young Hadene News', logo: { '@type': 'ImageObject', url: img } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canon },
@@ -139,7 +173,7 @@ export function buildPage(p) {
     if (document.readyState === 'complete') later();
     else window.addEventListener('load', later, {once: true});
   })();
-</script><meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover"><title>${esc(pageTitle(fm.title))}</title><meta name="description" content="${esc(fm.meta_description)}"><link rel="canonical" href="${canon}"><meta property="og:title" content="${esc(fm.title)}"><meta property="og:description" content="${esc(fm.meta_description)}"><meta property="og:image" content="${img}"><meta property="og:url" content="${canon}"><meta property="og:type" content="article"><meta property="og:locale" content="en_CA"><meta property="og:site_name" content="Young Hadene"><meta property="article:published_time" content="${fm.datePublished}"><meta property="article:author" content="${esc(fm.author.name)}"><meta name="author" content="${esc(fm.author.name)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(fm.title)}"><meta name="twitter:description" content="${esc(fm.meta_description)}"><meta name="twitter:image" content="${img}"><link rel="stylesheet" href="../css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">${ld(schema)}</script><script type="application/ld+json">${ld(crumbs)}</script><style>
+</script><meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover"><title>${esc(pageTitle(fm.title))}</title><meta name="description" content="${esc(fm.meta_description)}"><link rel="canonical" href="${canon}"><meta property="og:title" content="${esc(fm.title)}"><meta property="og:description" content="${esc(fm.meta_description)}"><meta property="og:image" content="${img}"><meta property="og:url" content="${canon}"><meta property="og:type" content="article"><meta property="og:locale" content="en_CA"><meta property="og:site_name" content="Young Hadene"><meta property="article:published_time" content="${fm.datePublished}">${fm.dateModified ? `<meta property="article:modified_time" content="${fm.dateModified}">` : ''}<meta property="article:author" content="${esc(fm.author.name)}"><meta name="author" content="${esc(fm.author.name)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(fm.title)}"><meta name="twitter:description" content="${esc(fm.meta_description)}"><meta name="twitter:image" content="${img}"><link rel="stylesheet" href="../css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎤</text></svg>"><script type="application/ld+json">${ld(schema)}</script><script type="application/ld+json">${ld(crumbs)}</script><style>
 .article-wrap{max-width:720px;margin:0 auto;padding:40px 0;}
 .article-wrap h1{font-size:clamp(2rem,5vw,3rem);margin-bottom:16px;line-height:1.08;}
 .article-wrap .meta{color:var(--text-muted);font-size:.8rem;margin-bottom:32px;text-transform:uppercase;letter-spacing:.08em;}
@@ -164,7 +198,7 @@ export function buildPage(p) {
 }
 
 export function card(p) {
-  return `        <a class="news-card" href="/news/${p.slug}">
+  return `        <a class="news-card" href="/news/${p.slug}" data-published="${DATES.torontoISOFromMs(p.pubMs)}">
           <div class="news-card-body">
             <span class="cat">News</span>
             <h2>${esc(p.fm.title)}</h2>
@@ -178,7 +212,7 @@ export function card(p) {
 export function sitemapItem(p) {
   return `  <url>
     <loc>${SITE}/news/${p.slug}</loc>
-    <news:news>
+${p.fm.dateModified ? `    <lastmod>${p.fm.dateModified}</lastmod>\n` : ''}    <news:news>
       <news:publication>
         <news:name>Young Hadene</news:name>
         <news:language>en</news:language>
@@ -191,7 +225,11 @@ export function sitemapItem(p) {
 }
 
 export function rssItem(p) {
-  const d = new Date(p.fm.datePublished + 'T04:00:00Z').toUTCString();
+  // Date-only posts keep the form the feed already uses for them; timestamped
+  // posts use the Toronto RFC 822 form (as #27's items do).
+  const d = DATES.DATE_ONLY.test(p.fm.datePublished)
+    ? new Date(p.fm.datePublished + 'T04:00:00Z').toUTCString()
+    : DATES.rssDate(p.pubMs);
   return `  <item>
     <title>${esc(p.fm.title)}</title>
     <link>${SITE}/news/${p.slug}</link>
