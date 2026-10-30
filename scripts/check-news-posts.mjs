@@ -12,7 +12,7 @@
 // be before datePublished, and must reach the NewsArticle schema, the
 // article:modified_time meta and the news-sitemap <lastmod>.
 import fs from 'node:fs';
-import { listSources, parse, buildPage, card, sitemapItem, rssItem, modified, normNewsDate, SITE } from './news-posts-lib.mjs';
+import { listSources, parse, buildPage, renderBody, olStart, card, sitemapItem, rssItem, modified, normNewsDate, SITE } from './news-posts-lib.mjs';
 
 const load = (f, name) => new Function(fs.readFileSync('functions/' + f, 'utf8').replace(/export const /g, 'const ') + `; return ${name};`)();
 const BLOG_REDIRECTS = load('_blog-redirects.js', 'BLOG_REDIRECTS');
@@ -38,6 +38,17 @@ for (const [inp, want] of [
   ['2026-10-30T16:00:00Z', '2026-10-30T12:00:00-04:00'], ['2026-10-30T12:00-0400', '2026-10-30T12:00:00-04:00'],
   ['2026-12-01T17:30:00.000Z', '2026-12-01T12:30:00-05:00'], ['2026-10-30T12:00:00', null], ['Oct 30, 2026', null], ['2026-13-01', null],
 ]) if (normNewsDate(inp) !== want) bad.push(`normNewsDate(${inp}) gave ${normNewsDate(inp)}, expected ${want}`);
+// Ordered-list self-test: real lists only, and <ol start> when not from 1.
+for (const [md, want] of [
+  ['1. A\n2. B', '<ol><li>A</li><li>B</li></ol>'],
+  ['3. C\n4. D\n5. E', '<ol start="3"><li>C</li><li>D</li><li>E</li></ol>'],
+  ['2026. That year changed things.', '<p>2026. That year changed things.</p>'],
+  ['2026. That year\n2027. The next', '<p>2026. That year<br>2027. The next</p>'],
+  ['1. Only one item', '<p>1. Only one item</p>'],
+  ['1. A\n3. B', '<p>1. A<br>3. B</p>'],
+  ['0. A\n1. B', '<p>0. A<br>1. B</p>'],
+]) { const got = renderBody(md).html; if (got !== want) bad.push(`renderBody(${JSON.stringify(md)}) gave ${got}, expected ${want}`); }
+if (olStart(['3. a', '4. b']) !== 3 || olStart(['2026. a', '2027. b']) !== 0) bad.push('olStart self-test failed');
 const block = (doc, re) => (doc.match(re) || [])[0] || '';
 const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const files = listSources();

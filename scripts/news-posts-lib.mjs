@@ -94,9 +94,20 @@ function inline(s) {
   return s;
 }
 
-// Markdown subset used by the drafts: #/## headings, paragraphs, "- " and "1. " lists,
+// Markdown subset used by the drafts: #/## headings, paragraphs, "- " and "1. " lists (2+ consecutive items; <ol start> if not from 1),
 // pipe tables, **bold**, *italic* or _italic_ (italic may sit inside bold),
 // [links](url).
+// A block is an ordered list only if it has 2+ lines, each "N. text" with
+// N of 1-3 digits, numbered consecutively. Returns the first number (for
+// <ol start>) or 0. Keeps a paragraph like "2026. That..." a paragraph.
+export function olStart(lines) {
+  if (lines.length < 2) return 0;
+  const nums = lines.map((l) => (/^(\d{1,3})\. \S/.exec(l) || [])[1]);
+  if (nums.some((n) => n === undefined)) return 0;
+  const first = Number(nums[0]);
+  return first >= 1 && nums.every((n, i) => Number(n) === first + i) ? first : 0;
+}
+
 export function renderBody(md) {
   const blocks = md.trim().split(/\n\s*\n/);
   let h1 = '', html = '';
@@ -105,7 +116,8 @@ export function renderBody(md) {
     if (/^# /.test(b) && lines.length === 1) { h1 = b.slice(2).trim(); continue; }
     if (/^## /.test(b) && lines.length === 1) { html += `<h2>${inline(b.slice(3).trim())}</h2>`; continue; }
     if (lines.every((l) => /^- /.test(l))) { html += '<ul>' + lines.map((l) => `<li>${inline(l.slice(2))}</li>`).join('') + '</ul>'; continue; }
-    if (lines.every((l) => /^\d+\. /.test(l))) { html += '<ol>' + lines.map((l) => `<li>${inline(l.replace(/^\d+\. /, ''))}</li>`).join('') + '</ol>'; continue; }
+    const ol = olStart(lines);
+    if (ol) { html += (ol === 1 ? '<ol>' : `<ol start="${ol}">`) + lines.map((l) => `<li>${inline(l.replace(/^\d+\. /, ''))}</li>`).join('') + '</ol>'; continue; }
     if (lines.length >= 2 && lines.every((l) => /^\|.*\|$/.test(l)) && /^\|[\s|:-]+\|$/.test(lines[1])) {
       const cells = (l) => l.slice(1, -1).split('|').map((c) => c.trim());
       const head = cells(lines[0]);
@@ -183,7 +195,7 @@ export function buildPage(p) {
 .article-wrap p strong{color:var(--text-primary);}
 .article-wrap p a,.article-wrap li a{color:var(--accent);}
 .article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading);letter-spacing:.04em;}
-.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;}${/<ol>/.test(html) ? '\n.article-wrap ol{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;list-style:decimal;}' : ''}
+.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;}${/<ol[ >]/.test(html) ? '\n.article-wrap ol{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;list-style:decimal;}' : ''}
 .article-wrap li{margin-bottom:8px;}
 .article-wrap .table-wrap{overflow-x:auto;margin-bottom:24px;}
 .article-wrap table{width:100%;border-collapse:collapse;font-size:.9rem;color:var(--text-secondary);}
