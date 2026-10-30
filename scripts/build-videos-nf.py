@@ -44,7 +44,7 @@ shorts=[short(*s) for s in sh]
 newmain=('<main class="nfv" id="main"><div class="nf-wrap nfv-wrap">'
  '<a href="/music" class="back-link">&#8592; Back to Music</a><h1 class="nfv-h1">Young Hadene Music Videos</h1>'
  f'<div class="nfv-intro">{intro}</div>'
- + billboard(bro[0],'Broken','OFFICIAL MUSIC VIDEO. STR8HITSRECORDS. TORONTO.','#music-videos')
+ + billboard(bro[0],'Broken','OFFICIAL MUSIC VIDEO. TORONTO.','#music-videos')
  + '<div id="music-videos"></div>'+row('Music videos',cards(feat))
  + row('Shorts',shorts,True)
  + row('Latest',cards(y26)) + row('2025',cards(y25))
@@ -71,7 +71,7 @@ open('videos/shorts.html','w',encoding='utf-8').write(S)
 # homepage
 I=open('index.html',encoding='utf-8').read()
 i=I.index('<div class="nf-video">'); j=I.index('<!-- ===== ABOUT',i); j=I.rindex('</div>\n  </section>',i,j)
-hp=(billboard(bro[0],'Broken','OFFICIAL MUSIC VIDEO. STR8HITSRECORDS. TORONTO.','/videos','h3')
+hp=(billboard(bro[0],'Broken','OFFICIAL MUSIC VIDEO. TORONTO.','/videos','h3')
  + row('Music videos',[card(*e[:6],None,anchor=False) for e in feat])
  + row('Latest',[card(*e[:6],None,anchor=False) for e in y26[:10]])
  + '<p style="margin-top:24px"><a class="nfv-btn nfv-btn-ghost" href="https://www.youtube.com/playlist?list=PLKcVKOEqHt-WbhdB_MueC7f8Ei5gGbz8U" target="_blank" rel="noopener">View Full Playlist on YouTube</a></p>\n    ')
