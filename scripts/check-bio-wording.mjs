@@ -5,7 +5,7 @@
 //
 // QA follow-ups also guarded here: the broken "He releases and works in..."
 // sentence, "independent imprint" / "his independent label" / "independent label
-// launch" (he releases independently; no imprint or label), any album count on the
+// launch" / "(his) own label" (he releases independently; no imprint or label), any album count on the
 // Haitian hub (/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation),
 // and "Haitian roots" said twice in one sentence.
 //
@@ -33,6 +33,7 @@ const BANNED = [
   ['broken "releases and works" (say "releases independently and works")', /\breleases\s+and\s+works\b/i],
   ['imprint (say he releases independently)', /\b(?:his|independent)\s+(?:own\s+)?imprint\b/i],
   ['independent label (say he releases independently)', /\bhis\s+(?:own\s+)?independent\s+label\b|\bindependent\s+label\s+launch\b/i],
+  ['own label (say he releases independently)', /\bown\s+(?:record\s+|independent\s+)?labels?\b/i],
 ];
 // Album count on the Haitian hub: /music and /press list more albums than the hub
 // does, so the hub names its albums without a number.
