@@ -3,7 +3,8 @@
 // [CONFIRM] / [VERIFY] / [HELD] markers, a built page that is stale or lacks
 // title, description, canonical, NewsArticle schema (Organization author,
 // datePublished, source URL), a slug in BLOG_REDIRECTS / NEWS_NOINDEX /
-// _redirects, an internal link to a redirected URL, or a post missing from
+// _redirects, an internal link to a redirected URL, literal markdown markers
+// (* or _x_) in FAQ text or FAQPage JSON-LD, or a post missing from
 // the news.html listing, news-sitemap.xml or news-rss.xml.
 import fs from 'node:fs';
 import { listSources, parse, buildPage, SITE } from './news-posts-lib.mjs';
@@ -65,6 +66,21 @@ for (const file of files) {
     if (!sources.every((s) => (j.isBasedOn || []).includes(s.url))) err('schema isBasedOn is missing the source URL');
   }
   for (const s of sources) if (!html.includes(`href="${s.url}"`)) err(`page does not link the source ${s.url}`);
+  // FAQ text must not show markdown markers (e.g. nested *italic* inside
+  // **bold** that the converter left as literal asterisks).
+  const faq = (html.match(/<h2>(?:FAQ|Frequently Asked Questions)<\/h2>([\s\S]*?)(?=<h2>|<div class="correction-note">|<\/article>)/i) || [])[1];
+  if (faq) {
+    for (const blk of faq.split(/<\/p>|<\/li>|<br>/)) {
+      const t = blk.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      if (/\*|(^|[\s(])_\S|\S_($|[\s.,;:!?)])/.test(t)) err(`FAQ text has a literal markdown marker: "${t}"`);
+    }
+  }
+  const walkFaq = (o) => {
+    if (!o || typeof o !== 'object') return;
+    if (o['@type'] === 'Question') for (const t of [o.name, o.acceptedAnswer && o.acceptedAnswer.text]) if (typeof t === 'string' && t.includes('*')) err(`FAQPage JSON-LD has a literal asterisk: "${t}"`);
+    Object.values(o).forEach(walkFaq);
+  };
+  for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) walkFaq(JSON.parse(m[1]));
   if (!listing.includes(`href="/news/${slug}"`)) err('missing from news.html listing');
   if (!sm.includes(`<loc>${SITE}/news/${slug}</loc>`)) err('missing from news-sitemap.xml');
   if (!rss.includes(`<link>${SITE}/news/${slug}</link>`)) err('missing from news-rss.xml');

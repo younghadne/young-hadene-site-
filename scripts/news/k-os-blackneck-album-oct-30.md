@@ -79,13 +79,13 @@ The interview doesn't give streaming numbers, chart expectations, tour dates or 
 
 ## FAQ
 
-**When does k-os' *BLackneck* come out?**
+**When does k-os' _BLackneck_ come out?**
 October 30, 2026, on Spiritual Tech Records via The Orchard, according to Billboard Canada.
 
-**Did Drake produce *BLackneck*?**
+**Did Drake produce _BLackneck_?**
 He's credited as executive producer and paid for the album. Billboard Canada reports he wasn't behind the boards.
 
-**How many songs are on *BLackneck*?**
+**How many songs are on _BLackneck_?**
 Seven, according to the report.
 
 **Is Young Hadene involved?**

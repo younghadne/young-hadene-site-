@@ -55,13 +55,18 @@ function inline(s) {
   s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, t, u) => /^https?:/.test(u)
     ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>`
     : `<a href="${u}">${t}</a>`);
-  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // **bold** may contain *italic* (e.g. **When does *Title* come out?**);
+  // the italic pass below then converts the inner *...*.
+  s = s.replace(/\*\*((?:[^*]|\*[^*]+\*)+?)\*\*/g, '<strong>$1</strong>');
   s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  // _italic_ only at word edges, so snake_case and URL underscores are left alone.
+  s = s.replace(/(^|[\s(>])_([^_\s](?:[^_]*[^_\s])?)_(?=$|[\s.,;:!?)<])/g, '$1<em>$2</em>');
   return s;
 }
 
 // Markdown subset used by the drafts: #/## headings, paragraphs, "- " lists,
-// pipe tables, **bold**, *italic*, [links](url).
+// pipe tables, **bold**, *italic* or _italic_ (italic may sit inside bold),
+// [links](url).
 export function renderBody(md) {
   const blocks = md.trim().split(/\n\s*\n/);
   let h1 = '', html = '';
