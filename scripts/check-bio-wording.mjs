@@ -3,6 +3,12 @@
 // needed, the only allowed form is exactly:
 //   credited to ℗ str8hitsrecords on Apple Music
 //
+// QA follow-ups also guarded here: the broken "He releases and works in..."
+// sentence, "independent imprint" / "his independent label" / "independent label
+// launch" (he releases independently; no imprint or label), any album count on the
+// Haitian hub (/blog/haitian-rappers-in-toronto-young-hadene-and-the-new-generation),
+// and "Haitian roots" said twice in one sentence.
+//
 // Repo mode (npm test): scans every tracked .html/.json/.txt/.xml file that the
 // site serves (visible text, meta content and JSON-LD). Skips seo/, scripts/,
 // node_modules, and static blog files whose slug 301s via functions/_blog-redirects.js
@@ -24,6 +30,15 @@ const BANNED = [
   ['born in Haiti', /born\s+in\s+Haiti/i],
   ['Haitian-born', /Haitian[\s-]+born/i],
   ['label name Str8hitsRecords', /str8\s*hits\s*records/i],
+  ['broken "releases and works" (say "releases independently and works")', /\breleases\s+and\s+works\b/i],
+  ['imprint (say he releases independently)', /\b(?:his|independent)\s+(?:own\s+)?imprint\b/i],
+  ['independent label (say he releases independently)', /\bhis\s+(?:own\s+)?independent\s+label\b|\bindependent\s+label\s+launch\b/i],
+];
+// Album count on the Haitian hub: /music and /press list more albums than the hub
+// does, so the hub names its albums without a number.
+const HUB = 'haitian-rappers-in-toronto-young-hadene-and-the-new-generation';
+const HUB_BANNED = [
+  ['album count on the Haitian hub', /\b(?:one|two|three|four|five|six|\d+)\s+(?:full[\s-]+length\s+|studio\s+)?albums\b/i],
 ];
 
 const redirectSrc = readFileSync('functions/_blog-redirects.js', 'utf8');
@@ -43,13 +58,25 @@ const text = s => s
   .replace(/https?:\/\/[^\s"'<>)\]]+/g, ' ')
   .replace(/\s+/g, ' ');
 
-function problems(raw) {
+// Sentences for the doubled-"Haitian roots" rule: block tags, line breaks (real or
+// JSON-escaped), JSON/JS field boundaries and FAQ "|" separators also end a sentence.
+const sentences = raw => text(raw
+  .replace(/\\n|\r?\n|<\/(?:p|li|h[1-6]|div|td|th|dt|dd|ul|ol|title|figcaption|blockquote)>|<br\s*\/?>/gi, ' \u00b6 ')
+  .replace(/<[^>]*\b(?:content|alt|title|aria-label)="([^"]*)"[^>]*>/g, ' \u00b6 $1 \u00b6 ')
+  .replace(/["']\s*[,:]\s*["']/g, ' \u00b6 '))
+  .split(/[.!?]["”’']?(?=\s|$)|\u00b6|\|/);
+
+function problems(raw, where = '') {
   let t = text(raw).split(CREDIT).join(' ');
   for (const q of ALLOWED_QUOTES) t = t.split(q).join(' ');
   const out = [];
-  for (const [label, re] of BANNED) {
+  const rules = where.includes(HUB) ? [...BANNED, ...HUB_BANNED] : BANNED;
+  for (const [label, re] of rules) {
     const g = new RegExp(re.source, 'gi');
     for (const m of t.matchAll(g)) out.push(`${label}: "...${t.slice(Math.max(0, m.index - 60), m.index + m[0].length + 40).trim()}..."`);
+  }
+  for (const s of sentences(raw)) {
+    if ((s.match(/Haitian\s+roots/gi) || []).length > 1) out.push(`"Haitian roots" twice in one sentence: "${s.trim().slice(0, 220)}"`);
   }
   return out;
 }
@@ -90,7 +117,7 @@ async function runLive() {
       if (seen.has(final)) continue;
       seen.add(final);
       scanned++;
-      const found = problems(r.body);
+      const found = problems(r.body, final);
       if (!found.length) continue;
       const m = final.match(/^\/(blog|news)\/([^/]+?)(?:\.html)?$/);
       const isKv = m && kv[m[1]].has(m[2]) && !(m[1] === 'blog' && STATIC_FIRST.has(m[2]));
@@ -125,7 +152,7 @@ for (const f of walk('.').sort()) {
   const m = f.match(/^blog\/([^/]+)\.html$/);
   if (m && REDIRECTED.has(m[1])) continue;
   scanned++;
-  for (const p of problems(readFileSync(f, 'utf8'))) { bad++; if (bad <= 60) console.error(`BIO-WORDING FAIL: ${f}: ${p}`); }
+  for (const p of problems(readFileSync(f, 'utf8'), f)) { bad++; if (bad <= 60) console.error(`BIO-WORDING FAIL: ${f}: ${p}`); }
 }
 if (bad) { console.error(`BIO-WORDING FAIL: ${bad} banned phrase(s) in ${scanned} files`); process.exit(1); }
-console.log(`BIO-WORDING OK: ${scanned} served files: no "born in Haiti", "Haitian-born" or label name (only "${CREDIT}" allowed).`);
+console.log(`BIO-WORDING OK: ${scanned} served files: no "born in Haiti", "Haitian-born" or label name (only "${CREDIT}" allowed); no "releases and works", imprint/independent-label wording, hub album count, or doubled "Haitian roots".`);
