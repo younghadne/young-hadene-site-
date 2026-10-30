@@ -77,10 +77,10 @@ const newsFiles = listHtml(newsDir);
 // ── 2. Repo news list for the Google News sitemap ──
 // Lists EVERY repo news post (newest first). This file is the source list
 // that functions/news-sitemap.xml.js merges with KV; the 2-day Google News
-// window (and the fallback when nothing is that fresh) is applied there at
-// request time. Filtering here froze the window at deploy time, so a build a
-// few days after the last post shipped an empty file and /news-sitemap.xml
-// went empty.
+// window is applied there at request time (strict: an empty urlset when
+// nothing is that fresh). Filtering here froze the window at deploy time, so
+// a build a few days after a post shipped without it and the Function could
+// no longer list it while it was still fresh.
 const now = Date.now();
 const repoNews = newsFiles
   .map((f) => {

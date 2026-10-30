@@ -1,21 +1,22 @@
 // GET /news-sitemap.xml — Google News sitemap built at request time from
 // KV news posts plus the repo's news/*.html posts (the static
 // news-sitemap.xml the build writes lists every repo post; the 2-day window
-// is applied here, not at build time, so a deploy can never freeze an empty
+// is applied here, not at build time, so a deploy can never freeze a stale
 // list). Off-topic (NEWS_NOINDEX) and removed posts are left out.
 //
-// Window: Google News reads articles published in the last 2 days. When
-// nothing is that fresh, the sitemap falls back to the newest
-// FALLBACK_COUNT articles with their REAL publication dates instead of
-// serving an empty <urlset>. Google simply skips the stale entries for News
-// purposes (no penalty) and still sees the URLs; set FALLBACK_COUNT to 0 to
-// serve a strictly 2-day sitemap. The X-News-Sitemap header says which mode
-// answered ("fresh" or "fallback").
+// Window (owner decision 2026-10-30): strictly the last 2 days, as Google
+// News reads them. When nothing is that fresh the response is a valid,
+// empty <urlset> (no padding with older posts). FALLBACK_COUNT > 0 would
+// instead list that many newest articles with their real dates.
+// X-News-Sitemap header: "fresh" (>= 1 article from the last 2 days),
+// "empty" (none; valid empty urlset), "fallback" (only if FALLBACK_COUNT > 0).
+// On an unexpected error the Function answers 503 + Retry-After rather than
+// the static file, which lists every repo post and would break the window.
 import { collectNewsItems, esc, SITE_URL } from './_news-feed-items.js';
 import { torontoISOFromMs } from './_news-dates.js';
 
 export const WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
-export const FALLBACK_COUNT = 10;
+export const FALLBACK_COUNT = 0;
 const MAX_URLS = 1000; // Google News sitemap limit
 
 function cleanTitle(s) {
@@ -42,7 +43,8 @@ export async function selectSitemapItems(env, now = Date.now()) {
   const all = await collectNewsItems(env, 'sitemap', now);
   const fresh = all.filter((it) => now - it.ms <= WINDOW_MS);
   if (fresh.length) return { mode: 'fresh', items: fresh.slice(0, MAX_URLS) };
-  return { mode: 'fallback', items: all.slice(0, FALLBACK_COUNT) };
+  if (FALLBACK_COUNT > 0) return { mode: 'fallback', items: all.slice(0, FALLBACK_COUNT) };
+  return { mode: 'empty', items: [] };
 }
 
 export function sitemapXml(items) {
@@ -63,9 +65,9 @@ export async function onRequestGet(context) {
       },
     });
   } catch (e) {
-    try {
-      if (env && env.ASSETS) return env.ASSETS.fetch(new Request(SITE_URL + '/news-sitemap.xml'));
-    } catch { /* fall through */ }
-    return new Response('sitemap unavailable', { status: 500 });
+    return new Response('news sitemap temporarily unavailable\n', {
+      status: 503,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': '300', 'Cache-Control': 'no-store', 'X-News-Sitemap': 'error' },
+    });
   }
 }

@@ -1,8 +1,10 @@
 // Guards /news-sitemap.xml, /news-rss.xml and sitemap.xml lastmods against the
 // failures QA found on live (2026-10-30):
-//  - /news-sitemap.xml served an empty <urlset>: the build filtered the static
-//    file by date at deploy time and the Function added only KV posts from the
-//    last 2 days, so with no fresh post nothing was left.
+//  - /news-sitemap.xml missed fresh repo posts: the build filtered the static
+//    file by date at deploy time (7 days, frozen at the deploy), so the
+//    request-time 2-day window could not see them. The window is now applied
+//    once, at request time, to repo + KV posts; with nothing fresh it is a
+//    valid empty <urlset> (owner decision: strict 2 days).
 //  - /news-rss.xml listed 20 KV posts and no repo posts: KV filled the 20
 //    slots before the repo file was even read.
 //  - sitemap.xml lastmods all equal to the deploy's HEAD date: in a shallow
@@ -56,22 +58,42 @@ const repoDates = new Map([...staticSm.matchAll(/<loc>[^<]*\/news\/([^<]+)<\/loc
 const newestRepo = Math.max(...repoDates.values());
 const noindex = [...NEWS_NOINDEX][0];
 
-// 2. Nothing fresh (live today): never empty, newest posts with their real dates.
+// 2. Nothing fresh (live today): strictly 2-day, so a valid EMPTY urlset,
+//    no padding with older posts, header says "empty".
 {
+  if (nsm.FALLBACK_COUNT !== 0) fail(`FALLBACK_COUNT is ${nsm.FALLBACK_COUNT}; owner decision is a strict 2-day sitemap (0)`);
   const now = newestRepo + 30 * D;
   const kv = [{ slug: 'kv-old', title: 'KV old', status: 'published', dateNum: newestRepo - 5 * D }];
   const { mode, items } = await nsm.selectSitemapItems(kvEnv(kv), now);
   const xml = nsm.sitemapXml(items);
-  if (mode !== 'fallback') fail(`stale-only sitemap mode ${mode}, want fallback`);
-  if (!locs(xml).length) fail('stale-only sitemap is empty');
-  if (items.length > nsm.FALLBACK_COUNT) fail(`fallback lists ${items.length} > ${nsm.FALLBACK_COUNT}`);
-  for (const it of items) if (it.source === 'repo' && it.ms !== repoDates.get(it.slug)) fail(`fallback changed ${it.slug}'s date`);
-  for (const m of xml.matchAll(/<news:publication_date>([^<]+)</g)) if (newsDateMs(m[1]) > now - 2 * D) fail(`fallback faked a fresh date: ${m[1]}`);
+  if (mode !== 'empty') fail(`stale-only sitemap mode ${mode}, want empty`);
+  if (locs(xml).length) fail(`stale-only sitemap lists ${locs(xml).length} old post(s)`);
+  if (!/^<\?xml[^>]*\?>\s*<urlset [^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"[^>]*>\s*<\/urlset>\s*$/.test(xml)) fail('empty sitemap is not a valid empty <urlset>');
+  const env = kvEnv(kv);
 }
-// Same with no KV binding at all: repo posts still listed.
+// The 2-day edge: 47h old is in, 49h old is out.
 {
-  const { items } = await nsm.selectSitemapItems({ ASSETS }, newestRepo + 30 * D);
-  if (!items.length) fail('sitemap empty without a KV binding');
+  const now = newestRepo + 100 * D;
+  const kv = [
+    { slug: 'kv-47h', title: '47h', status: 'published', dateNum: now - 47 * H },
+    { slug: 'kv-49h', title: '49h', status: 'published', dateNum: now - 49 * H },
+  ];
+  const got = locs(nsm.sitemapXml((await nsm.selectSitemapItems(kvEnv(kv), now)).items));
+  if (got.join() !== 'kv-47h') fail(`2-day edge lists [${got}], want [kv-47h]`);
+}
+// No KV binding at all: still a valid response (empty when nothing is fresh).
+{
+  const { mode } = await nsm.selectSitemapItems({ ASSETS }, newestRepo + 30 * D);
+  if (mode !== 'empty') fail(`no-KV stale sitemap mode ${mode}, want empty`);
+  const { items } = await nsm.selectSitemapItems({ ASSETS }, newestRepo + 12 * H);
+  if (!items.length) fail('fresh repo post missing without a KV binding');
+}
+// Error path: 503 + Retry-After, never the unwindowed static file.
+{
+  const boom = { ASSETS: { fetch: async () => { throw new Error('boom'); } }, YH_POSTS: { get: async () => { throw new Error('boom'); } } };
+  const res = await nsm.onRequestGet({ env: boom, request: new Request('https://younghadene.ca/news-sitemap.xml') });
+  if (res.status !== 200 && (res.status !== 503 || !res.headers.get('Retry-After'))) fail(`error path status ${res.status} without Retry-After`);
+  if (res.status === 200 && locs(await res.text()).length) fail('error path served posts outside the window');
 }
 
 // 3. Fresh posts present: only the last 2 days, from KV and repo, minus hidden ones.
@@ -124,6 +146,7 @@ const noindex = [...NEWS_NOINDEX][0];
 for (const [name, mod] of [['news-sitemap', nsm], ['news-rss', rss]]) {
   const res = await mod.onRequestGet({ env: kvEnv([]), request: new Request('https://younghadene.ca/' + name + '.xml') });
   if (res.status !== 200) fail(`${name} status ${res.status}`);
+  if (name === 'news-sitemap' && !['fresh', 'empty'].includes(res.headers.get('X-News-Sitemap'))) fail(`X-News-Sitemap is ${res.headers.get('X-News-Sitemap')}`);
 }
 if (writes.length) fail('Functions wrote to KV: ' + writes.join(', '));
 
@@ -145,4 +168,4 @@ try {
 
 rmSync(d, { recursive: true, force: true });
 if (bad) { console.error(`NEWS-FEEDS-CHECK FAIL: ${bad} problem(s).`); process.exit(1); }
-console.log('NEWS-FEEDS-CHECK OK: news sitemap never empty (2-day window, real-date fallback), RSS merges repo + KV before the 20 cap, Toronto dates, no KV writes, shallow-clone lastmods kept.');
+console.log('NEWS-FEEDS-CHECK OK: news sitemap strict 2-day window over repo + KV (valid empty urlset when nothing is fresh), RSS merges repo + KV before the 20 cap, Toronto dates, no KV writes, shallow-clone lastmods kept.');
