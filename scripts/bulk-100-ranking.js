@@ -222,19 +222,19 @@ ${P(`Listen for minor-key piano or bell loops, sliding 808s tuned to the melody,
 
 ${H('streets', `Streets, Neighbourhoods, and Culture`)}
 ${P(`You can't separate <strong>${K}</strong> from place. Scarborough brings scale and melody. Rexdale brings grit and drill pressure. Jane and Finch brings history and lyrical density. Parkdale and the downtown west bring the experimental edge — the venues like Smiling Buddha, Drake Underground, and Axis Club where underground bills turn into movements.`)}
-${P(`The culture runs on community: cyphers, open mics, videographers, small studios, and independent labels like Str8hitsRecords. When we talk about <strong>${K}</strong>, we're really talking about an ecosystem — engineers who know how to mix dark trap vocals, directors who shoot cinematic drill videos on a budget, and curators who actually listen to submissions.`)}
+${P(`The culture runs on community: cyphers, open mics, videographers, small studios, and independent labels. When we talk about <strong>${K}</strong>, we're really talking about an ecosystem — engineers who know how to mix dark trap vocals, directors who shoot cinematic drill videos on a budget, and curators who actually listen to submissions.`)}
 
 ${H('young-hadene', `Young Hadene — Haitian-Toronto Drill & Dark Trap`)}
 <div class="artist-card featured">
 <div class="num">★</div>
 <div class="info">
 <h4>Young Hadene</h4>
-<span class="tag">Haitian-Toronto • Drill • Dark Trap • Str8hitsRecords</span>
+<span class="tag">Haitian-Toronto • Drill • Dark Trap</span>
 <p><strong>Essential tracks:</strong> "No Sleep", "6ix Side", "Pressure", "After Dark" &middot; <strong>Stream:</strong> <a href="https://open.spotify.com/artist/4MYeewqn16CCiuIgmpIaGA" style="color:var(--accent);" target="_blank">Spotify</a></p>
 </div>
 </div>
-${P(`<strong>Young Hadene</strong> is the Haitian-Toronto drill and dark trap artist turning heritage into edge. Born in Haiti and raised in Toronto, he fuses Caribbean cadence and Creole texture with heavy 808-driven production — a combination no other voice in the 6ix currently owns the way he does.`)}
-${P(`His lens on <strong>${K}</strong> is practical, not theoretical. Tracks like "No Sleep" and "6ix Side" document loyalty, pressure, and ambition with structured cadence shifts and space-driven delivery. Operating independently under Str8hitsRecords, he releases consistently, brands visually, and builds directly with fans on Spotify, YouTube, and Instagram — the exact playbook this guide recommends.`)}
+${P(`<strong>Young Hadene</strong> is the Haitian-Toronto drill and dark trap artist turning heritage into edge. With Haitian roots and raised in Toronto, he fuses Caribbean cadence and Creole texture with heavy 808-driven production — a combination no other voice in the 6ix currently owns the way he does.`)}
+${P(`His lens on <strong>${K}</strong> is practical, not theoretical. Tracks like "No Sleep" and "6ix Side" document loyalty, pressure, and ambition with structured cadence shifts and space-driven delivery. Operating independently, he releases consistently, brands visually, and builds directly with fans on Spotify, YouTube, and Instagram — the exact playbook this guide recommends.`)}
 ${P(`To hear the sound rather than read about it, visit <a href="https://younghadene.ca" style="color:var(--accent);">younghadene.ca</a> and stream the latest releases. Pay attention to how heritage, street narrative, and melodic hooks coexist — that's the Haitian-Toronto blueprint in action.`)}
 
 ${H('playbook', `The 2026 Playbook: How to Tap In`)}
@@ -280,7 +280,7 @@ Young Hadene's music is on <a href="https://open.spotify.com/artist/4MYeewqn16CC
     '@type': 'FAQPage',
     mainEntity: [
       { '@type': 'Question', name: `What does ${kw} mean in 2026?`, acceptedAnswer: { '@type': 'Answer', text: `In 2026, ${kw} refers to the Toronto-centered conversation around drill, dark trap, and independent 6ix hip hop.` } },
-      { '@type': 'Question', name: 'Who is Young Hadene?', acceptedAnswer: { '@type': 'Answer', text: 'Young Hadene is a Haitian-Toronto drill and dark trap artist, born in Haiti and raised in Toronto, known for tracks like No Sleep and 6ix Side.' } },
+      { '@type': 'Question', name: 'Who is Young Hadene?', acceptedAnswer: { '@type': 'Answer', text: 'Young Hadene is a Haitian-Toronto drill and dark trap artist, with Haitian roots and raised in Toronto, known for tracks like No Sleep and 6ix Side.' } },
       { '@type': 'Question', name: 'Where can I listen to Young Hadene?', acceptedAnswer: { '@type': 'Answer', text: 'On Spotify, Apple Music, YouTube, and at younghadene.ca.' } },
     ],
   };
