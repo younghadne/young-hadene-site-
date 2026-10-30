@@ -94,7 +94,7 @@ function inline(s) {
   return s;
 }
 
-// Markdown subset used by the drafts: #/## headings, paragraphs, "- " lists,
+// Markdown subset used by the drafts: #/## headings, paragraphs, "- " and "1. " lists,
 // pipe tables, **bold**, *italic* or _italic_ (italic may sit inside bold),
 // [links](url).
 export function renderBody(md) {
@@ -105,6 +105,7 @@ export function renderBody(md) {
     if (/^# /.test(b) && lines.length === 1) { h1 = b.slice(2).trim(); continue; }
     if (/^## /.test(b) && lines.length === 1) { html += `<h2>${inline(b.slice(3).trim())}</h2>`; continue; }
     if (lines.every((l) => /^- /.test(l))) { html += '<ul>' + lines.map((l) => `<li>${inline(l.slice(2))}</li>`).join('') + '</ul>'; continue; }
+    if (lines.every((l) => /^\d+\. /.test(l))) { html += '<ol>' + lines.map((l) => `<li>${inline(l.replace(/^\d+\. /, ''))}</li>`).join('') + '</ol>'; continue; }
     if (lines.length >= 2 && lines.every((l) => /^\|.*\|$/.test(l)) && /^\|[\s|:-]+\|$/.test(lines[1])) {
       const cells = (l) => l.slice(1, -1).split('|').map((c) => c.trim());
       const head = cells(lines[0]);
@@ -182,7 +183,7 @@ export function buildPage(p) {
 .article-wrap p strong{color:var(--text-primary);}
 .article-wrap p a,.article-wrap li a{color:var(--accent);}
 .article-wrap h2{font-size:1.5rem;margin-top:40px;margin-bottom:14px;font-family:var(--font-heading);letter-spacing:.04em;}
-.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;}
+.article-wrap ul{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;}${/<ol>/.test(html) ? '\n.article-wrap ol{color:var(--text-secondary);line-height:1.8;margin-bottom:18px;padding-left:24px;font-size:.95rem;list-style:decimal;}' : ''}
 .article-wrap li{margin-bottom:8px;}
 .article-wrap .table-wrap{overflow-x:auto;margin-bottom:24px;}
 .article-wrap table{width:100%;border-collapse:collapse;font-size:.9rem;color:var(--text-secondary);}
