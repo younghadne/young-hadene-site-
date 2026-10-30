@@ -1,66 +1,41 @@
-// GET /news-rss.xml — dynamic news RSS from KV (latest 20), unioned with
-// the static file so nothing is lost. New items appear instantly, no rebuild.
-const SITE_URL = 'https://younghadene.ca';
+// GET /news-rss.xml — news RSS built at request time: visible KV news posts
+// and the repo's news/*.html posts (from the static news-rss.xml the build
+// writes) are merged, deduped by slug (KV wins, as /news/<slug> serves KV
+// first), sorted by publish date and THEN capped at 20. Off-topic
+// (NEWS_NOINDEX) and removed posts are left out. Dates are Toronto time.
+import { collectNewsItems, esc, SITE_URL } from './_news-feed-items.js';
+import { rssDate } from './_news-dates.js';
 
-function esc(s) {
-  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+export const LIMIT = 20;
+
+function kvItemXml(it) {
+  const p = it.post;
+  const link = `${SITE_URL}/news/${it.slug}`;
+  const desc = String(p.excerpt || p.content || p.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 300);
+  return '  <item>\n    <title>' + esc(p.title) + '</title>\n    <link>' + esc(link) + '</link>\n    <guid isPermaLink="true">' + esc(link) + '</guid>\n    <description>' + esc(desc) + '</description>\n    <pubDate>' + rssDate(it.ms) + '</pubDate>\n    <category>' + esc(p.category || 'News') + '</category>\n  </item>\n';
 }
 
-function itemXml(p) {
-  const link = `${SITE_URL}/news/${p.slug}`;
-  const desc = String(p.excerpt || p.content || p.title || '').replace(/[#*>\-\[\]()`]/g, '').trim().substring(0, 300);
-  return '  <item>\n    <title>' + esc(p.title) + '</title>\n    <link>' + esc(link) + '</link>\n    <guid isPermaLink="true">' + esc(link) + '</guid>\n    <description>' + esc(desc) + '</description>\n    <pubDate>' + new Date(Number(p.dateNum) || Date.now()).toUTCString() + '</pubDate>\n    <category>' + esc(p.category || 'News') + '</category>\n  </item>\n';
+// Repo items keep the build's title/description; the date is re-written in
+// Toronto time so both sources read the same way.
+function repoItemXml(it) {
+  return '  <item>' + it.body.replace(/<pubDate>[^<]*<\/pubDate>/, `<pubDate>${rssDate(it.ms)}</pubDate>`) + '</item>\n';
+}
+
+// Exported for scripts/check-news-feeds.mjs.
+export async function selectRssItems(env, now = Date.now()) {
+  return (await collectNewsItems(env, 'rss', now)).slice(0, LIMIT);
+}
+
+export function rssXml(items) {
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>' + SITE_URL + '/news</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n' +
+    items.map((it) => (it.source === 'kv' ? kvItemXml(it) : repoItemXml(it))).join('') + '</channel>\n</rss>\n';
 }
 
 export async function onRequestGet(context) {
   const { env } = context;
   try {
-    const now = Date.now();
-    const seen = new Set();
-    let items = '';
-    let count = 0;
-    const store = env && env.YH_POSTS;
-    if (store) {
-      let arr = [];
-      try {
-        const t = await store.get('news:index');
-        const parsed = t ? JSON.parse(t) : [];
-        if (Array.isArray(parsed)) arr = parsed;
-      } catch { arr = []; }
-      arr.sort((a, b) => (Number(b.dateNum) || 0) - (Number(a.dateNum) || 0));
-      for (const p of arr) {
-        if (count >= 20 || !p || !p.slug) continue;
-        const vis = p.status === 'published' || !p.status ||
-          (p.status === 'scheduled' && p.scheduledFor && Number(p.scheduledFor) <= now);
-        if (!vis) continue;
-        const link = `${SITE_URL}/news/${p.slug}`;
-        if (seen.has(link)) continue;
-        seen.add(link);
-        items += itemXml(p);
-        count++;
-      }
-    }
-    try {
-      if (env && env.ASSETS && count < 20) {
-        const r = await env.ASSETS.fetch(new Request(SITE_URL + '/news-rss.xml'));
-        if (r.ok) {
-          const text = await r.text();
-          const re = /<item>([\s\S]*?)<\/item>/g;
-          let m;
-          while ((m = re.exec(text)) !== null && count < 20) {
-            const linkM = m[1].match(/<link>([^<]*)<\/link>/);
-            if (linkM && !seen.has(linkM[1])) {
-              seen.add(linkM[1]);
-              items += `  <item>${m[1]}</item>\n`;
-              count++;
-            }
-          }
-        }
-      }
-    } catch { /* static union is best-effort */ }
-    const rss = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n<title>Young Hadene — News</title>\n<link>' + SITE_URL + '/news</link>\n<description>Latest news from Young Hadene: releases, shows, videos and Toronto drill &amp; dark trap scene updates.</description>\n<language>en-ca</language>\n' +
-      items + '</channel>\n</rss>\n';
-    return new Response(rss, {
+    const items = await selectRssItems(env);
+    return new Response(rssXml(items), {
       status: 200,
       headers: { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Cache-Control': 'public, max-age=60' },
     });

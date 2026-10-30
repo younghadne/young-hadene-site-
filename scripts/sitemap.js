@@ -2,7 +2,8 @@
 // Static sitemap.xml generator + check (run: npm run sitemap / npm test).
 // Includes every .html page whose canonical points to itself, except:
 // noindex pages, /admin*, blog posts in BLOG_REDIRECTS, news in NEWS_NOINDEX,
-// and EXCLUDE below. lastmod = git date of the page's last commit.
+// and EXCLUDE below. lastmod = git date of the page's last commit (in a
+// shallow clone: the committed sitemap.xml's lastmod, see gitDate).
 // KV-only posts are added at request time by functions/sitemap.xml.js.
 // `node scripts/sitemap.js` writes sitemap.xml; `--check` fails if it is stale.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
@@ -30,7 +31,33 @@ function walk(dir, out = []) {
   }
   return out;
 }
-function gitDate(file) {
+// lastmod needs full git history. In a shallow clone (Cloudflare Pages
+// builds clone with depth 1) `git log -1 -- <file>` returns the single
+// fetched commit for EVERY file, so every page got the deploy's HEAD date
+// (all static entries on live read 2026-10-22, the date of main's head).
+// Without full history, keep the lastmod already committed in sitemap.xml
+// for that URL, and omit lastmod for a URL that has none. Never guess.
+function historyAvailable() {
+  try {
+    const shallow = execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    return shallow === 'false';
+  } catch { return false; }
+}
+let committedLastmod = null;
+function committedDate(url) {
+  if (!committedLastmod) {
+    committedLastmod = new Map();
+    try {
+      const txt = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
+      for (const m of txt.matchAll(/<loc>([^<]+)<\/loc><lastmod>([^<]+)<\/lastmod>/g)) committedLastmod.set(m[1], m[2]);
+    } catch { /* no committed sitemap: no lastmods */ }
+  }
+  return committedLastmod.get(SITE + url) || '';
+}
+let HISTORY = null;
+function gitDate(file, url) {
+  if (HISTORY === null) HISTORY = historyAvailable();
+  if (!HISTORY) return committedDate(url);
   try { return execFileSync('git', ['log', '-1', '--format=%cs', '--', file], { cwd: ROOT }).toString().trim(); } catch { return ''; }
 }
 function pages() {
@@ -55,7 +82,7 @@ function pages() {
 function build(withDates = true) {
   let x = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   for (const p of pages()) {
-    const lm = withDates ? gitDate(p.file) : '';
+    const lm = withDates ? gitDate(p.file, p.url) : '';
     const pr = PRIORITY[p.url] || (/^\/(blog|news|music|videos)\//.test(p.url) ? '0.8' : '0.7');
     x += `  <url><loc>${SITE}${p.url}</loc>${lm ? `<lastmod>${lm}</lastmod>` : ''}<priority>${pr}</priority></url>\n`;
   }
@@ -111,6 +138,7 @@ if (process.argv.includes('--check')) {
   }
   console.log(`SITEMAP-CHECK OK: ${want.length} URLs match the indexable pages.`);
 } else {
-  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), build());
-  console.log(`sitemap.xml written: ${pages().length} URLs`);
+  const xml = build();
+  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml);
+  console.log(`sitemap.xml written: ${pages().length} URLs` + (HISTORY === false ? ' (shallow clone: committed lastmods kept)' : ''));
 }

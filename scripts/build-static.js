@@ -2,7 +2,7 @@
 // Build step for GitHub Pages / static hosts.
 // Regenerates sitemap.xml (via scripts/sitemap.js) so new blog
 // posts are always included. Also generates:
-//   - news-sitemap.xml (Google News: /news/ articles from the last FRESH_WINDOW_DAYS days)
+//   - news-sitemap.xml (every repo /news/ article; the Function applies the 2-day window)
 //   - news-rss.xml (static RSS for the /news/ section, for Publisher Center)
 // Safe to run repeatedly (idempotent).
 const fs = require('fs');
@@ -28,11 +28,11 @@ function listHtml(dir) {
     .sort();
 }
 
-function mtimeISODate(full) {
-  try {
-    return fs.statSync(full).mtime.toISOString().substring(0, 10);
-  } catch { return ''; }
-}
+// Toronto date helpers: functions/_news-dates.js is the single source (an ES
+// module); load it the same way scripts/sitemap.js loads _blog-redirects.js.
+const { newsDateMs, torontoISOFromMs, rssDate } = new Function(
+  fs.readFileSync(path.join(ROOT, 'functions', '_news-dates.js'), 'utf8').replace(/^export /gm, '') +
+  '; return { newsDateMs, torontoISOFromMs, rssDate };')();
 
 function decodeEntities(s) {
   return String(s)
@@ -58,10 +58,11 @@ function extractTitle(html) {
 // article:published_time) over filesystem mtime. mtime is reset by git
 // checkout, which otherwise collapses every article onto one meaningless
 // timestamp and breaks the Google News 2-day freshness window.
+// A date-only value ("2026-10-23") is midnight in Toronto, not UTC.
 function publishedMs(html, fallbackMs) {
   const m = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) ||
             html.match(/article:published_time"\s+content="([^"]+)"/i);
-  const t = m ? Date.parse(m[1]) : NaN;
+  const t = m ? newsDateMs(m[1]) : NaN;
   return Number.isFinite(t) ? t : fallbackMs;
 }
 
@@ -73,31 +74,32 @@ require('child_process').execFileSync(process.execPath, [path.join(__dirname, 's
 const newsDir = path.join(ROOT, 'news');
 const newsFiles = listHtml(newsDir);
 
-// ── 2. Google News sitemap ──
-// Window widened (owner decision) from Google's recommended 2 days to
-// FRESH_WINDOW_DAYS so recent articles stay listed. Dates come from each
-// article's real publish time, never mtime.
-const FRESH_WINDOW_DAYS = 7;
-const FRESH_WINDOW_MS = FRESH_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+// ── 2. Repo news list for the Google News sitemap ──
+// Lists EVERY repo news post (newest first). This file is the source list
+// that functions/news-sitemap.xml.js merges with KV; the 2-day Google News
+// window is applied there at request time (strict: an empty urlset when
+// nothing is that fresh). Filtering here froze the window at deploy time, so
+// a build a few days after a post shipped without it and the Function could
+// no longer list it while it was still fresh.
 const now = Date.now();
-const fresh = newsFiles
+const repoNews = newsFiles
   .map((f) => {
     const full = path.join(newsDir, f);
     let ms = 0;
-    try { ms = publishedMs(fs.readFileSync(full, 'utf8'), fs.statSync(full).mtimeMs); } catch { ms = 0; }
+    try { ms = publishedMs(fs.readFileSync(full, 'utf8'), NaN); } catch { ms = NaN; }
     return { f, ms };
   })
-  .filter((x) => x.ms && now - x.ms < FRESH_WINDOW_MS)
+  .filter((x) => Number.isFinite(x.ms))
   .sort((a, b) => b.ms - a.ms);
 
 let news = '<?xml version="1.0" encoding="UTF-8"?>\n';
 news += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n';
 news += '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n';
-for (const { f, ms } of fresh) {
+for (const { f, ms } of repoNews) {
   const full = path.join(newsDir, f);
   const html = fs.readFileSync(full, 'utf8');
   const title = extractTitle(html).split('—')[0].split('|')[0].trim() || f;
-  const pubDate = new Date(ms).toISOString();
+  const pubDate = torontoISOFromMs(ms);
   news += '  <url>\n';
   news += `    <loc>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</loc>\n`;
   news += '    <news:news>\n';
@@ -112,16 +114,17 @@ for (const { f, ms } of fresh) {
 }
 news += '</urlset>\n';
 fs.writeFileSync(path.join(ROOT, 'news-sitemap.xml'), news);
-console.log(`news-sitemap.xml regenerated: ${fresh.length} fresh articles`);
+console.log(`news-sitemap.xml regenerated: ${repoNews.length} repo articles`);
 
 // ── 3. Static RSS for /news/ (latest 20) ──
 const items = newsFiles
   .map((f) => {
     const full = path.join(newsDir, f);
     let ms = 0;
-    try { ms = publishedMs(fs.readFileSync(full, 'utf8'), fs.statSync(full).mtimeMs); } catch { ms = 0; }
+    try { ms = publishedMs(fs.readFileSync(full, 'utf8'), NaN); } catch { ms = NaN; }
     return { f, ms };
   })
+  .filter((x) => Number.isFinite(x.ms))
   .sort((a, b) => b.ms - a.ms)
   .slice(0, 20);
 
@@ -141,7 +144,7 @@ for (const { f, ms } of items) {
   rss += `    <title>${esc(title)}</title>\n`;
   rss += `    <link>${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</link>\n`;
   rss += `    <guid isPermaLink="true">${SITE_URL}/news/${esc(f.replace(/\.html$/, ''))}</guid>\n`;
-  rss += `    <pubDate>${new Date(ms).toUTCString()}</pubDate>\n`;
+  rss += `    <pubDate>${rssDate(ms)}</pubDate>\n`;
   rss += `    <description>${esc(desc)}</description>\n`;
   rss += '  </item>\n';
 }
